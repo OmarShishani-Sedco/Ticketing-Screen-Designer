@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Ticketing_Screen_Designer</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TicketingScreenDesigner.BLL\TicketingScreenDesigner.BLL.csproj" />
+    <ProjectReference Include="..\TicketingScreenDesigner.Common\TicketingScreenDesigner.Common.csproj" />
+    <ProjectReference Include="..\TicketingScreenDesigner.Models\TicketingScreenDesigner.Models.csproj" />
+  </ItemGroup>
+
+</Project>

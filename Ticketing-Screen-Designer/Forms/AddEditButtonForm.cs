@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using TicketingScreenDesigner.BLL;
-using TicketingScreenDesigner.BLL.Interfaces;
 using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.Interfaces;
-using TicketingScreenDesigner.Models;
+using TicketingScreenDesigner.Models.Models;
+using TicketingScreenDesigner.DAL.DAL.Interfaces;
+using TicketingScreenDesigner.BLL.BLL.Interfaces;
 
 namespace Ticketing_Screen_Designer.Forms
 {
     public partial class AddEditButtonForm : Form
     {
         private readonly IButtonManager _buttonManager;
-        private readonly IServiceManager _serviceManager;
         private readonly int _screenId;
-        private readonly ButtonModel _existingButton;
         private readonly int _bankId;
+        private readonly ButtonModel _existingButton;
 
         public ButtonModel ResultButton { get; private set; }
 
-        public AddEditButtonForm(int screenId, int bankID , ButtonModel existingButton = null)
+        public AddEditButtonForm(int screenId, int bankId, ButtonModel existingButton = null)
         {
             InitializeComponent();
             _buttonManager = new ButtonManager(new ButtonDAL());
-            _serviceManager = new ServiceManager(new ServiceDAL());
             _screenId = screenId;
+            _bankId = bankId;
             _existingButton = existingButton;
-            _bankId = bankID;
 
             InitializeForm();
         }
@@ -35,9 +32,15 @@ namespace Ticketing_Screen_Designer.Forms
         {
             cmbButtonType.Items.Add("Issue Ticket");
             cmbButtonType.Items.Add("Show Message");
-            cmbButtonType.SelectedIndexChanged += (s, e) => TogglePanels();
 
-            LoadServices();
+            cmbButtonType.SelectedIndexChanged += (s, e) =>
+            {
+                TogglePanels();
+                if (cmbButtonType.SelectedItem?.ToString() == "Issue Ticket")
+                {
+                    LoadServices();
+                }
+            };
 
             if (_existingButton != null)
             {
@@ -51,15 +54,14 @@ namespace Ticketing_Screen_Designer.Forms
                     panelIssueTicket.Visible = true;
                     panelShowMessage.Visible = false;
 
-                    if (_existingButton.ServiceId.HasValue)
-                    {
-                        cmbService.SelectedValue = _existingButton.ServiceId.Value;
-                    }
+                    LoadServices();
+                    cmbService.SelectedValue = _existingButton.ServiceId;
                 }
-                else if (_existingButton.Type == "Show Message")
+                else
                 {
                     panelShowMessage.Visible = true;
                     panelIssueTicket.Visible = false;
+
                     txtMsgEn.Text = _existingButton.MessageEn;
                     txtMsgAr.Text = _existingButton.MessageAr;
                 }
@@ -74,11 +76,16 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void LoadServices()
         {
-            var services = _serviceManager.GetServicesForBank(_bankId); // You may be passing this via constructor too
+            IServiceDAL serviceDAL = new ServiceDAL();
+            IServiceManager serviceManager = new ServiceManager(serviceDAL);
+
+            var services = serviceManager.GetServicesForBank(_bankId); // List<ServiceModel>
+
             cmbService.DataSource = services;
-            cmbService.DisplayMember = "Name";
-            cmbService.ValueMember = "ServiceId";
+            cmbService.DisplayMember = "Name"; // Shows service name in dropdown
+            cmbService.ValueMember = "ServiceId";     // SelectedValue returns ServiceId
         }
+
 
         private void TogglePanels()
         {
@@ -104,11 +111,11 @@ namespace Ticketing_Screen_Designer.Forms
             string type = cmbButtonType.SelectedItem.ToString();
 
             var button = _existingButton ?? new ButtonModel();
-            button.ScreenId = _screenId;
             button.NameEn = txtNameEn.Text.Trim();
             button.NameAr = txtNameAr.Text.Trim();
             button.Type = type;
 
+            // Handle type-specific fields
             if (type == "Issue Ticket")
             {
                 if (cmbService.SelectedItem == null)
@@ -118,10 +125,11 @@ namespace Ticketing_Screen_Designer.Forms
                 }
 
                 button.ServiceId = (int)cmbService.SelectedValue;
+                
                 button.MessageEn = null;
                 button.MessageAr = null;
             }
-            else if (type == "Show Message")
+            else
             {
                 if (string.IsNullOrWhiteSpace(txtMsgEn.Text) || string.IsNullOrWhiteSpace(txtMsgAr.Text))
                 {
@@ -134,16 +142,11 @@ namespace Ticketing_Screen_Designer.Forms
                 button.ServiceId = null;
             }
 
-            if (_existingButton == null)
-            {
-                ResultButton = _buttonManager.AddButton(button);
-            }
-            else
-            {
-                _buttonManager.UpdateButton(button);
-                ResultButton = button;
-            }
+            // Only set ScreenId if known
+            if (_screenId > 0)
+                button.ScreenId = _screenId;
 
+            ResultButton = button;
             DialogResult = DialogResult.OK;
             this.Close();
         }

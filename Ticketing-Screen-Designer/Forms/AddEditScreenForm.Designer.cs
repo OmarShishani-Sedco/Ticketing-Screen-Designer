@@ -39,6 +39,8 @@
             lstButtons = new ListBox();
             label3 = new Label();
             grpButtons = new GroupBox();
+            label2 = new Label();
+            listView1 = new ListView();
             grpButtons.SuspendLayout();
             SuspendLayout();
             // 
@@ -91,7 +93,7 @@
             // 
             // btnDeleteButton
             // 
-            btnDeleteButton.Location = new Point(241, 22);
+            btnDeleteButton.Location = new Point(241, 20);
             btnDeleteButton.Name = "btnDeleteButton";
             btnDeleteButton.Size = new Size(104, 23);
             btnDeleteButton.TabIndex = 5;
@@ -101,7 +103,7 @@
             // 
             // btnEditButton
             // 
-            btnEditButton.Location = new Point(131, 22);
+            btnEditButton.Location = new Point(131, 20);
             btnEditButton.Name = "btnEditButton";
             btnEditButton.Size = new Size(104, 23);
             btnEditButton.TabIndex = 6;
@@ -124,10 +126,13 @@
             lstButtons.DisplayMember = "NameEn";
             lstButtons.FormattingEnabled = true;
             lstButtons.ItemHeight = 15;
-            lstButtons.Location = new Point(8, 168);
+            lstButtons.Location = new Point(32, 197);
             lstButtons.Name = "lstButtons";
-            lstButtons.Size = new Size(780, 214);
+            lstButtons.SelectionMode = SelectionMode.MultiExtended;
+            lstButtons.Size = new Size(735, 199);
             lstButtons.TabIndex = 8;
+            lstButtons.SelectedIndexChanged += lstButtons_SelectedIndexChanged;
+            lstButtons.MouseDown += lstButtons_MouseDown;
             // 
             // label3
             // 
@@ -152,14 +157,35 @@
             grpButtons.TabStop = false;
             grpButtons.Text = "groupBox1";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.BackColor = SystemColors.HighlightText;
+            label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(363, 163);
+            label2.Name = "label2";
+            label2.Size = new Size(67, 21);
+            label2.TabIndex = 12;
+            label2.Text = "Buttons";
+            // 
+            // listView1
+            // 
+            listView1.Location = new Point(21, 156);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(756, 253);
+            listView1.TabIndex = 13;
+            listView1.UseCompatibleStateImageBehavior = false;
+            // 
             // AddEditScreenForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(lstButtons);
+            Controls.Add(label2);
+            Controls.Add(listView1);
             Controls.Add(grpButtons);
             Controls.Add(label3);
-            Controls.Add(lstButtons);
             Controls.Add(btnSave);
             Controls.Add(btnCancel);
             Controls.Add(chkIsActive);
@@ -185,5 +211,7 @@
         private ListBox lstButtons;
         private Label label3;
         private GroupBox grpButtons;
+        private Label label2;
+        private ListView listView1;
     }
 }

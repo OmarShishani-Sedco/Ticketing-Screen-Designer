@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TicketingScreenDesigner.Common\TicketingScreenDesigner.Common.csproj" />
+    <ProjectReference Include="..\TicketingScreenDesigner.DAL\TicketingScreenDesigner.DAL.csproj" />
+    <ProjectReference Include="..\TicketingScreenDesigner.Models\TicketingScreenDesigner.Models.csproj" />
+  </ItemGroup>
+
+</Project>

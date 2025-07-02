@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TicketingScreenDesigner.BLL;
-using TicketingScreenDesigner.BLL.Interfaces;
+using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.DAL;
 using TicketingScreenDesigner.DAL.Interfaces;
-using TicketingScreenDesigner.Models;
+using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
 {
@@ -14,41 +14,48 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
 
-        private bool _isEditMode;
-        private ScreenModel _existingScreen;
+        private ScreenModel _screen; // Will hold in-memory or loaded screen
+        private readonly bool _isEditMode;
         private readonly BankModel _bank;
-        private List<ButtonModel> _buttons = new();
 
-        public AddEditScreenForm(BankModel bank, ScreenModel screen = null)
+        private List<ButtonModel> _buttons = new();
+        private bool _isSaved = false;
+
+        public AddEditScreenForm(BankModel bank, ScreenModel existingScreen = null)
         {
             InitializeComponent();
-            _screenManager = new ScreenManager(new ScreenDAL());
+            _screenManager = new ScreenManager(new ScreenDAL(), new ButtonDAL());
             _buttonManager = new ButtonManager(new ButtonDAL());
 
             _bank = bank;
-            _existingScreen = screen;
-            _isEditMode = screen != null;
+            _isEditMode = existingScreen != null;
+            _screen = existingScreen ?? new ScreenModel
+            {
+                BankId = _bank.BankId,
+                ScreenId = -1 // Indicates not yet saved
+            };
 
             InitializeForm();
+            this.FormClosing += AddEditScreenForm_FormClosing;
         }
 
         private void InitializeForm()
         {
+            txtScreenName.Text = _screen.ScreenName ?? "";
+            chkIsActive.Checked = _screen.IsActive;
+
             if (_isEditMode)
             {
                 this.Text = "Edit Screen";
-                txtScreenName.Text = _existingScreen.ScreenName;
-                chkIsActive.Checked = _existingScreen.IsActive;
-
-                _buttons = _buttonManager.GetButtonsForScreen(_existingScreen.ScreenId);
-                RefreshButtonList();
-                grpButtons.Enabled = true;
+                _buttons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
             }
             else
             {
                 this.Text = "Add Screen";
-                grpButtons.Enabled = false;
             }
+
+            RefreshButtonList();
+            grpButtons.Enabled = true;
         }
 
         private void RefreshButtonList()
@@ -60,17 +67,28 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnAddButton_Click(object sender, EventArgs e)
         {
-            if (!_isEditMode || _existingScreen == null)
-            {
-                MessageBox.Show("Please save the screen before adding buttons.");
-                return;
-            }
-
-            var form = new AddEditButtonForm(_existingScreen.ScreenId, _bank.BankId);
+            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId); // -1 if not saved
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _buttons.Add(form.ResultButton);
                 RefreshButtonList();
+
+                // If this is a new screen, save now that we have 1+ buttons
+                if (!_isEditMode && _screen.ScreenId == -1)
+                {
+                    // Fill screen model from form inputs
+                    _screen.ScreenName = txtScreenName.Text.Trim();
+                    _screen.IsActive = chkIsActive.Checked;
+                    _screen.BankId = _bank.BankId;
+
+                    // Now save
+                    SaveScreenAndButtons();
+                }
+
+                else if (_isEditMode)
+                {
+                    _buttonManager.AddButton(form.ResultButton);
+                }
             }
         }
 
@@ -78,30 +96,50 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (lstButtons.SelectedItem is ButtonModel selected)
             {
-                var form = new AddEditButtonForm(selected.ScreenId, _bank.BankId, selected);
+                var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, selected);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
                     if (index >= 0)
                         _buttons[index] = form.ResultButton;
                     RefreshButtonList();
+
+                    if (_isEditMode)
+                        _buttonManager.UpdateButton(form.ResultButton);
                 }
             }
         }
 
         private void btnDeleteButton_Click(object sender, EventArgs e)
         {
-            if (lstButtons.SelectedItem is ButtonModel selected)
+            if (lstButtons.SelectedItems.Count == 0)
             {
-                var confirm = MessageBox.Show("Delete this button?", "Confirm", MessageBoxButtons.YesNo);
-                if (confirm == DialogResult.Yes)
+                MessageBox.Show("Please select at least one button to delete.");
+                return;
+            }
+
+            var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo);
+            if (confirm != DialogResult.Yes)
+                return;
+
+            var buttonsToDelete = new List<ButtonModel>();
+            foreach (var item in lstButtons.SelectedItems)
+            {
+                if (item is ButtonModel btn)
                 {
-                    _buttonManager.DeleteButton(selected.ButtonId);
-                    _buttons.Remove(selected);
-                    RefreshButtonList();
+                    if (btn.ButtonId != 0)
+                        _buttonManager.DeleteButton(btn.ButtonId);
+
+                    buttonsToDelete.Add(btn);
                 }
             }
+
+            foreach (var btn in buttonsToDelete)
+                _buttons.Remove(btn);
+
+            RefreshButtonList();
         }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -111,36 +149,79 @@ namespace Ticketing_Screen_Designer.Forms
                 return;
             }
 
+            if (_buttons.Count == 0)
+            {
+                MessageBox.Show("A screen must contain at least one button.");
+                return;
+            }
+
+            _screen.ScreenName = txtScreenName.Text.Trim();
+            _screen.IsActive = chkIsActive.Checked;
+
             if (_isEditMode)
             {
-                _existingScreen.ScreenName = txtScreenName.Text.Trim();
-                _existingScreen.IsActive = chkIsActive.Checked;
-
-                _screenManager.UpdateScreen(_existingScreen);
-                grpButtons.Enabled = true;
-                MessageBox.Show("Screen updated. Now you can manage buttons.");
+                _screenManager.UpdateScreen(_screen);
+                MessageBox.Show("Screen updated.");
             }
             else
             {
-                var newScreen = new ScreenModel
-                {
-                    ScreenName = txtScreenName.Text.Trim(),
-                    IsActive = chkIsActive.Checked,
-                    BankId = _bank.BankId
-                };
+                SaveScreenAndButtons();
+            }
 
-                _existingScreen = _screenManager.AddScreen(newScreen);
-                _isEditMode = true;
+            _isSaved = true;
+            DialogResult = DialogResult.OK;
+            this.Close();
+        }
 
-                grpButtons.Enabled = true;
-                btnSave.Enabled = false; // Optional: Disable further editing
-                MessageBox.Show("Screen saved. You can now add buttons.");
+        private void SaveScreenAndButtons()
+        {
+            _screen = _screenManager.AddScreen(_screen);
+            foreach (var btn in _buttons)
+            {
+                btn.ScreenId = _screen.ScreenId;
+                _buttonManager.AddButton(btn);
+            }
+
+            MessageBox.Show("Screen and buttons saved.");
+            _isSaved = true;
+            DialogResult = DialogResult.OK;
+
+        }
+
+        private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_isSaved && !_isEditMode && _screen.ScreenId == -1)
+            {
+                // Nothing persisted — nothing to delete
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void lstButtons_MouseDown(object sender, MouseEventArgs e)
+        {
+            int index = lstButtons.IndexFromPoint(e.Location);
+
+            if (index == ListBox.NoMatches)
+            {
+                lstButtons.ClearSelected();
+            }
+        }
+        private void UpdateButtonActionsEnabled()
+        {
+            int selectedCount = lstButtons.SelectedItems.Count;
+
+            btnEditButton.Enabled = selectedCount == 1;
+            btnDeleteButton.Enabled = selectedCount > 0;
+        }
+
+
+        private void lstButtons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateButtonActionsEnabled();
         }
     }
 }

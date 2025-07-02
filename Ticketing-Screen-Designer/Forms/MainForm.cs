@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TicketingScreenDesigner.BLL.Interfaces;
-using TicketingScreenDesigner.Models;
+using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
 {

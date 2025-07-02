@@ -114,7 +114,7 @@
             // cmbService
             // 
             cmbService.FormattingEnabled = true;
-            cmbService.Items.AddRange(new object[] { "Issue Ticket, Show Message" });
+            cmbService.Items.AddRange(new object[] { "Issue Ticket", "Show Message" });
             cmbService.Location = new Point(121, 40);
             cmbService.Name = "cmbService";
             cmbService.Size = new Size(121, 23);

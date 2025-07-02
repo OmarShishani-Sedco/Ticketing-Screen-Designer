@@ -1,9 +1,9 @@
 ﻿using TicketingScreenDesigner.BLL;
-using TicketingScreenDesigner.BLL.Interfaces;
+using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.Interfaces;
-using TicketingScreenDesigner.Helpers;
-using TicketingScreenDesigner.Models;
+using TicketingScreenDesigner.DAL.DAL.Interfaces;
+using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
 {

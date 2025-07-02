@@ -2,11 +2,11 @@
 using System.Windows.Forms;
 using Ticketing_Screen_Designer.Forms;
 using TicketingScreenDesigner.BLL;
-using TicketingScreenDesigner.BLL.Interfaces;
+using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.Interfaces;
+using TicketingScreenDesigner.DAL.DAL.Interfaces;
 
-namespace TicketingScreenDesigner
+namespace Ticketing_Screen_Designer
 {
     static class Program
     {
@@ -24,7 +24,7 @@ namespace TicketingScreenDesigner
                 {
                     // Manually wire up dependencies
                     IScreenDAL screenDAL = new ScreenDAL();
-                    IScreenManager screenManager = new ScreenManager(screenDAL);
+                    IScreenManager screenManager = new ScreenManager(screenDAL, new ButtonDAL());
 
                     Application.Run(new MainForm(bankForm.SelectedBank, screenManager));
                 }
