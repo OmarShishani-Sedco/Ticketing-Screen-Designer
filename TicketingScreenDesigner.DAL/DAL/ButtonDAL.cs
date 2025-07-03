@@ -57,8 +57,8 @@ public class ButtonDAL : IButtonDAL
             using (var conn = DatabaseHelper.GetConnection())
             {
                 string query = @"
-                    INSERT INTO Button (ScreenId, NameEnglish, NameArabic, ButtonType, ServiceId, MessageEnglish, MessageArabic)
-                    VALUES (@ScreenId, @NameEnglish, @NameArabic, @ButtonType, @ServiceId, @MessageEnglish, @MessageArabic);
+                    INSERT INTO Button (ScreenId, NameEnglish, NameArabic, ButtonType, ServiceId, MessageEnglish, MessageArabic, BankId)
+                    VALUES (@ScreenId, @NameEnglish, @NameArabic, @ButtonType, @ServiceId, @MessageEnglish, @MessageArabic, @BankId);
                     SELECT SCOPE_IDENTITY();";
 
                 using (var cmd = new SqlCommand(query, conn))
@@ -70,6 +70,7 @@ public class ButtonDAL : IButtonDAL
                     cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BankId", button.BankId);
 
                     conn.Open();
                     return Convert.ToInt32(cmd.ExecuteScalar());

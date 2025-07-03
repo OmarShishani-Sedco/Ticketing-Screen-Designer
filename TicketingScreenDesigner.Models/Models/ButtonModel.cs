@@ -4,6 +4,7 @@
     {
         public int ButtonId { get; set; }
         public int ScreenId { get; set; }
+        public int BankId { get; set; } 
 
         public string NameEn { get; set; }
         public string NameAr { get; set; }

@@ -123,9 +123,9 @@ namespace Ticketing_Screen_Designer.Forms
                 MessageBox.Show("Please select at least one button to delete.");
                 return;
             }
-            if (lstButtons.Items.Count == 1)
+            if (lstButtons.SelectedItems.Count == lstButtons.Items.Count )
             {
-                MessageBox.Show("Only one button in the screen, please add another button before deleting this one");
+                MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)");
                 return;
             }
 

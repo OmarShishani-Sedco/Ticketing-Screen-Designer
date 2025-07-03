@@ -114,6 +114,7 @@ namespace Ticketing_Screen_Designer.Forms
             button.NameEn = txtNameEn.Text.Trim();
             button.NameAr = txtNameAr.Text.Trim();
             button.Type = type;
+            button.BankId = _bankId;
 
             // Handle type-specific fields
             if (type == "Issue Ticket")
