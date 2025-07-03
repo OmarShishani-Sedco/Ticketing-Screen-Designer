@@ -5,5 +5,7 @@ namespace TicketingScreenDesigner.BLL.BLL.Interfaces
     public interface IBankManager
     {
         BankModel GetOrCreateBank(string name);
+        List<BankModel> GetAllBanks();
+
     }
 }

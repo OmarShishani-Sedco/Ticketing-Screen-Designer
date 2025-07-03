@@ -11,19 +11,21 @@ namespace Ticketing_Screen_Designer.Forms
     public partial class AddEditButtonForm : Form
     {
         private readonly IButtonManager _buttonManager;
+        private readonly IServiceManager _serviceManager;
         private readonly int _screenId;
         private readonly int _bankId;
         private readonly ButtonModel _existingButton;
 
         public ButtonModel ResultButton { get; private set; }
 
-        public AddEditButtonForm(int screenId, int bankId, ButtonModel existingButton = null)
+        public AddEditButtonForm(int screenId, int bankId, IButtonManager buttonManager, IServiceManager serviceManager, ButtonModel existingButton = null)
         {
             InitializeComponent();
-            _buttonManager = new ButtonManager(new ButtonDAL());
             _screenId = screenId;
             _bankId = bankId;
             _existingButton = existingButton;
+            _buttonManager = buttonManager;
+            _serviceManager = serviceManager;
 
             InitializeForm();
         }
@@ -76,10 +78,8 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void LoadServices()
         {
-            IServiceDAL serviceDAL = new ServiceDAL();
-            IServiceManager serviceManager = new ServiceManager(serviceDAL);
 
-            var services = serviceManager.GetServicesForBank(_bankId); // List<ServiceModel>
+            var services = _serviceManager.GetServicesForBank(_bankId); // List<ServiceModel>
 
             cmbService.DataSource = services;
             cmbService.DisplayMember = "Name"; // Shows service name in dropdown

@@ -10,18 +10,32 @@ namespace Ticketing_Screen_Designer.Forms
     {
         private readonly BankModel _selectedBank;
         private readonly IScreenManager _screenManager;
+        private readonly IButtonManager _buttonManager;
+        private readonly IServiceManager _serviceManager;
+        private readonly IBankManager _bankManager;
 
-        public MainForm(BankModel selectedBank, IScreenManager screenManager)
+        public MainForm(
+            BankModel selectedBank,
+            IScreenManager screenManager,
+            IButtonManager buttonManager,
+            IServiceManager serviceManager,
+            IBankManager bankManager)
         {
             InitializeComponent();
+
             _selectedBank = selectedBank;
             _screenManager = screenManager;
+            _buttonManager = buttonManager;
+            _serviceManager = serviceManager;
+            _bankManager = bankManager;
 
             this.Text = $"Main Form - {_selectedBank.BankName}";
             lblBankName.Text = $"Bank: {_selectedBank.BankName}";
 
             LoadScreens();
         }
+
+
 
         private void LoadScreens()
         {
@@ -53,7 +67,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
         private void btnAddScreen_Click(object sender, EventArgs e)
         {
-            using (var addScreenForm = new AddEditScreenForm(_selectedBank))
+            using (var addScreenForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager))
             {
                 var result = addScreenForm.ShowDialog();
 
@@ -74,7 +88,7 @@ namespace Ticketing_Screen_Designer.Forms
 
             var selectedScreen = selectedItem.Screen;
 
-            using (var editForm = new AddEditScreenForm(_selectedBank, selectedScreen))
+            using (var editForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager, selectedScreen))
             {
                 var result = editForm.ShowDialog();
 

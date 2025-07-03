@@ -9,20 +9,21 @@ namespace Ticketing_Screen_Designer.Forms
 {
     public partial class BankSelectorForm : Form
     {
+        private readonly IBankManager _bankManager;
         public BankModel SelectedBank { get; private set; }
         private List<BankModel> _availableBanks;
 
-        public BankSelectorForm()
+        public BankSelectorForm(IBankManager bankManager)
         {
             InitializeComponent();
+            _bankManager = bankManager;
         }
 
         private void BankSelectorForm_Load(object sender, EventArgs e)
         {
             try
             {
-                IBankDAL bankDAL = new BankDAL();
-                _availableBanks = bankDAL.GetAllBanks();
+                _availableBanks = _bankManager.GetAllBanks();
 
                 cmbBanks.Items.Clear();
                 foreach (var bank in _availableBanks)
@@ -50,8 +51,6 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnContinue_Click(object sender, EventArgs e)
         {
-            IBankDAL bankDAL = new BankDAL();
-            IBankManager bankManager = new BankManager(bankDAL);
 
             try
             {
@@ -64,7 +63,7 @@ namespace Ticketing_Screen_Designer.Forms
                         return;
                     }
 
-                    SelectedBank = bankManager.GetOrCreateBank(newBankName);
+                    SelectedBank = _bankManager.GetOrCreateBank(newBankName);
                 }
                 else
                 {

@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TicketingScreenDesigner.BLL\TicketingScreenDesigner.BLL.csproj" />
     <ProjectReference Include="..\TicketingScreenDesigner.Common\TicketingScreenDesigner.Common.csproj" />
+    <ProjectReference Include="..\TicketingScreenDesigner.DAL\TicketingScreenDesigner.DAL.csproj" />
     <ProjectReference Include="..\TicketingScreenDesigner.Models\TicketingScreenDesigner.Models.csproj" />
   </ItemGroup>
 

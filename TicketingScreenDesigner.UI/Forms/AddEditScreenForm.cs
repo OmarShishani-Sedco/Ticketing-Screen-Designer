@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using TicketingScreenDesigner.BLL;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -13,22 +12,28 @@ namespace Ticketing_Screen_Designer.Forms
     {
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
-
-        private ScreenModel _screen; // Will hold in-memory or loaded screen
-        private readonly bool _isEditMode;
+        private readonly IServiceManager _serviceManager;
         private readonly BankModel _bank;
-
+        private ScreenModel _screen;
+        private readonly bool _isEditMode;
         private List<ButtonModel> _buttons = new();
         private bool _isSaved = false;
 
-        public AddEditScreenForm(BankModel bank, ScreenModel existingScreen = null)
+        public AddEditScreenForm(
+            BankModel bank,
+            IScreenManager screenManager,
+            IButtonManager buttonManager,
+            IServiceManager serviceManager,
+            ScreenModel existingScreen = null)
         {
             InitializeComponent();
-            _screenManager = new ScreenManager(new ScreenDAL(), new ButtonDAL());
-            _buttonManager = new ButtonManager(new ButtonDAL());
 
             _bank = bank;
+            _screenManager = screenManager;
+            _buttonManager = buttonManager;
+            _serviceManager = serviceManager;
             _isEditMode = existingScreen != null;
+
             _screen = existingScreen ?? new ScreenModel
             {
                 BankId = _bank.BankId,
@@ -38,6 +43,7 @@ namespace Ticketing_Screen_Designer.Forms
             InitializeForm();
             this.FormClosing += AddEditScreenForm_FormClosing;
         }
+
 
         private void InitializeForm()
         {
@@ -67,7 +73,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnAddButton_Click(object sender, EventArgs e)
         {
-            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId); // -1 if not saved
+            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager); // -1 if not saved
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _buttons.Add(form.ResultButton);
@@ -96,7 +102,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (lstButtons.SelectedItem is ButtonModel selected)
             {
-                var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, selected);
+                var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager,  selected);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
@@ -115,6 +121,11 @@ namespace Ticketing_Screen_Designer.Forms
             if (lstButtons.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Please select at least one button to delete.");
+                return;
+            }
+            if (lstButtons.Items.Count == 1)
+            {
+                MessageBox.Show("Only one button in the screen, please add another button before deleting this one");
                 return;
             }
 
