@@ -61,6 +61,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
 
             RefreshButtonList();
+            UpdateButtonActionsEnabled();
         }
 
         private void RefreshButtonList()

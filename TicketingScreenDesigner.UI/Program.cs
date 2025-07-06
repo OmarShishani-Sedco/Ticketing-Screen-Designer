@@ -41,8 +41,7 @@ namespace Ticketing_Screen_Designer
                         bankForm.SelectedBank,
                         screenManager,
                         buttonManager,
-                        serviceManager,
-                        bankManager
+                        serviceManager
                     ));
                 }
                 else

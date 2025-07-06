@@ -12,14 +12,12 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
         private readonly IServiceManager _serviceManager;
-        private readonly IBankManager _bankManager;
 
         public MainForm(
             BankModel selectedBank,
             IScreenManager screenManager,
             IButtonManager buttonManager,
-            IServiceManager serviceManager,
-            IBankManager bankManager)
+            IServiceManager serviceManager)
         {
             InitializeComponent();
 
@@ -27,7 +25,6 @@ namespace Ticketing_Screen_Designer.Forms
             _screenManager = screenManager;
             _buttonManager = buttonManager;
             _serviceManager = serviceManager;
-            _bankManager = bankManager;
 
             this.Text = $"Main Form - {_selectedBank.BankName}";
             lblBankName.Text = $"Bank: {_selectedBank.BankName}";
