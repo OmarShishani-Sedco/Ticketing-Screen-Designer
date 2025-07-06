@@ -38,10 +38,8 @@
             btnAddButton = new Button();
             lstButtons = new ListBox();
             label3 = new Label();
-            grpButtons = new GroupBox();
             label2 = new Label();
             listView1 = new ListView();
-            grpButtons.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -93,7 +91,7 @@
             // 
             // btnDeleteButton
             // 
-            btnDeleteButton.Location = new Point(241, 20);
+            btnDeleteButton.Location = new Point(241, 117);
             btnDeleteButton.Name = "btnDeleteButton";
             btnDeleteButton.Size = new Size(104, 23);
             btnDeleteButton.TabIndex = 5;
@@ -103,7 +101,7 @@
             // 
             // btnEditButton
             // 
-            btnEditButton.Location = new Point(131, 20);
+            btnEditButton.Location = new Point(131, 117);
             btnEditButton.Name = "btnEditButton";
             btnEditButton.Size = new Size(104, 23);
             btnEditButton.TabIndex = 6;
@@ -113,7 +111,7 @@
             // 
             // btnAddButton
             // 
-            btnAddButton.Location = new Point(21, 20);
+            btnAddButton.Location = new Point(21, 117);
             btnAddButton.Name = "btnAddButton";
             btnAddButton.Size = new Size(104, 23);
             btnAddButton.TabIndex = 7;
@@ -123,7 +121,6 @@
             // 
             // lstButtons
             // 
-            lstButtons.DisplayMember = "NameEn";
             lstButtons.FormattingEnabled = true;
             lstButtons.ItemHeight = 15;
             lstButtons.Location = new Point(32, 197);
@@ -144,18 +141,6 @@
             label3.Size = new Size(67, 21);
             label3.TabIndex = 10;
             label3.Text = "Buttons";
-            // 
-            // grpButtons
-            // 
-            grpButtons.Controls.Add(btnAddButton);
-            grpButtons.Controls.Add(btnEditButton);
-            grpButtons.Controls.Add(btnDeleteButton);
-            grpButtons.Location = new Point(21, 97);
-            grpButtons.Name = "grpButtons";
-            grpButtons.Size = new Size(453, 49);
-            grpButtons.TabIndex = 11;
-            grpButtons.TabStop = false;
-            grpButtons.Text = "groupBox1";
             // 
             // label2
             // 
@@ -181,10 +166,12 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnAddButton);
             Controls.Add(lstButtons);
+            Controls.Add(btnEditButton);
             Controls.Add(label2);
+            Controls.Add(btnDeleteButton);
             Controls.Add(listView1);
-            Controls.Add(grpButtons);
             Controls.Add(label3);
             Controls.Add(btnSave);
             Controls.Add(btnCancel);
@@ -193,7 +180,6 @@
             Controls.Add(label1);
             Name = "AddEditScreenForm";
             Text = "AddEditScreenForm";
-            grpButtons.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -210,7 +196,6 @@
         private Button btnAddButton;
         private ListBox lstButtons;
         private Label label3;
-        private GroupBox grpButtons;
         private Label label2;
         private ListView listView1;
     }

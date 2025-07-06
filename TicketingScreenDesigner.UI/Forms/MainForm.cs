@@ -43,7 +43,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 var screens = _screenManager.GetScreensForBank(_selectedBank.BankId);
 
-                listBoxScreens.Items.Clear(); // Assuming you're using a ListBox
+                listBoxScreens.Items.Clear(); 
 
                 foreach (var screen in screens)
                 {

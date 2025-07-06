@@ -95,7 +95,9 @@
             // 
             // cmbButtonType
             // 
+            cmbButtonType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbButtonType.FormattingEnabled = true;
+            cmbButtonType.Items.AddRange(new object[] { "Issue Ticket", "Show Message" });
             cmbButtonType.Location = new Point(156, 129);
             cmbButtonType.Name = "cmbButtonType";
             cmbButtonType.Size = new Size(121, 23);
@@ -113,8 +115,8 @@
             // 
             // cmbService
             // 
+            cmbService.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbService.FormattingEnabled = true;
-            cmbService.Items.AddRange(new object[] { "Issue Ticket", "Show Message" });
             cmbService.Location = new Point(121, 40);
             cmbService.Name = "cmbService";
             cmbService.Size = new Size(121, 23);
@@ -209,8 +211,8 @@
             Controls.Add(txtNameEn);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(panelIssueTicket);
             Controls.Add(panelShowMessage);
+            Controls.Add(panelIssueTicket);
             Name = "AddEditButtonForm";
             Text = "AddEditButtonForm";
             panelIssueTicket.ResumeLayout(false);

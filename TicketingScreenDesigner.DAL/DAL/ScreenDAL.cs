@@ -38,6 +38,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message, ex.StackTrace);
@@ -68,6 +73,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message, ex.StackTrace);
@@ -92,6 +102,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message, ex.StackTrace);
@@ -115,6 +130,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                         cmd.ExecuteNonQuery();
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
             }
             catch (Exception ex)
             {
@@ -148,6 +168,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message, ex.StackTrace);
@@ -170,6 +195,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                         cmd.ExecuteNonQuery();
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
             }
             catch (Exception ex)
             {

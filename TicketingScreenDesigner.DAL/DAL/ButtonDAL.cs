@@ -41,6 +41,11 @@ public class ButtonDAL : IButtonDAL
                 }
             }
         }
+        catch (SqlException ex)
+        {
+            Logger.LogError("Database error: " + ex.Message);
+            throw;
+        }
         catch (Exception ex)
         {
             Logger.LogError(ex.Message, ex.StackTrace);
@@ -76,6 +81,11 @@ public class ButtonDAL : IButtonDAL
                     return Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+        }
+        catch (SqlException ex)
+        {
+            Logger.LogError("Database error: " + ex.Message);
+            throw;
         }
         catch (Exception ex)
         {
@@ -115,6 +125,11 @@ public class ButtonDAL : IButtonDAL
                 }
             }
         }
+        catch (SqlException ex)
+        {
+            Logger.LogError("Database error: " + ex.Message);
+            throw;
+        }
         catch (Exception ex)
         {
             Logger.LogError(ex.Message, ex.StackTrace);
@@ -138,6 +153,11 @@ public class ButtonDAL : IButtonDAL
                 }
             }
         }
+        catch (SqlException ex)
+        {
+            Logger.LogError("Database error: " + ex.Message);
+            throw;
+        }
         catch (Exception ex)
         {
             Logger.LogError(ex.Message, ex.StackTrace);
@@ -160,6 +180,11 @@ public class ButtonDAL : IButtonDAL
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+        catch (SqlException ex)
+        {
+            Logger.LogError("Database error: " + ex.Message);
+            throw;
         }
         catch (Exception ex)
         {

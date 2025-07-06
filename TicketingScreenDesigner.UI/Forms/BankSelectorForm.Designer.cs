@@ -38,6 +38,7 @@
             // cmbBanks
             // 
             cmbBanks.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbBanks.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbBanks.FormattingEnabled = true;
             cmbBanks.Location = new Point(12, 68);
             cmbBanks.Name = "cmbBanks";

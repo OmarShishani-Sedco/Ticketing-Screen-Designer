@@ -61,19 +61,18 @@ namespace Ticketing_Screen_Designer.Forms
             }
 
             RefreshButtonList();
-            grpButtons.Enabled = true;
         }
 
         private void RefreshButtonList()
         {
             lstButtons.DataSource = null;
             lstButtons.DataSource = _buttons;
-            lstButtons.DisplayMember = "NameEn";
+            lstButtons.ClearSelected();
         }
 
         private void btnAddButton_Click(object sender, EventArgs e)
         {
-            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager); // -1 if not saved
+            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager); // ScreenId -1 if not saved
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _buttons.Add(form.ResultButton);
@@ -82,6 +81,10 @@ namespace Ticketing_Screen_Designer.Forms
                 // If this is a new screen, save now that we have 1+ buttons
                 if (!_isEditMode && _screen.ScreenId == -1)
                 {
+                    if (string.IsNullOrWhiteSpace(_screen.ScreenName))
+                    {
+                        return;
+                    }
                     // Fill screen model from form inputs
                     _screen.ScreenName = txtScreenName.Text.Trim();
                     _screen.IsActive = chkIsActive.Checked;
@@ -129,7 +132,7 @@ namespace Ticketing_Screen_Designer.Forms
                 return;
             }
 
-            var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo);
+            var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes)
                 return;
 
@@ -203,9 +206,19 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (!_isSaved && !_isEditMode && _screen.ScreenId == -1)
             {
-                // Nothing persisted — nothing to delete
+                var confirm = MessageBox.Show(
+                    "You haven't saved the screen yet. Are you sure you want to close? (warning: all buttons will be deleted)",
+                    "Unsaved Changes",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm == DialogResult.No)
+                {
+                    e.Cancel = true; // Prevent form from closing
+                }
             }
         }
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {

@@ -35,6 +35,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                         }
                     }
                 }
+                catch (SqlException ex)
+                {
+                    Logger.LogError("Database error: " + ex.Message);
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     Logger.LogError(ex.Message, ex.StackTrace);

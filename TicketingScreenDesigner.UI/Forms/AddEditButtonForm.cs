@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TicketingScreenDesigner.BLL;
-using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.Models.Models;
-using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.DAL;
+using TicketingScreenDesigner.DAL.DAL.Interfaces;
+using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
 {
@@ -15,6 +16,9 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly int _screenId;
         private readonly int _bankId;
         private readonly ButtonModel _existingButton;
+        private static readonly Regex EnglishRegex = new Regex(@"^[\u0020-\u007E]+$"); // ASCII range
+        private static readonly Regex ArabicRegex = new Regex(@"^[\u0600-\u06FF\s\d\p{P}]+$"); // Arabic range
+
 
         public ButtonModel ResultButton { get; private set; }
 
@@ -32,9 +36,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void InitializeForm()
         {
-            cmbButtonType.Items.Add("Issue Ticket");
-            cmbButtonType.Items.Add("Show Message");
-
+          
             cmbButtonType.SelectedIndexChanged += (s, e) =>
             {
                 TogglePanels();
@@ -107,6 +109,11 @@ namespace Ticketing_Screen_Designer.Forms
                 MessageBox.Show("Please select a button type.");
                 return;
             }
+            if (!ValidateButtonName())
+            {
+                return;
+            }
+            
 
             string type = cmbButtonType.SelectedItem.ToString();
 
@@ -137,7 +144,10 @@ namespace Ticketing_Screen_Designer.Forms
                     MessageBox.Show("Please enter message text in both languages.");
                     return;
                 }
-
+                if (!ValidateMessage())
+                {
+                    return;
+                }
                 button.MessageEn = txtMsgEn.Text.Trim();
                 button.MessageAr = txtMsgAr.Text.Trim();
                 button.ServiceId = null;
@@ -156,5 +166,48 @@ namespace Ticketing_Screen_Designer.Forms
         {
             this.Close();
         }
+
+        private bool ValidateButtonName()
+        {
+            // Validate English Name
+            if (!EnglishRegex.IsMatch(txtNameEn.Text))
+            {
+                MessageBox.Show("English Name must contain only English letters and valid symbols.");
+                return false;
+            }
+
+            // Validate Arabic Name
+            if (!ArabicRegex.IsMatch(txtNameAr.Text))
+            {
+                MessageBox.Show("Arabic Name must contain only Arabic letters.");
+                return false;
+            }
+
+           
+
+            return true;
+        }
+
+        private bool ValidateMessage()
+        {
+            // Validate English Message
+            if (!EnglishRegex.IsMatch(txtMsgEn.Text))
+            {
+                MessageBox.Show("English Message must contain only English characters.");
+                return false;
+            }
+
+            // Validate Arabic Message
+            if (!ArabicRegex.IsMatch(txtMsgAr.Text))
+            {
+                MessageBox.Show("Arabic Message must contain only Arabic characters.");
+                return false;
+            }
+
+
+
+            return true;
+        }
+
     }
 }

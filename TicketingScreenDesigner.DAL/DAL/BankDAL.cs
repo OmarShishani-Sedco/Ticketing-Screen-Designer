@@ -9,37 +9,69 @@ namespace TicketingScreenDesigner.DAL.DAL
     {
         public BankModel GetBankByName(string name)
         {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            try
             {
-                conn.Open();
-                string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@name", name);
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
-                    return new BankModel
+                    conn.Open();
+                    string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@name", name);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        BankId = (int)reader["BankId"],
-                        BankName = reader["BankName"].ToString()
-                    };
+                        if (reader.Read())
+                        {
+                            return new BankModel
+                            {
+                                BankId = (int)reader["BankId"],
+                                BankName = reader["BankName"].ToString()
+                            };
+                        }
+                    }
                 }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message, ex.StackTrace);
+                throw;
+            }
+
+
+
             return null;
         }
 
+
         public int AddBank(string name)
         {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
-            {
-                conn.Open();
-                string query = "INSERT INTO Bank (BankName) VALUES (@name); SELECT SCOPE_IDENTITY();";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@name", name);
+            try {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    string query = "INSERT INTO Bank (BankName) VALUES (@name); SELECT SCOPE_IDENTITY();";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@name", name);
 
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
             }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw; 
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message, ex.StackTrace);
+                throw;
+            }
+
         }
 
         public List<BankModel> GetAllBanks()
@@ -68,6 +100,11 @@ namespace TicketingScreenDesigner.DAL.DAL
                         }
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+                throw; 
             }
             catch (Exception ex)
             {
