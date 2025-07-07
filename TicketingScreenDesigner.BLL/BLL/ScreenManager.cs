@@ -25,62 +25,34 @@ namespace TicketingScreenDesigner.BLL.BLL
 
         public ScreenModel AddScreen(ScreenModel screen)
         {
-            if (string.IsNullOrWhiteSpace(screen.ScreenName))
-                throw new ArgumentException("Screen name is required.");
-            try
-            {
-                if (screen.IsActive)
-                {
-                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
-                }
 
-                return _screenDAL.InsertScreen(screen);
-            }
-            catch (Exception ex)
+            if (screen.IsActive)
             {
-                Logger.LogError(ex.Message, ex.StackTrace);
-                throw;
+                _screenDAL.DeactivateAllScreensForBank(screen.BankId);
             }
+
+            return _screenDAL.InsertScreen(screen);
+
         }
 
 
         public void UpdateScreen(ScreenModel screen)
         {
-            if (string.IsNullOrWhiteSpace(screen.ScreenName))
-                throw new ArgumentException("Screen name is required.");
-
-            try
+            if (screen.IsActive)
             {
-                if (screen.IsActive)
-                {
-                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
-                }
-                _screenDAL.UpdateScreen(screen);
-
+                _screenDAL.DeactivateAllScreensForBank(screen.BankId);
             }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex.Message, ex.StackTrace);
-                throw;
-            }
+            _screenDAL.UpdateScreen(screen);
 
         }
 
         public void DeleteScreen(int screenId)
         {
-            try
-            {
-                // Delete all buttons associated with this screen first
-                _buttonDAL.DeleteButtonsByScreenId(screenId);
+            // Delete all buttons associated with this screen first
+            _buttonDAL.DeleteButtonsByScreenId(screenId);
 
-                // Then delete the screen itself
-                _screenDAL.DeleteScreen(screenId);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex.Message, ex.StackTrace);
-                throw;
-            }
+            // Then delete the screen itself
+            _screenDAL.DeleteScreen(screenId);
         }
 
 

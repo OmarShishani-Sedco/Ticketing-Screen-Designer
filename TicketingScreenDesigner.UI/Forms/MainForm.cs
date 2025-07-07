@@ -59,7 +59,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading screens: " + ex.Message);
+                MessageBox.Show("Error loading screens: ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnAddScreen_Click(object sender, EventArgs e)

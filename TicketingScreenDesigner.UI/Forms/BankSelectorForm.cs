@@ -35,8 +35,9 @@ namespace Ticketing_Screen_Designer.Forms
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.Message, ex.StackTrace);
-                MessageBox.Show("Error loading banks.");
+                MessageBox.Show("Unable to load bank list. The form will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close(); // close the form
+
             }
         }
 
@@ -82,8 +83,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.Message, ex.StackTrace);
-                MessageBox.Show("An error occurred getting or creating the bank.");
+                MessageBox.Show("An error occurred getting or creating the bank, please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
