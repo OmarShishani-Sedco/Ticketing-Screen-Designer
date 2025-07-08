@@ -28,36 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            cmbBanks = new ComboBox();
-            txtNewBankName = new TextBox();
+            txtBankName = new TextBox();
             btnContinue = new Button();
             lblSelect = new Label();
-            lblNewBank = new Label();
             SuspendLayout();
             // 
-            // cmbBanks
+            // txtBankName
             // 
-            cmbBanks.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cmbBanks.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbBanks.FormattingEnabled = true;
-            cmbBanks.Location = new Point(12, 68);
-            cmbBanks.Name = "cmbBanks";
-            cmbBanks.Size = new Size(121, 23);
-            cmbBanks.TabIndex = 0;
-            cmbBanks.SelectedIndexChanged += cmbBanks_SelectedIndexChanged;
-            // 
-            // txtNewBankName
-            // 
-            txtNewBankName.Location = new Point(12, 226);
-            txtNewBankName.Name = "txtNewBankName";
-            txtNewBankName.Size = new Size(141, 23);
-            txtNewBankName.TabIndex = 1;
-            txtNewBankName.Visible = false;
+            txtBankName.Location = new Point(12, 79);
+            txtBankName.Name = "txtBankName";
+            txtBankName.Size = new Size(141, 23);
+            txtBankName.TabIndex = 1;
             // 
             // btnContinue
             // 
             btnContinue.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnContinue.Location = new Point(30, 374);
+            btnContinue.Location = new Point(12, 144);
             btnContinue.Name = "btnContinue";
             btnContinue.Size = new Size(75, 23);
             btnContinue.TabIndex = 2;
@@ -68,47 +54,30 @@
             // lblSelect
             // 
             lblSelect.AutoSize = true;
-            lblSelect.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSelect.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             lblSelect.Location = new Point(12, 26);
             lblSelect.Name = "lblSelect";
-            lblSelect.Size = new Size(474, 17);
+            lblSelect.Size = new Size(651, 17);
             lblSelect.TabIndex = 3;
-            lblSelect.Text = "Please select your bank (select Create New Bank If your bank doesn't exist) ";
-            // 
-            // lblNewBank
-            // 
-            lblNewBank.AutoSize = true;
-            lblNewBank.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNewBank.Location = new Point(12, 191);
-            lblNewBank.Name = "lblNewBank";
-            lblNewBank.Size = new Size(141, 17);
-            lblNewBank.TabIndex = 4;
-            lblNewBank.Text = "Enter new bank name";
-            lblNewBank.Visible = false;
+            lblSelect.Text = "Please enter your bank name to continue to main form (if the bank doesn't exist it will create a new bank)";
             // 
             // BankSelectorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(lblNewBank);
             Controls.Add(lblSelect);
             Controls.Add(btnContinue);
-            Controls.Add(txtNewBankName);
-            Controls.Add(cmbBanks);
+            Controls.Add(txtBankName);
             Name = "BankSelectorForm";
-            Text = "BankSelectorForm";
-            Load += BankSelectorForm_Load;
+            Text = "Bank Form";
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private ComboBox cmbBanks;
-        private TextBox txtNewBankName;
+        private TextBox txtBankName;
         private Button btnContinue;
         private Label lblSelect;
-        private Label lblNewBank;
     }
 }

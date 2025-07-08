@@ -1,8 +1,10 @@
 ﻿using Ticketing_Screen_Designer.Forms;
 using TicketingScreenDesigner.BLL.BLL;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Common.Helpers; // Needed for Logger
 using TicketingScreenDesigner.DAL.DAL;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
+using TicketingScreenDesigner.DAL.Utilities;
 
 namespace Ticketing_Screen_Designer
 {
@@ -11,6 +13,40 @@ namespace Ticketing_Screen_Designer
         [STAThread]
         static void Main()
         {
+            // Global Exception Handling
+            Application.ThreadException += (sender, e) =>
+            {
+                Logger.LogError(e.Exception.ToString());
+                MessageBox.Show(
+                    "An unexpected error occurred. Please restart the application.",
+                    "Unexpected Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                if (e.ExceptionObject is Exception ex)
+                    Logger.LogError(ex.ToString());
+                else
+                    Logger.LogError("Unknown unhandled exception occurred.");
+
+                MessageBox.Show(
+                    "A critical error occurred. The application will now exit.",
+                    "Fatal Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                Application.Exit();
+            };
+            if (!DatabaseUtility.TestConnection(out string errorMsg))
+            {
+                MessageBox.Show(errorMsg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Logger.LogError("Database connection test failed: " + errorMsg);
+                Application.Exit();
+                return;
+            }
+
             // --- Manual Dependency Injection ---
 
             // DALs
@@ -34,9 +70,6 @@ namespace Ticketing_Screen_Designer
 
                 if (result == DialogResult.OK && bankForm.SelectedBank != null)
                 {
-                    
-
-                    // Run main form with dependencies
                     Application.Run(new MainForm(
                         bankForm.SelectedBank,
                         screenManager,

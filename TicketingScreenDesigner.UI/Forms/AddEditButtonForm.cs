@@ -100,13 +100,13 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (string.IsNullOrWhiteSpace(txtNameEn.Text) || string.IsNullOrWhiteSpace(txtNameAr.Text))
             {
-                MessageBox.Show("Please enter button name in both English and Arabic.");
+                MessageBox.Show("Please enter button name in both English and Arabic.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (cmbButtonType.SelectedItem == null)
             {
-                MessageBox.Show("Please select a button type.");
+                MessageBox.Show("Please select a button type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (!ValidateButtonName())
@@ -128,7 +128,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 if (cmbService.SelectedItem == null)
                 {
-                    MessageBox.Show("Please select a service.");
+                    MessageBox.Show("Please select a service.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -141,7 +141,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 if (string.IsNullOrWhiteSpace(txtMsgEn.Text) || string.IsNullOrWhiteSpace(txtMsgAr.Text))
                 {
-                    MessageBox.Show("Please enter message text in both languages.");
+                    MessageBox.Show("Please enter message text in both languages.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 if (!ValidateMessage())
@@ -172,14 +172,14 @@ namespace Ticketing_Screen_Designer.Forms
             // Validate English Name
             if (!EnglishRegex.IsMatch(txtNameEn.Text))
             {
-                MessageBox.Show("English Name must contain only English letters and valid symbols.");
+                MessageBox.Show("English Name must contain only English letters and valid symbols.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             // Validate Arabic Name
             if (!ArabicRegex.IsMatch(txtNameAr.Text))
             {
-                MessageBox.Show("Arabic Name must contain only Arabic letters.");
+                MessageBox.Show("Arabic Name must contain only Arabic letters.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -193,14 +193,14 @@ namespace Ticketing_Screen_Designer.Forms
             // Validate English Message
             if (!EnglishRegex.IsMatch(txtMsgEn.Text))
             {
-                MessageBox.Show("English Message must contain only English characters.");
+                MessageBox.Show("English Message must contain only English characters.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             // Validate Arabic Message
             if (!ArabicRegex.IsMatch(txtMsgAr.Text))
             {
-                MessageBox.Show("Arabic Message must contain only Arabic characters.");
+                MessageBox.Show("Arabic Message must contain only Arabic characters.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 

@@ -120,7 +120,8 @@
             Controls.Add(btnEditScreen);
             Controls.Add(btnAddScreen);
             Name = "MainForm";
-            Text = "MainForm";
+            Text = "Main Form";
+            Load += MainForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

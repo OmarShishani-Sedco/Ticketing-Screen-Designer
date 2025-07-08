@@ -1,8 +1,5 @@
-﻿using TicketingScreenDesigner.BLL;
+﻿using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
-using TicketingScreenDesigner.Common.Helpers;
-using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -11,7 +8,6 @@ namespace Ticketing_Screen_Designer.Forms
     {
         private readonly IBankManager _bankManager;
         public BankModel SelectedBank { get; private set; }
-        private List<BankModel> _availableBanks;
 
         public BankSelectorForm(IBankManager bankManager)
         {
@@ -19,63 +15,37 @@ namespace Ticketing_Screen_Designer.Forms
             _bankManager = bankManager;
         }
 
-        private void BankSelectorForm_Load(object sender, EventArgs e)
-        {
-            try
-            {
-                _availableBanks = _bankManager.GetAllBanks();
-
-                cmbBanks.Items.Clear();
-                foreach (var bank in _availableBanks)
-                {
-                    cmbBanks.Items.Add(bank.BankName);
-                }
-
-                cmbBanks.Items.Add("-- Create New Bank --");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to load bank list. The form will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.Close(); // close the form
-
-            }
-        }
-
-        private void cmbBanks_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string selected = cmbBanks.SelectedItem?.ToString();
-            bool isCreatingNew = selected == "-- Create New Bank --";
-
-            txtNewBankName.Visible = isCreatingNew;
-            lblNewBank.Visible = isCreatingNew;
-        }
-
+        
         private void btnContinue_Click(object sender, EventArgs e)
         {
-
             try
             {
-                if (cmbBanks.SelectedItem?.ToString() == "-- Create New Bank --")
-                {
-                    string newBankName = txtNewBankName.Text.Trim();
-                    if (string.IsNullOrEmpty(newBankName))
-                    {
-                        MessageBox.Show("Bank name is required.");
-                        return;
-                    }
+                string bankName = txtBankName.Text.Trim();
 
-                    SelectedBank = _bankManager.GetOrCreateBank(newBankName);
-                }
-                else
+                if (string.IsNullOrEmpty(bankName))
                 {
-                    string selectedName = cmbBanks.SelectedItem?.ToString();
-                    SelectedBank = _availableBanks.FirstOrDefault(b => b.BankName == selectedName);
+                    MessageBox.Show("Bank name is required.","Warning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                    return;
                 }
+
+                SelectedBank = _bankManager.GetBankByName(bankName);
 
                 if (SelectedBank == null)
                 {
-                    MessageBox.Show("Please select a valid bank.");
-                    return;
+                    var confirm = MessageBox.Show(
+                   "Entered bank name doesn't exist, are you sure you want to create a new bank?",
+                   "Creating new bank",
+                   MessageBoxButtons.YesNo,
+                   MessageBoxIcon.Warning);
+                    if (confirm == DialogResult.Yes)
+                    {
+                        _bankManager.AddBank(bankName);
+                        SelectedBank = _bankManager.GetBankByName(bankName);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 this.DialogResult = DialogResult.OK;
@@ -83,7 +53,8 @@ namespace Ticketing_Screen_Designer.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred getting or creating the bank, please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIExceptionHandler.Handle(ex, "BankSelectorForm_Continue");
+                this.Close();
             }
         }
     }

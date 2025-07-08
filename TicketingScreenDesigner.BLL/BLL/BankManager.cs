@@ -14,6 +14,15 @@ namespace TicketingScreenDesigner.BLL.BLL
             _dal = dal;
         }
 
+        public BankModel GetBankByName(string name)
+        {
+            return _dal.GetBankByName(name);
+        }
+        public int AddBank(string name)
+        {
+            return _dal.AddBank(name);
+        }
+
         public BankModel GetOrCreateBank(string name)
         {
             var existing = _dal.GetBankByName(name);

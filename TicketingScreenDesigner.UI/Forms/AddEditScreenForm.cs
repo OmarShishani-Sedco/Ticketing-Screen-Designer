@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using TicketingScreenDesigner.BLL;
+﻿using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
-using TicketingScreenDesigner.DAL;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -97,7 +93,14 @@ namespace Ticketing_Screen_Designer.Forms
 
                 else if (_isEditMode)
                 {
-                    _buttonManager.AddButton(form.ResultButton);
+                    try
+                    {
+                        _buttonManager.AddButton(form.ResultButton);
+                    }
+                    catch (Exception ex)
+                    {
+                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_DeleteButton");
+                    }
                 }
             }
         }
@@ -113,9 +116,16 @@ namespace Ticketing_Screen_Designer.Forms
                     if (index >= 0)
                         _buttons[index] = form.ResultButton;
                     RefreshButtonList();
-
-                    if (_isEditMode)
-                        _buttonManager.UpdateButton(form.ResultButton);
+                    try
+                    {
+                        if (_isEditMode)
+                            _buttonManager.UpdateButton(form.ResultButton);
+                    }
+                    catch (Exception ex)
+                    {
+                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_EditButton");
+                    }
+                    
                 }
             }
         }
@@ -124,12 +134,12 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (lstButtons.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Please select at least one button to delete.");
+                MessageBox.Show("Please select at least one button to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (lstButtons.SelectedItems.Count == lstButtons.Items.Count )
             {
-                MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)");
+                MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -142,8 +152,15 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 if (item is ButtonModel btn)
                 {
-                    if (btn.ButtonId != 0)
-                        _buttonManager.DeleteButton(btn.ButtonId);
+                    try
+                    {
+                        if (btn.ButtonId != 0)
+                            _buttonManager.DeleteButton(btn.ButtonId);
+                    }
+                    catch (Exception ex)
+                    {
+                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_DeleteButton");
+                    }
 
                     buttonsToDelete.Add(btn);
                 }
@@ -160,13 +177,13 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (string.IsNullOrWhiteSpace(txtScreenName.Text))
             {
-                MessageBox.Show("Screen name is required.");
+                MessageBox.Show("Screen name is required.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (_buttons.Count == 0)
             {
-                MessageBox.Show("A screen must contain at least one button.");
+                MessageBox.Show("A screen must contain at least one button.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -175,8 +192,16 @@ namespace Ticketing_Screen_Designer.Forms
 
             if (_isEditMode)
             {
-                _screenManager.UpdateScreen(_screen);
-                MessageBox.Show("Screen updated.");
+                try
+                {
+                    _screenManager.UpdateScreen(_screen);
+                    MessageBox.Show("Screen updated.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    UIExceptionHandler.Handle(ex, "AddEditScreenForm_DeleteButton");
+                }
+                
             }
             else
             {
@@ -190,16 +215,24 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void SaveScreenAndButtons()
         {
-            _screen = _screenManager.AddScreen(_screen);
-            foreach (var btn in _buttons)
+            try
             {
-                btn.ScreenId = _screen.ScreenId;
-                _buttonManager.AddButton(btn);
-            }
+                _screen = _screenManager.AddScreen(_screen);
+                foreach (var btn in _buttons)
+                {
+                    btn.ScreenId = _screen.ScreenId;
+                    _buttonManager.AddButton(btn);
+                }
 
-            MessageBox.Show("Screen and buttons saved.");
-            _isSaved = true;
-            DialogResult = DialogResult.OK;
+                MessageBox.Show("Screen and buttons saved.","Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _isSaved = true;
+                DialogResult = DialogResult.OK;
+            }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "AddEditScreenForm_SaveScreenAndButtons");
+            }
+           
 
         }
 

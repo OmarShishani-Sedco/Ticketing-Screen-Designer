@@ -214,7 +214,7 @@
             Controls.Add(panelShowMessage);
             Controls.Add(panelIssueTicket);
             Name = "AddEditButtonForm";
-            Text = "AddEditButtonForm";
+            Text = "Add/Edit Button Form";
             panelIssueTicket.ResumeLayout(false);
             panelIssueTicket.PerformLayout();
             panelShowMessage.ResumeLayout(false);

@@ -6,6 +6,7 @@ namespace TicketingScreenDesigner.BLL.BLL.Interfaces
     {
         BankModel GetOrCreateBank(string name);
         List<BankModel> GetAllBanks();
-
+        BankModel GetBankByName(string name);
+        int AddBank(string name);
     }
 }

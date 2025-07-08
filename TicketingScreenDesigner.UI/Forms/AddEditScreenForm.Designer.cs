@@ -179,7 +179,7 @@
             Controls.Add(txtScreenName);
             Controls.Add(label1);
             Name = "AddEditScreenForm";
-            Text = "AddEditScreenForm";
+            Text = "Add/Edit Screen Form";
             ResumeLayout(false);
             PerformLayout();
         }

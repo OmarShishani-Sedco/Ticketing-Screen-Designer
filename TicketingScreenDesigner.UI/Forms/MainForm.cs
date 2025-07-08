@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
@@ -29,7 +27,6 @@ namespace Ticketing_Screen_Designer.Forms
             this.Text = $"Main Form - {_selectedBank.BankName}";
             lblBankName.Text = $"Bank: {_selectedBank.BankName}";
 
-            LoadScreens();
         }
 
 
@@ -40,7 +37,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 var screens = _screenManager.GetScreensForBank(_selectedBank.BankId);
 
-                listBoxScreens.Items.Clear(); 
+                listBoxScreens.Items.Clear();
 
                 foreach (var screen in screens)
                 {
@@ -54,12 +51,28 @@ namespace Ticketing_Screen_Designer.Forms
                         Screen = screen
                     });
                 }
-                listBoxScreens.ClearSelected(); 
-                UpdateScreenButtonsEnabled();   
+                listBoxScreens.ClearSelected();
+                UpdateScreenButtonsEnabled();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading screens: ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIExceptionHandler.Handle(ex, "MainForm_LoadScreens");
+                var result = MessageBox.Show(
+                       "An error occurred while loading screens.\nWould you like to try again?",
+                       "Load Failed",
+                       MessageBoxButtons.YesNo,
+                       MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    LoadScreens(); 
+                }
+                else
+                {
+                    MessageBox.Show("Exiting application due to error. Please try again later.", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
+                }
+
             }
         }
         private void btnAddScreen_Click(object sender, EventArgs e)
@@ -79,7 +92,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
             {
-                MessageBox.Show("Please select a screen to edit.");
+                MessageBox.Show("Please select a screen to edit.","Warning",MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -100,7 +113,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
             {
-                MessageBox.Show("Please select a screen to delete.");
+                MessageBox.Show("Please select a screen to delete.","Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -121,7 +134,7 @@ namespace Ticketing_Screen_Designer.Forms
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error deleting screen: " + ex.Message);
+                    UIExceptionHandler.Handle(ex, "MainForm_DeleteScreen");
                 }
             }
         }
@@ -149,6 +162,10 @@ namespace Ticketing_Screen_Designer.Forms
             UpdateScreenButtonsEnabled();
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadScreens();
+        }
     }
 
 
