@@ -7,15 +7,25 @@ namespace TicketingScreenDesigner.DAL
 {
     public static class DatabaseHelper
     {
-        private static string _connectionString;
+        private static readonly string _connectionString;
 
         static DatabaseHelper()
         {
-            _connectionString = ConfigurationManager.ConnectionStrings["DbConnection"].ConnectionString;
-            if (string.IsNullOrWhiteSpace(_connectionString))
+            try
             {
-                Logger.LogError("Connection string 'DbConnection' is missing or empty.");
-                throw new InvalidOperationException("Connection string 'DbConnection' is missing or not configured.");
+                var settings = ConfigurationManager.ConnectionStrings["DbConnection"];
+                if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+                {
+                    throw new ConfigurationErrorsException("Connection string 'DbConnection' is missing or empty.");
+                }
+
+                _connectionString = settings.ConnectionString;
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                Logger.LogError(ex, "DatabaseHelper.StaticConstructor");
+
+                throw; 
             }
         }
 
