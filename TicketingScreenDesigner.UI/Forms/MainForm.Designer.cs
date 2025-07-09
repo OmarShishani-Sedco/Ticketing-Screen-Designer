@@ -52,7 +52,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(931, 44);
+            tableLayoutPanel2.Size = new Size(808, 44);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // flowLayoutPanel1
@@ -64,7 +64,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(925, 38);
+            flowLayoutPanel1.Size = new Size(802, 38);
             flowLayoutPanel1.TabIndex = 3;
             // 
             // btnAddScreen
@@ -106,7 +106,7 @@
             lblBankName.Anchor = AnchorStyles.None;
             lblBankName.AutoSize = true;
             lblBankName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblBankName.Location = new Point(446, 17);
+            lblBankName.Location = new Point(384, 17);
             lblBankName.Name = "lblBankName";
             lblBankName.Size = new Size(65, 25);
             lblBankName.TabIndex = 5;
@@ -131,7 +131,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(957, 466);
+            tableLayoutPanel1.Size = new Size(834, 461);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // listBoxScreens
@@ -142,7 +142,7 @@
             listBoxScreens.ItemHeight = 21;
             listBoxScreens.Location = new Point(13, 133);
             listBoxScreens.Name = "listBoxScreens";
-            listBoxScreens.Size = new Size(931, 320);
+            listBoxScreens.Size = new Size(808, 320);
             listBoxScreens.TabIndex = 9;
             listBoxScreens.SelectedIndexChanged += listBoxScreens_SelectedIndexChanged;
             listBoxScreens.MouseDown += listBoxScreens_MouseDown;
@@ -153,7 +153,7 @@
             label1.AutoSize = true;
             label1.BackColor = SystemColors.Control;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(438, 102);
+            label1.Location = new Point(377, 102);
             label1.Name = "label1";
             label1.Size = new Size(80, 25);
             label1.TabIndex = 8;
@@ -164,9 +164,10 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(957, 466);
+            ClientSize = new Size(834, 461);
             Controls.Add(tableLayoutPanel1);
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Main Form";
             Load += MainForm_Load;
             tableLayoutPanel2.ResumeLayout(false);

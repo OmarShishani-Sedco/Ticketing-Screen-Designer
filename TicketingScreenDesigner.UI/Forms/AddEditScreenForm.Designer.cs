@@ -37,17 +37,15 @@
             lstButtons = new ListBox();
             label2 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
             flowLayoutPanel3 = new FlowLayoutPanel();
             btnCancel = new Button();
             btnSave = new Button();
-            tableLayoutPanel4 = new TableLayoutPanel();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             tableLayoutPanel1.SuspendLayout();
+            flowLayoutPanel3.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
-            flowLayoutPanel3.SuspendLayout();
-            tableLayoutPanel4.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -117,7 +115,7 @@
             lstButtons.Location = new Point(13, 160);
             lstButtons.Name = "lstButtons";
             lstButtons.SelectionMode = SelectionMode.MultiExtended;
-            lstButtons.Size = new Size(797, 268);
+            lstButtons.Size = new Size(787, 278);
             lstButtons.TabIndex = 8;
             lstButtons.SelectedIndexChanged += lstButtons_SelectedIndexChanged;
             lstButtons.MouseDown += lstButtons_MouseDown;
@@ -128,7 +126,7 @@
             label2.AutoSize = true;
             label2.BackColor = SystemColors.ButtonFace;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(378, 123);
+            label2.Location = new Point(373, 123);
             label2.Name = "label2";
             label2.Size = new Size(67, 21);
             label2.TabIndex = 12;
@@ -139,7 +137,7 @@
             tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 4);
+            tableLayoutPanel1.Controls.Add(flowLayoutPanel3, 0, 4);
             tableLayoutPanel1.Controls.Add(lstButtons, 0, 3);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
@@ -154,45 +152,24 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            tableLayoutPanel1.Size = new Size(823, 483);
+            tableLayoutPanel1.Size = new Size(813, 493);
             tableLayoutPanel1.TabIndex = 14;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.Controls.Add(label1);
-            flowLayoutPanel1.Controls.Add(txtScreenName);
-            flowLayoutPanel1.Controls.Add(chkIsActive);
-            flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(13, 13);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(797, 44);
-            flowLayoutPanel1.TabIndex = 17;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Controls.Add(btnAddButton);
-            flowLayoutPanel2.Controls.Add(btnEditButton);
-            flowLayoutPanel2.Controls.Add(btnDeleteButton);
-            flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(13, 63);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(797, 44);
-            flowLayoutPanel2.TabIndex = 18;
             // 
             // flowLayoutPanel3
             // 
-            flowLayoutPanel3.Controls.Add(btnSave);
             flowLayoutPanel3.Controls.Add(btnCancel);
+            flowLayoutPanel3.Controls.Add(btnSave);
             flowLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel3.Location = new Point(3, 3);
+            flowLayoutPanel3.FlowDirection = FlowDirection.RightToLeft;
+            flowLayoutPanel3.Location = new Point(13, 444);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(656, 100);
-            flowLayoutPanel3.TabIndex = 19;
+            flowLayoutPanel3.Size = new Size(787, 36);
+            flowLayoutPanel3.TabIndex = 20;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnCancel.Location = new Point(139, 3);
+            btnCancel.Location = new Point(655, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(129, 30);
             btnCancel.TabIndex = 3;
@@ -203,7 +180,7 @@
             // btnSave
             // 
             btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnSave.Location = new Point(3, 3);
+            btnSave.Location = new Point(519, 3);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(130, 30);
             btnSave.TabIndex = 4;
@@ -211,36 +188,44 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
-            // tableLayoutPanel4
+            // flowLayoutPanel1
             // 
-            tableLayoutPanel4.ColumnCount = 2;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 83.11377F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.8862267F));
-            tableLayoutPanel4.Controls.Add(flowLayoutPanel3, 0, 0);
-            tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(13, 434);
-            tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 1;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle());
-            tableLayoutPanel4.Size = new Size(797, 36);
-            tableLayoutPanel4.TabIndex = 16;
+            flowLayoutPanel1.Controls.Add(label1);
+            flowLayoutPanel1.Controls.Add(txtScreenName);
+            flowLayoutPanel1.Controls.Add(chkIsActive);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.Location = new Point(13, 13);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(787, 44);
+            flowLayoutPanel1.TabIndex = 17;
+            // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.Controls.Add(btnAddButton);
+            flowLayoutPanel2.Controls.Add(btnEditButton);
+            flowLayoutPanel2.Controls.Add(btnDeleteButton);
+            flowLayoutPanel2.Dock = DockStyle.Fill;
+            flowLayoutPanel2.Location = new Point(13, 63);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(787, 44);
+            flowLayoutPanel2.TabIndex = 18;
             // 
             // AddEditScreenForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(823, 483);
+            ClientSize = new Size(813, 493);
             Controls.Add(tableLayoutPanel1);
             Name = "AddEditScreenForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Add/Edit Screen Form";
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             flowLayoutPanel2.ResumeLayout(false);
-            flowLayoutPanel3.ResumeLayout(false);
-            tableLayoutPanel4.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -258,9 +243,8 @@
         private TableLayoutPanel tableLayoutPanel1;
         private FlowLayoutPanel flowLayoutPanel1;
         private FlowLayoutPanel flowLayoutPanel2;
-        private TableLayoutPanel tableLayoutPanel4;
         private FlowLayoutPanel flowLayoutPanel3;
-        private Button btnSave;
         private Button btnCancel;
+        private Button btnSave;
     }
 }

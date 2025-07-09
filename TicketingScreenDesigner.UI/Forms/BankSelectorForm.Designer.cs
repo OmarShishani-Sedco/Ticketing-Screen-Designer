@@ -66,12 +66,13 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(849, 472);
+            ClientSize = new Size(834, 461);
             Controls.Add(lblSelect);
             Controls.Add(btnContinue);
             Controls.Add(txtBankName);
             Name = "BankSelectorForm";
             Padding = new Padding(10);
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Bank Form";
             ResumeLayout(false);
             PerformLayout();

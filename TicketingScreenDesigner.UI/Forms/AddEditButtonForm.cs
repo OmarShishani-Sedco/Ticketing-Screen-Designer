@@ -36,7 +36,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void InitializeForm()
         {
-          
+
             cmbButtonType.SelectedIndexChanged += (s, e) =>
             {
                 TogglePanels();
@@ -113,7 +113,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 return;
             }
-            
+
 
             string type = cmbButtonType.SelectedItem.ToString();
 
@@ -133,7 +133,7 @@ namespace Ticketing_Screen_Designer.Forms
                 }
 
                 button.ServiceId = (int)cmbService.SelectedValue;
-                
+
                 button.MessageEn = null;
                 button.MessageAr = null;
             }
@@ -183,7 +183,7 @@ namespace Ticketing_Screen_Designer.Forms
                 return false;
             }
 
-           
+
 
             return true;
         }
@@ -208,6 +208,5 @@ namespace Ticketing_Screen_Designer.Forms
 
             return true;
         }
-
     }
 }
