@@ -2,7 +2,7 @@
 using System.Configuration;
 using TicketingScreenDesigner.Common.Helpers;
 
-namespace TicketingScreenDesigner.DAL.Utilities
+namespace TicketingScreenDesigner.DAL
 {
     public static class DatabaseUtility
     {

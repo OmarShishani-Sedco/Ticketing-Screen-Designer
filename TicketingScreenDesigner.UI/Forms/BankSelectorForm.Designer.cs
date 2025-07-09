@@ -35,17 +35,16 @@
             // 
             // txtBankName
             // 
-            txtBankName.Location = new Point(12, 79);
+            txtBankName.Location = new Point(22, 79);
             txtBankName.Name = "txtBankName";
             txtBankName.Size = new Size(141, 23);
             txtBankName.TabIndex = 1;
             // 
             // btnContinue
             // 
-            btnContinue.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnContinue.Location = new Point(12, 144);
+            btnContinue.Location = new Point(22, 132);
             btnContinue.Name = "btnContinue";
-            btnContinue.Size = new Size(75, 23);
+            btnContinue.Size = new Size(130, 30);
             btnContinue.TabIndex = 2;
             btnContinue.Text = "Continue";
             btnContinue.UseVisualStyleBackColor = true;
@@ -54,10 +53,11 @@
             // lblSelect
             // 
             lblSelect.AutoSize = true;
-            lblSelect.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            lblSelect.Location = new Point(12, 26);
+            lblSelect.BackColor = SystemColors.ButtonFace;
+            lblSelect.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSelect.Location = new Point(22, 36);
             lblSelect.Name = "lblSelect";
-            lblSelect.Size = new Size(651, 17);
+            lblSelect.Size = new Size(747, 20);
             lblSelect.TabIndex = 3;
             lblSelect.Text = "Please enter your bank name to continue to main form (if the bank doesn't exist it will create a new bank)";
             // 
@@ -65,11 +65,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            AutoSize = true;
+            ClientSize = new Size(849, 472);
             Controls.Add(lblSelect);
             Controls.Add(btnContinue);
             Controls.Add(txtBankName);
             Name = "BankSelectorForm";
+            Padding = new Padding(10);
             Text = "Bank Form";
             ResumeLayout(false);
             PerformLayout();

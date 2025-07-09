@@ -23,8 +23,6 @@ namespace TicketingScreenDesigner.DAL
             }
             catch (ConfigurationErrorsException ex)
             {
-                Logger.LogError(ex, "DatabaseHelper.StaticConstructor");
-
                 throw; 
             }
         }

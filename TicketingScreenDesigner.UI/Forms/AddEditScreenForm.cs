@@ -238,7 +238,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!_isSaved && !_isEditMode && _screen.ScreenId == -1)
+            if (!_isSaved && !_isEditMode && _screen.ScreenId == -1 && _buttons.Count != 0)
             {
                 var confirm = MessageBox.Show(
                     "You haven't saved the screen yet. Are you sure you want to close? (warning: all buttons will be deleted)",

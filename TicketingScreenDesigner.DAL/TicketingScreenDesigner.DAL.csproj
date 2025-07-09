@@ -1,19 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<DebugType>None</DebugType>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
-  </ItemGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TicketingScreenDesigner.Common\TicketingScreenDesigner.Common.csproj" />
-    <ProjectReference Include="..\TicketingScreenDesigner.Models\TicketingScreenDesigner.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TicketingScreenDesigner.Common\TicketingScreenDesigner.Common.csproj" />
+		<ProjectReference Include="..\TicketingScreenDesigner.Models\TicketingScreenDesigner.Models.csproj" />
+	</ItemGroup>
 
 </Project>

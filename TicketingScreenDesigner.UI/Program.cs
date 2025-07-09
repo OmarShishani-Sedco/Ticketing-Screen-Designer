@@ -2,9 +2,9 @@
 using TicketingScreenDesigner.BLL.BLL;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Common.Helpers; // Needed for Logger
+using TicketingScreenDesigner.DAL;
 using TicketingScreenDesigner.DAL.DAL;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
-using TicketingScreenDesigner.DAL.Utilities;
 
 namespace Ticketing_Screen_Designer
 {

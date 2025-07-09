@@ -65,7 +65,7 @@ namespace Ticketing_Screen_Designer.Forms
 
                 if (result == DialogResult.Yes)
                 {
-                    LoadScreens(); 
+                    LoadScreens();
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
             {
-                MessageBox.Show("Please select a screen to edit.","Warning",MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a screen to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
             {
-                MessageBox.Show("Please select a screen to delete.","Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -166,7 +166,10 @@ namespace Ticketing_Screen_Designer.Forms
         {
             LoadScreens();
         }
+
     }
+
+
 
 
 
