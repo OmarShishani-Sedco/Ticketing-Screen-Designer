@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TicketingScreenDesigner.BLL.BLL.Interfaces;
+﻿using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
@@ -20,45 +18,79 @@ namespace TicketingScreenDesigner.BLL.BLL
 
         public List<ScreenModel> GetScreensForBank(int bankId)
         {
-            return _screenDAL.GetScreensByBankId(bankId);
+            try
+            {
+                return _screenDAL.GetScreensByBankId(bankId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.GetScreensForBank");
+                throw;
+            }
         }
 
         public ScreenModel AddScreen(ScreenModel screen)
         {
-
-            if (screen.IsActive)
+            try
             {
-                _screenDAL.DeactivateAllScreensForBank(screen.BankId);
+                if (screen.IsActive)
+                {
+                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
+                }
+
+                return _screenDAL.InsertScreen(screen);
             }
-
-            return _screenDAL.InsertScreen(screen);
-
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.AddScreen");
+                throw;
+            }
         }
-
 
         public void UpdateScreen(ScreenModel screen)
         {
-            if (screen.IsActive)
+            try
             {
-                _screenDAL.DeactivateAllScreensForBank(screen.BankId);
-            }
-            _screenDAL.UpdateScreen(screen);
+                if (screen.IsActive)
+                {
+                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
+                }
 
+                _screenDAL.UpdateScreen(screen);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.UpdateScreen");
+                throw;
+            }
         }
 
         public void DeleteScreen(int screenId)
         {
-            // Delete all buttons associated with this screen first
-            _buttonDAL.DeleteButtonsByScreenId(screenId);
-
-            // Then delete the screen itself
-            _screenDAL.DeleteScreen(screenId);
+            try
+            {
+                // First delete all buttons associated with the screen
+                _buttonDAL.DeleteButtonsByScreenId(screenId);
+                _screenDAL.DeleteScreen(screenId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.DeleteScreen");
+                throw;
+            }
         }
-
 
         public void SetActiveScreen(int bankId, int screenId)
         {
-            _screenDAL.SetActiveScreen(bankId, screenId);
+            try
+            {
+                _screenDAL.SetActiveScreen(bankId, screenId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.SetActiveScreen");
+                throw;
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using TicketingScreenDesigner.BLL.BLL.Interfaces;
-using TicketingScreenDesigner.DAL.DAL;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
+using TicketingScreenDesigner.Common.Helpers;
 
 namespace TicketingScreenDesigner.BLL.BLL
 {
@@ -16,25 +16,59 @@ namespace TicketingScreenDesigner.BLL.BLL
 
         public BankModel GetBankByName(string name)
         {
-            return _dal.GetBankByName(name);
+            try
+            {
+                return _dal.GetBankByName(name);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankManager.GetBankByName");
+                throw;
+            }
         }
+
         public int AddBank(string name)
         {
-            return _dal.AddBank(name);
+            try
+            {
+                return _dal.AddBank(name);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankManager.AddBank");
+                throw;
+            }
         }
 
         public BankModel GetOrCreateBank(string name)
         {
-            var existing = _dal.GetBankByName(name);
-            if (existing != null)
-                return existing;
+            try
+            {
+                var existing = _dal.GetBankByName(name);
+                if (existing != null)
+                    return existing;
 
-            int newId = _dal.AddBank(name);
-            return new BankModel { BankId = newId, BankName = name };
+                int newId = _dal.AddBank(name);
+                return new BankModel { BankId = newId, BankName = name };
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankManager.GetOrCreateBank");
+                throw;
+            }
         }
+
         public List<BankModel> GetAllBanks()
         {
-            return _dal.GetAllBanks();
+            try
+            {
+                return _dal.GetAllBanks();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankManager.GetAllBanks");
+                throw;
+            }
         }
     }
 }

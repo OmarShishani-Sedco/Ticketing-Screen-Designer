@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using TicketingScreenDesigner.BLL.BLL.Interfaces;
+﻿using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
+using TicketingScreenDesigner.Common.Helpers;
 
 namespace TicketingScreenDesigner.BLL.BLL
 {
@@ -16,29 +16,69 @@ namespace TicketingScreenDesigner.BLL.BLL
 
         public List<ButtonModel> GetButtonsForScreen(int screenId)
         {
-            return _dal.GetButtonsByScreenId(screenId);
+            try
+            {
+                return _dal.GetButtonsByScreenId(screenId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ButtonManager.GetButtonsForScreen");
+                throw;
+            }
         }
 
         public ButtonModel AddButton(ButtonModel button)
         {
-            int id = _dal.AddButton(button);
-            button.ButtonId = id;
-            return button;
+            try
+            {
+                int id = _dal.AddButton(button);
+                button.ButtonId = id;
+                return button;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ButtonManager.AddButton");
+                throw;
+            }
         }
 
         public void UpdateButton(ButtonModel button)
         {
-            _dal.UpdateButton(button);
+            try
+            {
+                _dal.UpdateButton(button);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ButtonManager.UpdateButton");
+                throw;
+            }
         }
 
         public void DeleteButton(int buttonId)
         {
-            _dal.DeleteButton(buttonId);
+            try
+            {
+                _dal.DeleteButton(buttonId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ButtonManager.DeleteButton");
+                throw;
+            }
         }
 
         public void DeleteButtonsByScreenId(int screenId)
         {
-            _dal.DeleteButtonsByScreenId(screenId);
+            try
+            {
+                _dal.DeleteButtonsByScreenId(screenId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ButtonManager.DeleteButtonsByScreenId");
+                throw;
+            }
         }
     }
 }

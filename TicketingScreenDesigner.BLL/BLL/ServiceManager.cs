@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using TicketingScreenDesigner.BLL.BLL.Interfaces;
+﻿using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
-using TicketingScreenDesigner.Models;
 using TicketingScreenDesigner.Models.Models;
+using TicketingScreenDesigner.Common.Helpers;
 
 namespace TicketingScreenDesigner.BLL.BLL
 {
@@ -17,7 +16,15 @@ namespace TicketingScreenDesigner.BLL.BLL
 
         public List<ServiceModel> GetServicesForBank(int bankId)
         {
-            return _dal.GetServicesByBankId(bankId);
+            try
+            {
+                return _dal.GetServicesByBankId(bankId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ServiceManager.GetServicesForBank");
+                throw;
+            }
         }
     }
 }

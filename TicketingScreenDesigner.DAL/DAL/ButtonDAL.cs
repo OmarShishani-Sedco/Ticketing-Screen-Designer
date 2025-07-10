@@ -10,69 +10,87 @@ public class ButtonDAL : IButtonDAL
     {
         var buttons = new List<ButtonModel>();
 
-        using (var conn = DatabaseHelper.GetConnection())
+        try
         {
-            string query = "SELECT * FROM Button WHERE ScreenId = @ScreenId";
-
-            using (var cmd = new SqlCommand(query, conn))
+            using (var conn = DatabaseHelper.GetConnection())
             {
-                cmd.Parameters.AddWithValue("@ScreenId", screenId);
-                conn.Open();
+                string query = "SELECT * FROM Button WHERE ScreenId = @ScreenId";
 
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = new SqlCommand(query, conn))
                 {
-                    while (reader.Read())
+                    cmd.Parameters.AddWithValue("@ScreenId", screenId);
+                    conn.Open();
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        buttons.Add(new ButtonModel
+                        while (reader.Read())
                         {
-                            ButtonId = Convert.ToInt32(reader["ButtonId"]),
-                            ScreenId = Convert.ToInt32(reader["ScreenId"]),
-                            NameEn = reader["NameEnglish"]?.ToString(),
-                            NameAr = reader["NameArabic"]?.ToString(),
-                            Type = reader["ButtonType"]?.ToString(),
-                            ServiceId = reader["ServiceId"] != DBNull.Value ? Convert.ToInt32(reader["ServiceId"]) : (int?)null,
-                            MessageEn = reader["MessageEnglish"] != DBNull.Value ? reader["MessageEnglish"].ToString() : null,
-                            MessageAr = reader["MessageArabic"] != DBNull.Value ? reader["MessageArabic"].ToString() : null,
-                        });
+                            buttons.Add(new ButtonModel
+                            {
+                                ButtonId = Convert.ToInt32(reader["ButtonId"]),
+                                ScreenId = Convert.ToInt32(reader["ScreenId"]),
+                                NameEn = reader["NameEnglish"]?.ToString(),
+                                NameAr = reader["NameArabic"]?.ToString(),
+                                Type = reader["ButtonType"]?.ToString(),
+                                ServiceId = reader["ServiceId"] != DBNull.Value ? Convert.ToInt32(reader["ServiceId"]) : (int?)null,
+                                MessageEn = reader["MessageEnglish"] != DBNull.Value ? reader["MessageEnglish"].ToString() : null,
+                                MessageAr = reader["MessageArabic"] != DBNull.Value ? reader["MessageArabic"].ToString() : null,
+                            });
+                        }
                     }
                 }
             }
-        }
 
-        return buttons;
+            return buttons;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.GetButtonsByScreenId");
+            throw;
+        }
     }
 
     public int AddButton(ButtonModel button)
     {
-        using (var conn = DatabaseHelper.GetConnection())
+        try
         {
-            string query = @"
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                string query = @"
                 INSERT INTO Button (ScreenId, NameEnglish, NameArabic, ButtonType, ServiceId, MessageEnglish, MessageArabic, BankId)
                 VALUES (@ScreenId, @NameEnglish, @NameArabic, @ButtonType, @ServiceId, @MessageEnglish, @MessageArabic, @BankId);
                 SELECT SCOPE_IDENTITY();";
 
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@ScreenId", button.ScreenId);
-                cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
-                cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
-                cmd.Parameters.AddWithValue("@ButtonType", button.Type);
-                cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@BankId", button.BankId);
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ScreenId", button.ScreenId);
+                    cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
+                    cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
+                    cmd.Parameters.AddWithValue("@ButtonType", button.Type);
+                    cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BankId", button.BankId);
 
-                conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.AddButton");
+            throw;
         }
     }
 
     public void UpdateButton(ButtonModel button)
     {
-        using (var conn = DatabaseHelper.GetConnection())
+        try
         {
-            string query = @"
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                string query = @"
                 UPDATE Button
                 SET NameEnglish = @NameEnglish,
                     NameArabic = @NameArabic,
@@ -82,49 +100,71 @@ public class ButtonDAL : IButtonDAL
                     MessageArabic = @MessageArabic
                 WHERE ButtonId = @ButtonId";
 
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
-                cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
-                cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
-                cmd.Parameters.AddWithValue("@ButtonType", button.Type);
-                cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
+                    cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
+                    cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
+                    cmd.Parameters.AddWithValue("@ButtonType", button.Type);
+                    cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.UpdateButton");
+            throw;
         }
     }
 
     public void DeleteButton(int buttonId)
     {
-        using (var conn = DatabaseHelper.GetConnection())
+        try
         {
-            string query = "DELETE FROM Button WHERE ButtonId = @ButtonId";
-
-            using (var cmd = new SqlCommand(query, conn))
+            using (var conn = DatabaseHelper.GetConnection())
             {
-                cmd.Parameters.AddWithValue("@ButtonId", buttonId);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                string query = "DELETE FROM Button WHERE ButtonId = @ButtonId";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ButtonId", buttonId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.DeleteButton");
+            throw;
         }
     }
 
     public void DeleteButtonsByScreenId(int screenId)
     {
-        using (var conn = DatabaseHelper.GetConnection())
+        try
         {
-            string query = "DELETE FROM Button WHERE ScreenId = @ScreenId";
-
-            using (var cmd = new SqlCommand(query, conn))
+            using (var conn = DatabaseHelper.GetConnection())
             {
-                cmd.Parameters.AddWithValue("@ScreenId", screenId);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                string query = "DELETE FROM Button WHERE ScreenId = @ScreenId";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ScreenId", screenId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.DeleteButtonsByScreenId");
+            throw;
         }
     }
 }

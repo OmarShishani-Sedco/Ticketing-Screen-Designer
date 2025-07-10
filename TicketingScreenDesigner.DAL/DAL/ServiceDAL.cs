@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
-using TicketingScreenDesigner.Models;
 using TicketingScreenDesigner.Models.Models;
 
 namespace TicketingScreenDesigner.DAL.DAL
@@ -13,28 +10,37 @@ namespace TicketingScreenDesigner.DAL.DAL
         public List<ServiceModel> GetServicesByBankId(int bankId)
         {
             var services = new List<ServiceModel>();
-
-            using (var connection = DatabaseHelper.GetConnection())
+            try
             {
-                connection.Open();
-                var command = new SqlCommand("SELECT ServiceId, BankId, Name FROM Service WHERE BankId = @BankId", connection);
-                command.Parameters.AddWithValue("@BankId", bankId);
-
-                using (var reader = command.ExecuteReader())
+                using (var connection = DatabaseHelper.GetConnection())
                 {
-                    while (reader.Read())
+                    connection.Open();
+                    var command = new SqlCommand("SELECT ServiceId, BankId, Name FROM Service WHERE BankId = @BankId", connection);
+                    command.Parameters.AddWithValue("@BankId", bankId);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        services.Add(new ServiceModel
+                        while (reader.Read())
                         {
-                            ServiceId = reader.GetInt32(0),
-                            BankId = reader.GetInt32(1),
-                            Name = reader.GetString(2)
-                        });
+                            services.Add(new ServiceModel
+                            {
+                                ServiceId = reader.GetInt32(0),
+                                BankId = reader.GetInt32(1),
+                                Name = reader.GetString(2)
+                            });
+                        }
                     }
                 }
+
+                return services;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ServiceDAL.GetServicesByBankId");
+                throw;
             }
 
-            return services;
+            
         }
     }
 }

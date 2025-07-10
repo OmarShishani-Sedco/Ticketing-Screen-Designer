@@ -110,8 +110,9 @@
             // lstButtons
             // 
             lstButtons.Dock = DockStyle.Fill;
+            lstButtons.Font = new Font("Segoe UI", 12F);
             lstButtons.FormattingEnabled = true;
-            lstButtons.ItemHeight = 15;
+            lstButtons.ItemHeight = 21;
             lstButtons.Location = new Point(13, 160);
             lstButtons.Name = "lstButtons";
             lstButtons.SelectionMode = SelectionMode.MultiExtended;

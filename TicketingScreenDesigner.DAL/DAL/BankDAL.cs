@@ -9,68 +9,94 @@ namespace TicketingScreenDesigner.DAL.DAL
     {
         public BankModel GetBankByName(string name)
         {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            try
             {
-                conn.Open();
-                string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@name", name);
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
-                    if (reader.Read())
+                    conn.Open();
+                    string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@name", name);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        return new BankModel
+                        if (reader.Read())
                         {
-                            BankId = (int)reader["BankId"],
-                            BankName = reader["BankName"].ToString()
-                        };
+                            return new BankModel
+                            {
+                                BankId = (int)reader["BankId"],
+                                BankName = reader["BankName"].ToString()
+                            };
+                        }
                     }
                 }
+
+                return null;
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankDAL.GetBankByName");
+                throw;
+            }
+           
         }
-
         public int AddBank(string name)
         {
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            try
             {
-                conn.Open();
-                string query = "INSERT INTO Bank (BankName) VALUES (@name); SELECT SCOPE_IDENTITY();";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@name", name);
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    string query = "INSERT INTO Bank (BankName) VALUES (@name); SELECT SCOPE_IDENTITY();";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@name", name);
 
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankDAL.AddBank");
+                throw;
+            }
+            
         }
 
         public List<BankModel> GetAllBanks()
         {
             List<BankModel> banks = new List<BankModel>();
-
-            using (SqlConnection conn = DatabaseHelper.GetConnection())
+            try
             {
-                conn.Open();
-
-                string query = "SELECT BankId, BankName FROM bank";
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
-                    while (reader.Read())
+                    conn.Open();
+
+                    string query = "SELECT BankId, BankName FROM bank";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        BankModel bank = new BankModel
+                        while (reader.Read())
                         {
-                            BankId = reader.GetInt32(0),
-                            BankName = reader.GetString(1)
-                        };
-                        banks.Add(bank);
+                            BankModel bank = new BankModel
+                            {
+                                BankId = reader.GetInt32(0),
+                                BankName = reader.GetString(1)
+                            };
+                            banks.Add(bank);
+                        }
                     }
                 }
+
+                return banks;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankDAL.GetAllBanks");
+                throw;
             }
 
-            return banks;
+            
         }
     }
 }
