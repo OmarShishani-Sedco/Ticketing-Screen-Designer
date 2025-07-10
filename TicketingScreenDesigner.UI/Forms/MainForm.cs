@@ -53,6 +53,10 @@ namespace Ticketing_Screen_Designer.Forms
                 }
                 listBoxScreens.ClearSelected();
                 UpdateScreenButtonsEnabled();
+                if (listBoxScreens.Items.Count > 0)
+                {
+                    UpdateStatus("Screen(s) loaded successfully.");
+                }
             }
             catch (Exception ex)
             {
@@ -84,6 +88,7 @@ namespace Ticketing_Screen_Designer.Forms
                 if (result == DialogResult.OK)
                 {
                     LoadScreens(); // Refresh the list
+                    UpdateStatus("Screen added successfully.");
                 }
             }
         }
@@ -105,6 +110,7 @@ namespace Ticketing_Screen_Designer.Forms
                 if (result == DialogResult.OK)
                 {
                     LoadScreens(); // Refresh list after editing
+                    UpdateStatus("Screen edited successfully.");
                 }
             }
         }
@@ -131,6 +137,7 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     _screenManager.DeleteScreen(selectedScreen.ScreenId);
                     LoadScreens(); // Refresh the list
+                    UpdateStatus("Screen deleted successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -167,6 +174,19 @@ namespace Ticketing_Screen_Designer.Forms
             LoadScreens();
         }
 
+        private void statusClearTimer_Tick(object sender, EventArgs e)
+        {
+            StatusLabel.Text = string.Empty;
+            statusClearTimer.Stop();
+            statusStrip.Visible = false;
+        }
+        private void UpdateStatus(string message)
+        {
+            statusStrip.Visible = true;
+            StatusLabel.Text = message;
+            statusClearTimer.Stop();   
+            statusClearTimer.Start();  
+        }
     }
 
 

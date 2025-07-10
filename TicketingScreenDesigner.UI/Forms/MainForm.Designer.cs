@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             tableLayoutPanel2 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             btnAddScreen = new Button();
@@ -37,9 +38,13 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             listBoxScreens = new ListBox();
             label1 = new Label();
+            statusStrip = new StatusStrip();
+            StatusLabel = new ToolStripStatusLabel();
+            statusClearTimer = new System.Windows.Forms.Timer(components);
             tableLayoutPanel2.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            statusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel2
@@ -52,7 +57,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(808, 44);
+            tableLayoutPanel2.Size = new Size(977, 44);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // flowLayoutPanel1
@@ -64,7 +69,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(802, 38);
+            flowLayoutPanel1.Size = new Size(971, 38);
             flowLayoutPanel1.TabIndex = 3;
             // 
             // btnAddScreen
@@ -73,7 +78,7 @@
             btnAddScreen.Location = new Point(3, 3);
             btnAddScreen.Name = "btnAddScreen";
             btnAddScreen.Size = new Size(130, 30);
-            btnAddScreen.TabIndex = 0;
+            btnAddScreen.TabIndex = 1;
             btnAddScreen.Text = "Add Screen";
             btnAddScreen.UseVisualStyleBackColor = true;
             btnAddScreen.Click += btnAddScreen_Click;
@@ -84,7 +89,7 @@
             btnEditScreen.Location = new Point(139, 3);
             btnEditScreen.Name = "btnEditScreen";
             btnEditScreen.Size = new Size(121, 30);
-            btnEditScreen.TabIndex = 1;
+            btnEditScreen.TabIndex = 2;
             btnEditScreen.Text = "Edit Screen";
             btnEditScreen.UseVisualStyleBackColor = true;
             btnEditScreen.Click += btnEditScreen_Click;
@@ -96,7 +101,7 @@
             btnDeleteScreen.Location = new Point(266, 3);
             btnDeleteScreen.Name = "btnDeleteScreen";
             btnDeleteScreen.Size = new Size(132, 30);
-            btnDeleteScreen.TabIndex = 2;
+            btnDeleteScreen.TabIndex = 3;
             btnDeleteScreen.Text = "Delete Screen";
             btnDeleteScreen.UseVisualStyleBackColor = true;
             btnDeleteScreen.Click += btnDeleteScreen_Click;
@@ -106,7 +111,7 @@
             lblBankName.Anchor = AnchorStyles.None;
             lblBankName.AutoSize = true;
             lblBankName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblBankName.Location = new Point(384, 17);
+            lblBankName.Location = new Point(469, 17);
             lblBankName.Name = "lblBankName";
             lblBankName.Size = new Size(65, 25);
             lblBankName.TabIndex = 5;
@@ -131,7 +136,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(834, 461);
+            tableLayoutPanel1.Size = new Size(1003, 467);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // listBoxScreens
@@ -142,7 +147,7 @@
             listBoxScreens.ItemHeight = 21;
             listBoxScreens.Location = new Point(13, 133);
             listBoxScreens.Name = "listBoxScreens";
-            listBoxScreens.Size = new Size(808, 320);
+            listBoxScreens.Size = new Size(977, 321);
             listBoxScreens.TabIndex = 9;
             listBoxScreens.SelectedIndexChanged += listBoxScreens_SelectedIndexChanged;
             listBoxScreens.MouseDown += listBoxScreens_MouseDown;
@@ -153,21 +158,42 @@
             label1.AutoSize = true;
             label1.BackColor = SystemColors.Control;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(377, 102);
+            label1.Location = new Point(461, 102);
             label1.Name = "label1";
             label1.Size = new Size(80, 25);
             label1.TabIndex = 8;
             label1.Text = "Screens";
+            // 
+            // statusStrip
+            // 
+            statusStrip.Items.AddRange(new ToolStripItem[] { StatusLabel });
+            statusStrip.Location = new Point(0, 407);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(954, 22);
+            statusStrip.TabIndex = 8;
+            statusStrip.Text = "statusStrip1";
+            statusStrip.Visible = false;
+            // 
+            // StatusLabel
+            // 
+            StatusLabel.Name = "StatusLabel";
+            StatusLabel.Size = new Size(0, 17);
+            // 
+            // statusClearTimer
+            // 
+            statusClearTimer.Interval = 3000;
+            statusClearTimer.Tick += statusClearTimer_Tick;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(834, 461);
+            ClientSize = new Size(1003, 467);
             Controls.Add(tableLayoutPanel1);
+            Controls.Add(statusStrip);
             Name = "MainForm";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Main Form";
             Load += MainForm_Load;
             tableLayoutPanel2.ResumeLayout(false);
@@ -176,6 +202,8 @@
             flowLayoutPanel1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -191,5 +219,8 @@
         private TableLayoutPanel tableLayoutPanel1;
         private Label label1;
         private ListBox listBoxScreens;
+        private StatusStrip statusStrip;
+        private System.Windows.Forms.Timer statusClearTimer;
+        private ToolStripStatusLabel StatusLabel;
     }
 }

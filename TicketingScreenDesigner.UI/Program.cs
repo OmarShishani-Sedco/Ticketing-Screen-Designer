@@ -42,10 +42,10 @@ namespace Ticketing_Screen_Designer
             if (!DatabaseUtility.TestConnection(out string errorMsg))
             {
                 MessageBox.Show(errorMsg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Logger.LogError("Database connection test failed: " + errorMsg);
                 Application.Exit();
                 return;
             }
+
 
             // --- Manual Dependency Injection ---
 

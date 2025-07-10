@@ -4,11 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<DebugType>None</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
   </ItemGroup>
 
 </Project>

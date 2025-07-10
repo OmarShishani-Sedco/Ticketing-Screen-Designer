@@ -13,7 +13,14 @@ namespace TicketingScreenDesigner.Common.Helpers
 
     public static class Logger
     {
-        private static readonly string logFilePath = "error_log.json";
+        private static readonly string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+        private static readonly string logFilePath = Path.Combine(logDirectory, "error_log.json");
+
+        static Logger()
+        {
+            if (!Directory.Exists(logDirectory))
+                Directory.CreateDirectory(logDirectory);
+        }
 
         public static void LogError(string message, string stackTrace = "")
         {

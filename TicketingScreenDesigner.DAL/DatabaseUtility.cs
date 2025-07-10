@@ -1,52 +1,48 @@
 ﻿using Microsoft.Data.SqlClient;
-using System.Configuration;
 using TicketingScreenDesigner.Common.Helpers;
+using System.Configuration;
 
-namespace TicketingScreenDesigner.DAL
+public static class DatabaseUtility
 {
-    public static class DatabaseUtility
+    public static bool TestConnection(out string errorMessage)
     {
-        /// <summary>
-        /// Tests if the database connection is valid.
-        /// </summary>
-        /// <returns>True if connection is successful, otherwise false.</returns>
-        public static bool TestConnection(out string errorMessage)
+        try
         {
-            try
-            {
-                using (var conn = DatabaseHelper.GetConnection())
-                {
-                    conn.Open();
-                    errorMessage = string.Empty;
-                    return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Logger.LogError("Database connection failed (SQL): " + ex.ToString(), ex.StackTrace);
-                errorMessage = "Database connection failed. Please check your server settings.";
-                return false;
-            }
-            // we caught the inner exception because static constructor of Databasehelper throws TypeInitializationException by default
-            catch (TypeInitializationException ex) when (ex.InnerException is ConfigurationErrorsException configEx)
-            {
-                Logger.LogError("Database connection failed (Configuration): " + configEx.ToString(), configEx.StackTrace);
-                errorMessage = "Configuration error. Please check your connection string settings.";
-                return false;
-            }
+            AppConfig.Initialize();
 
-            catch (InvalidOperationException ex)
+            using (var conn = DatabaseHelper.GetConnection())
             {
-                Logger.LogError("Database connection failed (Invalid Operation): " + ex.ToString(), ex.StackTrace);
-                errorMessage = "Invalid operation while trying to connect to the database.";
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Unexpected error during DB connection test: " + ex.ToString(), ex.StackTrace);
-                errorMessage = "Unexpected error while trying to connect to the database.";
-                return false;
+                conn.Open();
+                errorMessage = string.Empty;
+                return true;
             }
         }
+        catch (DirectoryNotFoundException ex)
+        {
+            Logger.LogError(ex.Message, ex.StackTrace);
+            errorMessage = "Config folder is missing. Please ensure all files are correctly deployed.";
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Logger.LogError("Invalid config file: " + ex.Message, ex.StackTrace);
+            errorMessage = "Configuration file error: check appsettings.json.";
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.LogError(ex.Message, ex.StackTrace);
+            errorMessage = "Config file is missing. Please ensure all files are correctly deployed.";
+        }
+        catch (SqlException ex)
+        {
+            Logger.LogError("SQL Error during DB connection: " + ex.Message, ex.StackTrace);
+            errorMessage = "Cannot connect to database. Check SQL Server instance and credentials.";
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("Unexpected DB connection error: " + ex.Message, ex.StackTrace);
+            errorMessage = "Unexpected error while testing DB connection.";
+        }
+
+        return false;
     }
 }

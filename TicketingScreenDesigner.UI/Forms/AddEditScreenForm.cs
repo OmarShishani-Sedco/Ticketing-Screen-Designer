@@ -1,4 +1,5 @@
-﻿using Ticketing_Screen_Designer.UIHelpers;
+﻿using System.Windows.Forms;
+using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
@@ -50,6 +51,10 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 this.Text = "Edit Screen";
                 _buttons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
+                if (_buttons.Count > 0)
+                {
+                    UpdateStatus("Button(s) loaded successfully.");
+                }
             }
             else
             {
@@ -99,7 +104,7 @@ namespace Ticketing_Screen_Designer.Forms
                     }
                     catch (Exception ex)
                     {
-                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_DeleteButton");
+                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_AddButton");
                     }
                 }
             }
@@ -195,7 +200,8 @@ namespace Ticketing_Screen_Designer.Forms
                 try
                 {
                     _screenManager.UpdateScreen(_screen);
-                    MessageBox.Show("Screen updated.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UpdateStatus("Screen updated successfully.");
+
                 }
                 catch (Exception ex)
                 {
@@ -224,7 +230,8 @@ namespace Ticketing_Screen_Designer.Forms
                     _buttonManager.AddButton(btn);
                 }
 
-                MessageBox.Show("Screen and buttons saved.","Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UpdateStatus("Screen and buttons saved successfully.");
+
                 _isSaved = true;
                 DialogResult = DialogResult.OK;
             }
@@ -280,6 +287,18 @@ namespace Ticketing_Screen_Designer.Forms
         private void lstButtons_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateButtonActionsEnabled();
+        }
+        private void statusClearTimer_Tick(object sender, EventArgs e)
+        {
+            StatusLabel.Text = string.Empty;
+            statusClearTimer.Stop();
+            StatusLabel.Visible = false;
+        }
+        private void UpdateStatus(string message)
+        {
+            StatusLabel.Text = message;
+            statusClearTimer.Stop();
+            statusClearTimer.Start();
         }
     }
 }
