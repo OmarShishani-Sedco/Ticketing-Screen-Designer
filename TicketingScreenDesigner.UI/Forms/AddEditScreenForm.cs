@@ -297,11 +297,11 @@ namespace Ticketing_Screen_Designer.Forms
         {
             StatusLabel.Text = string.Empty;
             statusClearTimer.Stop();
-            StatusLabel.Visible = false;
+            statusStrip.Visible = false;
         }
-
         private void UpdateStatus(string message)
         {
+            statusStrip.Visible = true;
             StatusLabel.Text = message;
             statusClearTimer.Stop();
             statusClearTimer.Start();

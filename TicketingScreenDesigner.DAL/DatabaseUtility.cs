@@ -25,12 +25,12 @@ public static class DatabaseUtility
         catch (ConfigurationErrorsException ex)
         {
             Logger.LogError("Invalid config file: " + ex.Message, ex.StackTrace);
-            errorMessage = "Configuration file error: check appsettings.json.";
+            errorMessage = "Configuration file error: check appsettings.json. " + ex.Message;
         }
         catch (FileNotFoundException ex)
         {
             Logger.LogError(ex.Message, ex.StackTrace);
-            errorMessage = "Config file is missing. Please ensure all files are correctly deployed.";
+            errorMessage = "Config file is missing. Please ensure all files are correctly deployed. " + ex.Message;
         }
         catch (SqlException ex)
         {
