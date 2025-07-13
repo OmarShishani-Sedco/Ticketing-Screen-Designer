@@ -67,27 +67,34 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void RefreshButtonList()
         {
-            lstButtons.DataSource = null;
-            lstButtons.DataSource = _buttons;
-            lstButtons.ClearSelected();
+            listViewButtons.Items.Clear();
+
+            foreach (var button in _buttons)
+            {
+                var item = new ListViewItem(button.NameEn);
+                item.SubItems.Add(button.NameAr);
+                item.SubItems.Add(button.Type.ToDisplayString());
+                item.Tag = button;
+
+                listViewButtons.Items.Add(item);
+            }
+
+            UpdateButtonActionsEnabled();
         }
 
         private void btnAddButton_Click(object sender, EventArgs e)
         {
-            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager); // ScreenId -1 if not saved
+            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager);
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _buttons.Add(form.ResultButton);
                 RefreshButtonList();
 
-                // If this is a new screen, save now that we have 1+ buttons
                 if (!_isEditMode && _screen.ScreenId == -1)
                 {
-                    if (string.IsNullOrWhiteSpace(_screen.ScreenName))
-                    {
+                    if (string.IsNullOrWhiteSpace(_screen.ScreenName)) 
                         return;
-                    }
-                    // Fill screen model from form inputs
+
                     _screen.ScreenName = txtScreenName.Text.Trim();
                     _screen.IsActive = chkIsActive.Checked;
                     _screen.BankId = _bank.BankId;
@@ -95,7 +102,6 @@ namespace Ticketing_Screen_Designer.Forms
                     // Now save
                     SaveScreenAndButtons();
                 }
-
                 else if (_isEditMode)
                 {
                     try
@@ -112,37 +118,40 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnEditButton_Click(object sender, EventArgs e)
         {
-            if (lstButtons.SelectedItem is ButtonModel selected)
+            if (listViewButtons.SelectedItems.Count != 1) return;
+
+            var selectedItem = listViewButtons.SelectedItems[0];
+            var selected = selectedItem.Tag as ButtonModel;
+
+            var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager, selected);
+            if (form.ShowDialog() == DialogResult.OK)
             {
-                var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager,  selected);
-                if (form.ShowDialog() == DialogResult.OK)
+                int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
+                if (index >= 0)
+                    _buttons[index] = form.ResultButton;
+
+                RefreshButtonList();
+
+                try
                 {
-                    int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
-                    if (index >= 0)
-                        _buttons[index] = form.ResultButton;
-                    RefreshButtonList();
-                    try
-                    {
-                        if (_isEditMode)
-                            _buttonManager.UpdateButton(form.ResultButton);
-                    }
-                    catch (Exception ex)
-                    {
-                        UIExceptionHandler.Handle(ex, "AddEditScreenForm_EditButton");
-                    }
-                    
+                    if (_isEditMode)
+                        _buttonManager.UpdateButton(form.ResultButton);
+                }
+                catch (Exception ex)
+                {
+                    UIExceptionHandler.Handle(ex, "AddEditScreenForm_EditButton");
                 }
             }
         }
 
         private void btnDeleteButton_Click(object sender, EventArgs e)
         {
-            if (lstButtons.SelectedItems.Count == 0)
+            if (listViewButtons.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Please select at least one button to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            //if (lstButtons.SelectedItems.Count == lstButtons.Items.Count )
+            //if (listViewButtons.SelectedItems.Count == listViewButtons.Items.Count)
             //{
             //    MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             //    return;
@@ -153,9 +162,9 @@ namespace Ticketing_Screen_Designer.Forms
                 return;
 
             var buttonsToDelete = new List<ButtonModel>();
-            foreach (var item in lstButtons.SelectedItems)
+            foreach (ListViewItem item in listViewButtons.SelectedItems)
             {
-                if (item is ButtonModel btn)
+                if (item.Tag is ButtonModel btn)
                 {
                     try
                     {
@@ -176,7 +185,6 @@ namespace Ticketing_Screen_Designer.Forms
 
             RefreshButtonList();
         }
-
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -201,13 +209,11 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     _screenManager.UpdateScreen(_screen);
                     UpdateStatus("Screen updated successfully.");
-
                 }
                 catch (Exception ex)
                 {
-                    UIExceptionHandler.Handle(ex, "AddEditScreenForm_DeleteButton");
+                    UIExceptionHandler.Handle(ex, "AddEditScreenForm_UpdateScreen");
                 }
-                
             }
             else
             {
@@ -231,7 +237,6 @@ namespace Ticketing_Screen_Designer.Forms
                 }
 
                 UpdateStatus("Screen and buttons saved successfully.");
-
                 _isSaved = true;
                 DialogResult = DialogResult.OK;
             }
@@ -239,8 +244,6 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 UIExceptionHandler.Handle(ex, "AddEditScreenForm_SaveScreenAndButtons");
             }
-           
-
         }
 
         private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -255,11 +258,17 @@ namespace Ticketing_Screen_Designer.Forms
 
                 if (confirm == DialogResult.No)
                 {
-                    e.Cancel = true; // Prevent form from closing
+                    e.Cancel = true;
                 }
+               
             }
-        }
+            if (_buttons.Count == 0)
+            {
+                MessageBox.Show("A screen must contain at least one button. Please add a button before exiting form.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                e.Cancel = true;
+            }
 
+        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -271,34 +280,26 @@ namespace Ticketing_Screen_Designer.Forms
             this.Close();
         }
 
-        private void lstButtons_MouseDown(object sender, MouseEventArgs e)
+        private void listViewButtons_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int index = lstButtons.IndexFromPoint(e.Location);
-
-            if (index == ListBox.NoMatches)
-            {
-                lstButtons.ClearSelected();
-            }
+            UpdateButtonActionsEnabled();
         }
+
         private void UpdateButtonActionsEnabled()
         {
-            int selectedCount = lstButtons.SelectedItems.Count;
+            int selectedCount = listViewButtons.SelectedItems.Count;
 
             btnEditButton.Enabled = selectedCount == 1;
             btnDeleteButton.Enabled = selectedCount > 0;
         }
 
-
-        private void lstButtons_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateButtonActionsEnabled();
-        }
         private void statusClearTimer_Tick(object sender, EventArgs e)
         {
             StatusLabel.Text = string.Empty;
             statusClearTimer.Stop();
             StatusLabel.Visible = false;
         }
+
         private void UpdateStatus(string message)
         {
             StatusLabel.Text = message;

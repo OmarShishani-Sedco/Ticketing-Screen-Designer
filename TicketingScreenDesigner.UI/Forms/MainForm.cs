@@ -37,23 +37,18 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 var screens = _screenManager.GetScreensForBank(_selectedBank.BankId);
 
-                listBoxScreens.Items.Clear();
+                listViewScreens.Items.Clear();
 
                 foreach (var screen in screens)
                 {
-                    string display = screen.IsActive
-                        ? $"{screen.ScreenName} (Active)"
-                        : screen.ScreenName;
+                    var item = new ListViewItem(screen.ScreenName);
+                    item.SubItems.Add(screen.IsActive ? "Active" : "");
+                    item.Tag = screen; // Store actual object
 
-                    listBoxScreens.Items.Add(new ScreenDisplayItem
-                    {
-                        DisplayText = display,
-                        Screen = screen
-                    });
+                    listViewScreens.Items.Add(item);
                 }
-                listBoxScreens.ClearSelected();
                 UpdateScreenButtonsEnabled();
-                if (listBoxScreens.Items.Count > 0)
+                if (listViewScreens.Items.Count > 0)
                 {
                     UpdateStatus("Screen(s) loaded successfully.");
                 }
@@ -92,16 +87,22 @@ namespace Ticketing_Screen_Designer.Forms
                 }
             }
         }
+        private ScreenModel GetSelectedScreen()
+        {
+            if (listViewScreens.SelectedItems.Count == 0)
+                return null;
+
+            return listViewScreens.SelectedItems[0].Tag as ScreenModel;
+        }
 
         private void btnEditScreen_Click(object sender, EventArgs e)
         {
-            if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
+            var selectedScreen = GetSelectedScreen();
+            if (selectedScreen == null)
             {
                 MessageBox.Show("Please select a screen to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            var selectedScreen = selectedItem.Screen;
 
             using (var editForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager, selectedScreen))
             {
@@ -109,7 +110,7 @@ namespace Ticketing_Screen_Designer.Forms
 
                 if (result == DialogResult.OK)
                 {
-                    LoadScreens(); // Refresh list after editing
+                    LoadScreens();
                     UpdateStatus("Screen edited successfully.");
                 }
             }
@@ -117,26 +118,23 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnDeleteScreen_Click(object sender, EventArgs e)
         {
-            if (listBoxScreens.SelectedItem is not ScreenDisplayItem selectedItem)
+            var selectedScreen = GetSelectedScreen();
+            if (selectedScreen == null)
             {
                 MessageBox.Show("Please select a screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var selectedScreen = selectedItem.Screen;
-
             var confirm = MessageBox.Show(
                 $"Are you sure you want to delete screen '{selectedScreen.ScreenName}'?",
-                "Confirm Delete",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (confirm == DialogResult.Yes)
             {
                 try
                 {
                     _screenManager.DeleteScreen(selectedScreen.ScreenId);
-                    LoadScreens(); // Refresh the list
+                    LoadScreens();
                     UpdateStatus("Screen deleted successfully.");
                 }
                 catch (Exception ex)
@@ -146,25 +144,15 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
-        private void listBoxScreens_MouseDown(object sender, MouseEventArgs e)
-        {
-            int index = listBoxScreens.IndexFromPoint(e.Location);
 
-            if (index == ListBox.NoMatches)
-            {
-                listBoxScreens.ClearSelected();
-            }
-        }
         private void UpdateScreenButtonsEnabled()
         {
-            bool hasSelection = listBoxScreens.SelectedItem is ScreenDisplayItem;
-
-            btnEditScreen.Enabled = hasSelection;
-            btnDeleteScreen.Enabled = hasSelection;
+            btnEditScreen.Enabled = listViewScreens.SelectedItems.Count == 1;
+            btnDeleteScreen.Enabled = listViewScreens.SelectedItems.Count == 1;
         }
 
 
-        private void listBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
+        private void listViewScreens_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateScreenButtonsEnabled();
         }

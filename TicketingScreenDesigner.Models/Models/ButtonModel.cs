@@ -16,9 +16,6 @@
         public string? MessageEn { get; set; } // Only if Type = Show Message
         public string? MessageAr { get; set; }
 
-        public override string ToString()
-        {
-            return $"{NameEn}/{NameAr} | {Type}";
-        }
+        
     }
 }

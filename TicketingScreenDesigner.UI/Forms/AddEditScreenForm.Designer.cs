@@ -35,7 +35,6 @@
             btnDeleteButton = new Button();
             btnEditButton = new Button();
             btnAddButton = new Button();
-            lstButtons = new ListBox();
             label2 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
             flowLayoutPanel3 = new FlowLayoutPanel();
@@ -43,6 +42,10 @@
             btnSave = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
+            listViewButtons = new ListView();
+            EnButtonName = new ColumnHeader();
+            ArButtonName = new ColumnHeader();
+            btnType = new ColumnHeader();
             statusClearTimer = new System.Windows.Forms.Timer(components);
             statusStrip = new StatusStrip();
             StatusLabel = new ToolStripStatusLabel();
@@ -112,20 +115,6 @@
             btnAddButton.UseVisualStyleBackColor = true;
             btnAddButton.Click += btnAddButton_Click;
             // 
-            // lstButtons
-            // 
-            lstButtons.Dock = DockStyle.Fill;
-            lstButtons.Font = new Font("Segoe UI", 12F);
-            lstButtons.FormattingEnabled = true;
-            lstButtons.ItemHeight = 21;
-            lstButtons.Location = new Point(13, 160);
-            lstButtons.Name = "lstButtons";
-            lstButtons.SelectionMode = SelectionMode.MultiExtended;
-            lstButtons.Size = new Size(804, 286);
-            lstButtons.TabIndex = 100;
-            lstButtons.SelectedIndexChanged += lstButtons_SelectedIndexChanged;
-            lstButtons.MouseDown += lstButtons_MouseDown;
-            // 
             // label2
             // 
             label2.Anchor = AnchorStyles.None;
@@ -144,10 +133,10 @@
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(flowLayoutPanel3, 0, 4);
-            tableLayoutPanel1.Controls.Add(lstButtons, 0, 3);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 0, 1);
+            tableLayoutPanel1.Controls.Add(listViewButtons, 0, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -216,6 +205,36 @@
             flowLayoutPanel2.Size = new Size(804, 44);
             flowLayoutPanel2.TabIndex = 18;
             // 
+            // listViewButtons
+            // 
+            listViewButtons.Columns.AddRange(new ColumnHeader[] { EnButtonName, ArButtonName, btnType });
+            listViewButtons.Dock = DockStyle.Fill;
+            listViewButtons.Font = new Font("Segoe UI", 12F);
+            listViewButtons.FullRowSelect = true;
+            listViewButtons.GridLines = true;
+            listViewButtons.Location = new Point(13, 160);
+            listViewButtons.Name = "listViewButtons";
+            listViewButtons.Size = new Size(804, 286);
+            listViewButtons.TabIndex = 21;
+            listViewButtons.UseCompatibleStateImageBehavior = false;
+            listViewButtons.View = View.Details;
+            listViewButtons.SelectedIndexChanged += listViewButtons_SelectedIndexChanged;
+            // 
+            // EnButtonName
+            // 
+            EnButtonName.Text = "Name (EN)";
+            EnButtonName.Width = 150;
+            // 
+            // ArButtonName
+            // 
+            ArButtonName.Text = "Name (AR)";
+            ArButtonName.Width = 150;
+            // 
+            // btnType
+            // 
+            btnType.Text = "Type";
+            btnType.Width = 120;
+            // 
             // statusClearTimer
             // 
             statusClearTimer.Interval = 3000;
@@ -267,7 +286,6 @@
         private Button btnDeleteButton;
         private Button btnEditButton;
         private Button btnAddButton;
-        private ListBox lstButtons;
         private Label label2;
         private TableLayoutPanel tableLayoutPanel1;
         private FlowLayoutPanel flowLayoutPanel1;
@@ -278,5 +296,9 @@
         private System.Windows.Forms.Timer statusClearTimer;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel StatusLabel;
+        private ListView listViewButtons;
+        private ColumnHeader EnButtonName;
+        private ColumnHeader ArButtonName;
+        private ColumnHeader btnType;
     }
 }

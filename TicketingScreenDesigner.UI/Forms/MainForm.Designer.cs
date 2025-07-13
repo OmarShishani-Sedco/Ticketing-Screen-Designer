@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            ColumnHeader ScreenName;
             tableLayoutPanel2 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             btnAddScreen = new Button();
@@ -36,16 +37,23 @@
             btnDeleteScreen = new Button();
             lblBankName = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            listBoxScreens = new ListBox();
             label1 = new Label();
+            listViewScreens = new ListView();
+            ScreenStatus = new ColumnHeader();
             statusStrip = new StatusStrip();
             StatusLabel = new ToolStripStatusLabel();
             statusClearTimer = new System.Windows.Forms.Timer(components);
+            ScreenName = new ColumnHeader();
             tableLayoutPanel2.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
+            // 
+            // ScreenName
+            // 
+            ScreenName.Text = "Screen Name";
+            ScreenName.Width = 250;
             // 
             // tableLayoutPanel2
             // 
@@ -122,10 +130,10 @@
             tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(listBoxScreens, 0, 3);
             tableLayoutPanel1.Controls.Add(label1, 0, 2);
             tableLayoutPanel1.Controls.Add(lblBankName, 0, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 1);
+            tableLayoutPanel1.Controls.Add(listViewScreens, 0, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -136,21 +144,8 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(1003, 467);
+            tableLayoutPanel1.Size = new Size(1003, 476);
             tableLayoutPanel1.TabIndex = 7;
-            // 
-            // listBoxScreens
-            // 
-            listBoxScreens.Dock = DockStyle.Fill;
-            listBoxScreens.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            listBoxScreens.FormattingEnabled = true;
-            listBoxScreens.ItemHeight = 21;
-            listBoxScreens.Location = new Point(13, 133);
-            listBoxScreens.Name = "listBoxScreens";
-            listBoxScreens.Size = new Size(977, 321);
-            listBoxScreens.TabIndex = 9;
-            listBoxScreens.SelectedIndexChanged += listBoxScreens_SelectedIndexChanged;
-            listBoxScreens.MouseDown += listBoxScreens_MouseDown;
             // 
             // label1
             // 
@@ -163,6 +158,26 @@
             label1.Size = new Size(80, 25);
             label1.TabIndex = 8;
             label1.Text = "Screens";
+            // 
+            // listViewScreens
+            // 
+            listViewScreens.Columns.AddRange(new ColumnHeader[] { ScreenName, ScreenStatus });
+            listViewScreens.Dock = DockStyle.Fill;
+            listViewScreens.Font = new Font("Segoe UI", 12F);
+            listViewScreens.FullRowSelect = true;
+            listViewScreens.GridLines = true;
+            listViewScreens.Location = new Point(13, 133);
+            listViewScreens.MultiSelect = false;
+            listViewScreens.Name = "listViewScreens";
+            listViewScreens.Size = new Size(977, 330);
+            listViewScreens.TabIndex = 9;
+            listViewScreens.UseCompatibleStateImageBehavior = false;
+            listViewScreens.View = View.Details;
+            listViewScreens.SelectedIndexChanged += listViewScreens_SelectedIndexChanged;
+            // 
+            // ScreenStatus
+            // 
+            ScreenStatus.Text = "Status";
             // 
             // statusStrip
             // 
@@ -189,7 +204,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1003, 467);
+            ClientSize = new Size(1003, 476);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(statusStrip);
             Name = "MainForm";
@@ -218,9 +233,10 @@
         private Label lblBankName;
         private TableLayoutPanel tableLayoutPanel1;
         private Label label1;
-        private ListBox listBoxScreens;
         private StatusStrip statusStrip;
         private System.Windows.Forms.Timer statusClearTimer;
         private ToolStripStatusLabel StatusLabel;
+        private ListView listViewScreens;
+        private ColumnHeader ScreenStatus;
     }
 }
