@@ -9,7 +9,7 @@
         public string NameEn { get; set; }
         public string NameAr { get; set; }
 
-        public string Type { get; set; } // "Issue Ticket" or "Show Message"
+        public ButtonType Type { get; set; } // "Issue Ticket" or "Show Message"
 
         public int? ServiceId { get; set; } // Only if Type = Issue Ticket
 

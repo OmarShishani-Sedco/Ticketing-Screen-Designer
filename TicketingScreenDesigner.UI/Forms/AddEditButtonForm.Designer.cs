@@ -108,7 +108,6 @@
             // 
             cmbButtonType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbButtonType.FormattingEnabled = true;
-            cmbButtonType.Items.AddRange(new object[] { "Issue Ticket", "Show Message" });
             cmbButtonType.Location = new Point(586, 9);
             cmbButtonType.Margin = new Padding(3, 4, 3, 3);
             cmbButtonType.Name = "cmbButtonType";

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using TicketingScreenDesigner.BLL;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
-using TicketingScreenDesigner.DAL;
-using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -36,11 +33,12 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void InitializeForm()
         {
-
+            cmbButtonType.DataSource = Enum.GetValues(typeof(ButtonType));
+            cmbButtonType.SelectedIndex = -1; // Forces no selection initially
             cmbButtonType.SelectedIndexChanged += (s, e) =>
             {
                 TogglePanels();
-                if (cmbButtonType.SelectedItem?.ToString() == "Issue Ticket")
+                if ((ButtonType)cmbButtonType.SelectedItem == ButtonType.IssueTicket)
                 {
                     LoadServices();
                 }
@@ -53,11 +51,10 @@ namespace Ticketing_Screen_Designer.Forms
                 txtNameAr.Text = _existingButton.NameAr;
                 cmbButtonType.SelectedItem = _existingButton.Type;
 
-                if (_existingButton.Type == "Issue Ticket")
+                if (_existingButton.Type == ButtonType.IssueTicket)
                 {
                     panelIssueTicket.Visible = true;
                     panelShowMessage.Visible = false;
-
                     LoadServices();
                     cmbService.SelectedValue = _existingButton.ServiceId;
                 }
@@ -65,7 +62,6 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     panelShowMessage.Visible = true;
                     panelIssueTicket.Visible = false;
-
                     txtMsgEn.Text = _existingButton.MessageEn;
                     txtMsgAr.Text = _existingButton.MessageAr;
                 }
@@ -80,20 +76,19 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void LoadServices()
         {
-
-            var services = _serviceManager.GetServicesForBank(_bankId); // List<ServiceModel>
-
+            var services = _serviceManager.GetServicesForBank(_bankId);
             cmbService.DataSource = services;
             cmbService.DisplayMember = "Name"; // Shows service name in dropdown
             cmbService.ValueMember = "ServiceId";     // SelectedValue returns ServiceId
         }
 
-
         private void TogglePanels()
         {
-            string selectedType = cmbButtonType.SelectedItem?.ToString();
-            panelIssueTicket.Visible = selectedType == "Issue Ticket";
-            panelShowMessage.Visible = selectedType == "Show Message";
+            if (cmbButtonType.SelectedItem is ButtonType selectedType)
+            {
+                panelIssueTicket.Visible = selectedType == ButtonType.IssueTicket;
+                panelShowMessage.Visible = selectedType == ButtonType.ShowMessage;
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -109,13 +104,14 @@ namespace Ticketing_Screen_Designer.Forms
                 MessageBox.Show("Please select a button type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             if (!ValidateButtonName())
             {
                 return;
             }
 
 
-            string type = cmbButtonType.SelectedItem.ToString();
+            ButtonType type = (ButtonType)cmbButtonType.SelectedItem;
 
             var button = _existingButton ?? new ButtonModel();
             button.NameEn = txtNameEn.Text.Trim();
@@ -124,7 +120,7 @@ namespace Ticketing_Screen_Designer.Forms
             button.BankId = _bankId;
 
             // Handle type-specific fields
-            if (type == "Issue Ticket")
+            if (type == ButtonType.IssueTicket)
             {
                 if (cmbService.SelectedItem == null)
                 {
@@ -133,7 +129,6 @@ namespace Ticketing_Screen_Designer.Forms
                 }
 
                 button.ServiceId = (int)cmbService.SelectedValue;
-
                 button.MessageEn = null;
                 button.MessageAr = null;
             }
@@ -144,6 +139,7 @@ namespace Ticketing_Screen_Designer.Forms
                     MessageBox.Show("Please enter message text in both languages.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
                 if (!ValidateMessage())
                 {
                     return;
@@ -183,8 +179,6 @@ namespace Ticketing_Screen_Designer.Forms
                 return false;
             }
 
-
-
             return true;
         }
 
@@ -203,8 +197,6 @@ namespace Ticketing_Screen_Designer.Forms
                 MessageBox.Show("Arabic Message must contain only Arabic characters.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
-
 
             return true;
         }

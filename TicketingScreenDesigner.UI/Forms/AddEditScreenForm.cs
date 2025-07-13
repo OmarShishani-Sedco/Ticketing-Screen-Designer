@@ -142,11 +142,11 @@ namespace Ticketing_Screen_Designer.Forms
                 MessageBox.Show("Please select at least one button to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (lstButtons.SelectedItems.Count == lstButtons.Items.Count )
-            {
-                MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            //if (lstButtons.SelectedItems.Count == lstButtons.Items.Count )
+            //{
+            //    MessageBox.Show("Can't have screen with no buttons, please add a button before deleting selected button(s)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
 
             var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes)
@@ -263,6 +263,11 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            if (_buttons.Count == 0)
+            {
+                MessageBox.Show("A screen must contain at least one button. Please add a button before cancelling.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             this.Close();
         }
 

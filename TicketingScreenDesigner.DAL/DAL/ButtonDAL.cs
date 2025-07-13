@@ -31,7 +31,7 @@ public class ButtonDAL : IButtonDAL
                                 ScreenId = Convert.ToInt32(reader["ScreenId"]),
                                 NameEn = reader["NameEnglish"]?.ToString(),
                                 NameAr = reader["NameArabic"]?.ToString(),
-                                Type = reader["ButtonType"]?.ToString(),
+                                Type = (ButtonType)Convert.ToInt32(reader["ButtonType"]),
                                 ServiceId = reader["ServiceId"] != DBNull.Value ? Convert.ToInt32(reader["ServiceId"]) : (int?)null,
                                 MessageEn = reader["MessageEnglish"] != DBNull.Value ? reader["MessageEnglish"].ToString() : null,
                                 MessageAr = reader["MessageArabic"] != DBNull.Value ? reader["MessageArabic"].ToString() : null,
@@ -66,7 +66,7 @@ public class ButtonDAL : IButtonDAL
                     cmd.Parameters.AddWithValue("@ScreenId", button.ScreenId);
                     cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
                     cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
-                    cmd.Parameters.AddWithValue("@ButtonType", button.Type);
+                    cmd.Parameters.AddWithValue("@ButtonType", (int)button.Type);
                     cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
@@ -105,7 +105,7 @@ public class ButtonDAL : IButtonDAL
                     cmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
                     cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
                     cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
-                    cmd.Parameters.AddWithValue("@ButtonType", button.Type);
+                    cmd.Parameters.AddWithValue("@ButtonType", (int)button.Type);
                     cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
