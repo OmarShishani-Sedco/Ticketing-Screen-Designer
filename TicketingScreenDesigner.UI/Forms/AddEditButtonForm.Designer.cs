@@ -82,6 +82,7 @@
             // txtNameEn
             // 
             txtNameEn.Location = new Point(144, 8);
+            txtNameEn.MaxLength = 80;
             txtNameEn.Name = "txtNameEn";
             txtNameEn.Size = new Size(100, 23);
             txtNameEn.TabIndex = 1;
@@ -89,6 +90,7 @@
             // txtNameAr
             // 
             txtNameAr.Location = new Point(386, 8);
+            txtNameAr.MaxLength = 80;
             txtNameAr.Name = "txtNameAr";
             txtNameAr.Size = new Size(100, 23);
             txtNameAr.TabIndex = 2;
@@ -182,8 +184,8 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(panelIssueTicket);
             panel1.Controls.Add(panelShowMessage);
+            panel1.Controls.Add(panelIssueTicket);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(13, 93);
             panel1.Name = "panel1";
@@ -247,6 +249,7 @@
             // txtMsgAr
             // 
             txtMsgAr.Location = new Point(144, 70);
+            txtMsgAr.MaxLength = 200;
             txtMsgAr.Multiline = true;
             txtMsgAr.Name = "txtMsgAr";
             txtMsgAr.Size = new Size(100, 23);
@@ -255,6 +258,7 @@
             // txtMsgEn
             // 
             txtMsgEn.Location = new Point(144, 24);
+            txtMsgEn.MaxLength = 200;
             txtMsgEn.Multiline = true;
             txtMsgEn.Name = "txtMsgEn";
             txtMsgEn.Size = new Size(100, 23);

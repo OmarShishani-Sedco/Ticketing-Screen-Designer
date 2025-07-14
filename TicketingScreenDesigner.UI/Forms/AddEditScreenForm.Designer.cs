@@ -70,6 +70,7 @@
             // txtScreenName
             // 
             txtScreenName.Location = new Point(100, 3);
+            txtScreenName.MaxLength = 80;
             txtScreenName.Name = "txtScreenName";
             txtScreenName.Size = new Size(100, 23);
             txtScreenName.TabIndex = 1;

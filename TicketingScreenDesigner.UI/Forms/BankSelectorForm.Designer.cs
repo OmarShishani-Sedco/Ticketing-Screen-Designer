@@ -36,6 +36,7 @@
             // txtBankName
             // 
             txtBankName.Location = new Point(22, 79);
+            txtBankName.MaxLength = 80;
             txtBankName.Name = "txtBankName";
             txtBankName.Size = new Size(141, 23);
             txtBankName.TabIndex = 1;

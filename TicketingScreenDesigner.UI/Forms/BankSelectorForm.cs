@@ -41,6 +41,11 @@ namespace Ticketing_Screen_Designer.Forms
                     {
                         _bankManager.AddBank(bankName);
                         SelectedBank = _bankManager.GetBankByName(bankName);
+                        if (SelectedBank == null)
+                        {
+                            MessageBox.Show("Failed to create new bank. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                     }
                     else
                     {
