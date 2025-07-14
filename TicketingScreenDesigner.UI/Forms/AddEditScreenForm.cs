@@ -262,7 +262,7 @@ namespace Ticketing_Screen_Designer.Forms
                 }
                
             }
-            if (_buttons.Count == 0)
+            if (_buttons.Count == 0 && _isEditMode)
             {
                 MessageBox.Show("A screen must contain at least one button. Please add a button before exiting form.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 e.Cancel = true;
@@ -272,7 +272,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_buttons.Count == 0)
+            if (_buttons.Count == 0 && _isEditMode)
             {
                 MessageBox.Show("A screen must contain at least one button. Please add a button before cancelling.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
