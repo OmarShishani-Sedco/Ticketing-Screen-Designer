@@ -86,6 +86,7 @@
             chkIsActive.TabIndex = 2;
             chkIsActive.Text = "Set as Active Screen";
             chkIsActive.UseVisualStyleBackColor = true;
+            chkIsActive.CheckedChanged += chkIsActive_CheckedChanged;
             // 
             // btnDeleteButton
             // 

@@ -21,6 +21,7 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly bool _isEditMode;
         private List<ButtonModel> _buttons = new();
         private bool _isSaved = false;
+        private bool _isChanged;
         private ScreenModel _originalScreen;
         private List<ButtonModel> _originalButtons;
 
@@ -74,6 +75,7 @@ namespace Ticketing_Screen_Designer.Forms
 
             RefreshButtonList();
             UpdateButtonActionsEnabled();
+            _isChanged = false;
         }
 
         private void RefreshButtonList()
@@ -99,6 +101,7 @@ namespace Ticketing_Screen_Designer.Forms
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _buttons.Add(form.ResultButton);
+                _isChanged = true;
                 RefreshButtonList();
             }
         }
@@ -116,6 +119,7 @@ namespace Ticketing_Screen_Designer.Forms
                 int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
                 if (index >= 0)
                     _buttons[index] = form.ResultButton;
+                _isChanged = true;
 
                 RefreshButtonList();
             }
@@ -144,6 +148,7 @@ namespace Ticketing_Screen_Designer.Forms
 
             foreach (var btn in buttonsToDelete)
                 _buttons.Remove(btn);
+            _isChanged = true;
 
             RefreshButtonList();
         }
@@ -206,6 +211,7 @@ namespace Ticketing_Screen_Designer.Forms
                 }
 
                 _isSaved = true;
+                _isChanged = false;
                 DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -249,7 +255,7 @@ namespace Ticketing_Screen_Designer.Forms
                     return;
                 }
             }
-            if (!_isSaved && _isEditMode)
+            if (!_isSaved && _isEditMode && _isChanged)
             {
                 var confirm = MessageBox.Show(
                    "You haven't saved the screen yet. Are you sure you want to close? (warning: all changes will be reverted)",
@@ -350,6 +356,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void txtScreenName_TextChanged(object sender, EventArgs e)
         {
+            _isChanged = true;
             if (txtScreenName.Text.Length == txtScreenName.MaxLength)
             {
                 _tooltip.Show(
@@ -362,6 +369,16 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 _tooltip.Hide(txtScreenName);
             }
+        }
+
+        private void chkIsActive_TextChanged(object sender, EventArgs e)
+        {
+            _isChanged = true;
+        }
+
+        private void chkIsActive_CheckedChanged(object sender, EventArgs e)
+        {
+            _isChanged = true;
         }
     }
 }
