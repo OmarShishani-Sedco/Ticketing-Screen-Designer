@@ -105,7 +105,6 @@
             // btnDeleteScreen
             // 
             btnDeleteScreen.AutoSize = true;
-            flowLayoutPanel1.SetFlowBreak(btnDeleteScreen, true);
             btnDeleteScreen.Location = new Point(266, 3);
             btnDeleteScreen.Name = "btnDeleteScreen";
             btnDeleteScreen.Size = new Size(132, 30);
@@ -167,13 +166,15 @@
             listViewScreens.FullRowSelect = true;
             listViewScreens.GridLines = true;
             listViewScreens.Location = new Point(13, 133);
-            listViewScreens.MultiSelect = false;
             listViewScreens.Name = "listViewScreens";
             listViewScreens.Size = new Size(977, 330);
             listViewScreens.TabIndex = 9;
             listViewScreens.UseCompatibleStateImageBehavior = false;
             listViewScreens.View = View.Details;
             listViewScreens.SelectedIndexChanged += listViewScreens_SelectedIndexChanged;
+            listViewScreens.MouseDown += listViewButtons_MouseDown;
+            listViewScreens.MouseMove += listViewButtons_MouseMove;
+            listViewScreens.MouseUp += listViewButtons_MouseUp;
             // 
             // ScreenStatus
             // 

@@ -6,6 +6,10 @@ namespace Ticketing_Screen_Designer.Forms
 {
     public partial class MainForm : Form
     {
+        private Point _selectionStart;
+        private Rectangle _selectionRect;
+        private bool _isSelecting = false;
+
         private readonly BankModel _selectedBank;
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
@@ -118,37 +122,46 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnDeleteScreen_Click(object sender, EventArgs e)
         {
-            var selectedScreen = GetSelectedScreen();
-            if (selectedScreen == null)
+            if (listViewScreens.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Please select a screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select at least one screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             var confirm = MessageBox.Show(
-                $"Are you sure you want to delete screen '{selectedScreen.ScreenName}'?",
+                "Are you sure you want to delete the selected screen(s)?",
                 "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            if (confirm == DialogResult.Yes)
+            if (confirm != DialogResult.Yes)
+                return;
+
+            try
             {
-                try
+                foreach (ListViewItem item in listViewScreens.SelectedItems)
                 {
-                    _screenManager.DeleteScreen(selectedScreen.ScreenId);
-                    LoadScreens();
-                    UpdateStatus("Screen deleted successfully.");
+                    if (item.Tag is ScreenModel screen)
+                    {
+                        _screenManager.DeleteScreen(screen.ScreenId);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    UIExceptionHandler.Handle(ex, "MainForm_DeleteScreen");
-                }
+
+                LoadScreens();
+                UpdateStatus("Screen(s) deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "MainForm_DeleteScreens");
             }
         }
 
 
+
         private void UpdateScreenButtonsEnabled()
         {
-            btnEditScreen.Enabled = listViewScreens.SelectedItems.Count == 1;
-            btnDeleteScreen.Enabled = listViewScreens.SelectedItems.Count == 1;
+            int selectedCount = listViewScreens.SelectedItems.Count;
+
+            btnEditScreen.Enabled = selectedCount == 1;
+            btnDeleteScreen.Enabled = selectedCount > 0;
         }
 
 
@@ -175,21 +188,58 @@ namespace Ticketing_Screen_Designer.Forms
             statusClearTimer.Stop();   
             statusClearTimer.Start();  
         }
-    }
 
 
 
-
-
-    // Helper class for ListBox binding
-    public class ScreenDisplayItem
-    {
-        public string DisplayText { get; set; }
-        public ScreenModel Screen { get; set; }
-
-        public override string ToString()
+        //Utility methods for custom design
+        private void listViewButtons_MouseDown(object sender, MouseEventArgs e)
         {
-            return DisplayText;
+            if (e.Button == MouseButtons.Left)
+            {
+                _isSelecting = true;
+                _selectionStart = listViewScreens.PointToScreen(e.Location);
+                _selectionRect = new Rectangle(_selectionStart, new Size(0, 0));
+            }
+        }
+
+        private void listViewButtons_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isSelecting)
+            {
+                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
+
+                Point currentPoint = listViewScreens.PointToScreen(e.Location);
+                _selectionRect = GetNormalizedRectangle(_selectionStart, currentPoint);
+
+                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
+            }
+        }
+
+        private void listViewButtons_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_isSelecting)
+            {
+                _isSelecting = false;
+                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
+
+                Rectangle selectionBox = listViewScreens.RectangleToClient(_selectionRect);
+                foreach (ListViewItem item in listViewScreens.Items)
+                {
+                    if (item.Bounds.IntersectsWith(selectionBox))
+                    {
+                        item.Selected = true;
+                    }
+                }
+            }
+        }
+
+        private Rectangle GetNormalizedRectangle(Point p1, Point p2)
+        {
+            return new Rectangle(
+                Math.Min(p1.X, p2.X),
+                Math.Min(p1.Y, p2.Y),
+                Math.Abs(p1.X - p2.X),
+                Math.Abs(p1.Y - p2.Y));
         }
     }
 }

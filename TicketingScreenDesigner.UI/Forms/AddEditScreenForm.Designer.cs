@@ -74,6 +74,7 @@
             txtScreenName.Name = "txtScreenName";
             txtScreenName.Size = new Size(100, 23);
             txtScreenName.TabIndex = 1;
+            txtScreenName.TextChanged += txtScreenName_TextChanged;
             // 
             // chkIsActive
             // 
@@ -220,6 +221,9 @@
             listViewButtons.UseCompatibleStateImageBehavior = false;
             listViewButtons.View = View.Details;
             listViewButtons.SelectedIndexChanged += listViewButtons_SelectedIndexChanged;
+            listViewButtons.MouseDown += listViewButtons_MouseDown;
+            listViewButtons.MouseMove += listViewButtons_MouseMove;
+            listViewButtons.MouseUp += listViewButtons_MouseUp;
             // 
             // EnButtonName
             // 

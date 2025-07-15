@@ -40,6 +40,7 @@
             txtBankName.Name = "txtBankName";
             txtBankName.Size = new Size(141, 23);
             txtBankName.TabIndex = 1;
+            txtBankName.TextChanged += txtBankName_TextChanged;
             // 
             // btnContinue
             // 

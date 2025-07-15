@@ -10,6 +10,7 @@ namespace Ticketing_Screen_Designer.Forms
     {
         private readonly IButtonManager _buttonManager;
         private readonly IServiceManager _serviceManager;
+        private readonly ToolTip _tooltip = new ToolTip();
         private readonly int _screenId;
         private readonly int _bankId;
         private readonly ButtonModel _existingButton;
@@ -27,6 +28,8 @@ namespace Ticketing_Screen_Designer.Forms
             _existingButton = existingButton;
             _buttonManager = buttonManager;
             _serviceManager = serviceManager;
+            _tooltip.IsBalloon = true;
+            _tooltip.ToolTipIcon = ToolTipIcon.Warning;
 
             InitializeForm();
         }
@@ -199,6 +202,70 @@ namespace Ticketing_Screen_Designer.Forms
             }
 
             return true;
+        }
+
+        private void txtNameEn_TextChanged(object sender, EventArgs e)
+        {
+            if (txtNameEn.Text.Length == txtNameEn.MaxLength)
+            {
+                _tooltip.Show(
+                    $"Maximum length of {txtNameEn.MaxLength} characters reached.",
+                    txtNameEn,
+                    90, -65,
+                    3000);
+            }
+            else
+            {
+                _tooltip.Hide(txtNameEn);
+            }
+        }
+
+        private void txtNameAr_TextChanged(object sender, EventArgs e)
+        {
+            if (txtNameAr.Text.Length == txtNameAr.MaxLength)
+            {
+                _tooltip.Show(
+                    $"Maximum length of {txtNameAr.MaxLength} characters reached.",
+                    txtNameAr,
+                    90, -65,
+                    3000);
+            }
+            else
+            {
+                _tooltip.Hide(txtNameAr);
+            }
+        }
+
+        private void txtMsgEn_TextChanged(object sender, EventArgs e)
+        {
+            if (txtMsgEn.Text.Length == txtMsgEn.MaxLength)
+            {
+                _tooltip.Show(
+                    $"Maximum length of {txtMsgEn.MaxLength} characters reached.",
+                    txtMsgEn,
+                    90, -65,
+                    3000);
+            }
+            else
+            {
+                _tooltip.Hide(txtMsgEn);
+            }
+        }
+
+        private void txtMsgAr_TextChanged(object sender, EventArgs e)
+        {
+            if (txtMsgAr.Text.Length == txtMsgAr.MaxLength)
+            {
+                _tooltip.Show(
+                    $"Maximum length of {txtMsgAr.MaxLength} characters reached.",
+                    txtMsgAr,
+                    90, -65,
+                    3000);
+            }
+            else
+            {
+                _tooltip.Hide(txtMsgAr);
+            }
         }
     }
 }

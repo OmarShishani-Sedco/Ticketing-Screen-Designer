@@ -64,24 +64,13 @@ namespace Ticketing_Screen_Designer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (var bankForm = new BankSelectorForm(bankManager))
-            {
-                DialogResult result = bankForm.ShowDialog();
+            Application.Run(new BankSelectorForm(
+                          bankManager,
+                          screenManager,
+                          buttonManager,
+                          serviceManager
+                       ));
 
-                if (result == DialogResult.OK && bankForm.SelectedBank != null)
-                {
-                    Application.Run(new MainForm(
-                        bankForm.SelectedBank,
-                        screenManager,
-                        buttonManager,
-                        serviceManager
-                    ));
-                }
-                else
-                {
-                    Application.Exit();
-                }
-            }
         }
     }
 }

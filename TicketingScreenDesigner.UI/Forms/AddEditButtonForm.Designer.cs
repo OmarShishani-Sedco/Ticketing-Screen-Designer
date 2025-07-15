@@ -41,20 +41,20 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             panel1 = new Panel();
-            panelIssueTicket = new Panel();
-            label5 = new Label();
-            cmbService = new ComboBox();
             panelShowMessage = new Panel();
             label6 = new Label();
             txtMsgAr = new TextBox();
             txtMsgEn = new TextBox();
             label4 = new Label();
+            panelIssueTicket = new Panel();
+            label5 = new Label();
+            cmbService = new ComboBox();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             panel1.SuspendLayout();
-            panelIssueTicket.SuspendLayout();
             panelShowMessage.SuspendLayout();
+            panelIssueTicket.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -86,6 +86,7 @@
             txtNameEn.Name = "txtNameEn";
             txtNameEn.Size = new Size(100, 23);
             txtNameEn.TabIndex = 1;
+            txtNameEn.TextChanged += txtNameEn_TextChanged;
             // 
             // txtNameAr
             // 
@@ -94,6 +95,7 @@
             txtNameAr.Name = "txtNameAr";
             txtNameAr.Size = new Size(100, 23);
             txtNameAr.TabIndex = 2;
+            txtNameAr.TextChanged += txtNameAr_TextChanged;
             // 
             // label3
             // 
@@ -192,35 +194,6 @@
             panel1.Size = new Size(751, 194);
             panel1.TabIndex = 10;
             // 
-            // panelIssueTicket
-            // 
-            panelIssueTicket.Controls.Add(label5);
-            panelIssueTicket.Controls.Add(cmbService);
-            panelIssueTicket.Dock = DockStyle.Fill;
-            panelIssueTicket.Location = new Point(0, 0);
-            panelIssueTicket.Name = "panelIssueTicket";
-            panelIssueTicket.Size = new Size(751, 194);
-            panelIssueTicket.TabIndex = 7;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 11.25F);
-            label5.Location = new Point(8, 23);
-            label5.Name = "label5";
-            label5.Size = new Size(100, 20);
-            label5.TabIndex = 9;
-            label5.Text = "Select Service\n";
-            // 
-            // cmbService
-            // 
-            cmbService.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbService.FormattingEnabled = true;
-            cmbService.Location = new Point(8, 46);
-            cmbService.Name = "cmbService";
-            cmbService.Size = new Size(121, 23);
-            cmbService.TabIndex = 6;
-            // 
             // panelShowMessage
             // 
             panelShowMessage.AutoSize = true;
@@ -254,6 +227,7 @@
             txtMsgAr.Name = "txtMsgAr";
             txtMsgAr.Size = new Size(100, 23);
             txtMsgAr.TabIndex = 5;
+            txtMsgAr.TextChanged += txtMsgAr_TextChanged;
             // 
             // txtMsgEn
             // 
@@ -263,6 +237,7 @@
             txtMsgEn.Name = "txtMsgEn";
             txtMsgEn.Size = new Size(100, 23);
             txtMsgEn.TabIndex = 4;
+            txtMsgEn.TextChanged += txtMsgEn_TextChanged;
             // 
             // label4
             // 
@@ -273,6 +248,35 @@
             label4.Size = new Size(100, 20);
             label4.TabIndex = 8;
             label4.Text = "Message (EN)\n";
+            // 
+            // panelIssueTicket
+            // 
+            panelIssueTicket.Controls.Add(label5);
+            panelIssueTicket.Controls.Add(cmbService);
+            panelIssueTicket.Dock = DockStyle.Fill;
+            panelIssueTicket.Location = new Point(0, 0);
+            panelIssueTicket.Name = "panelIssueTicket";
+            panelIssueTicket.Size = new Size(751, 194);
+            panelIssueTicket.TabIndex = 7;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 11.25F);
+            label5.Location = new Point(8, 23);
+            label5.Name = "label5";
+            label5.Size = new Size(100, 20);
+            label5.TabIndex = 9;
+            label5.Text = "Select Service\n";
+            // 
+            // cmbService
+            // 
+            cmbService.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbService.FormattingEnabled = true;
+            cmbService.Location = new Point(8, 46);
+            cmbService.Name = "cmbService";
+            cmbService.Size = new Size(121, 23);
+            cmbService.TabIndex = 6;
             // 
             // AddEditButtonForm
             // 
@@ -290,10 +294,10 @@
             flowLayoutPanel2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            panelIssueTicket.ResumeLayout(false);
-            panelIssueTicket.PerformLayout();
             panelShowMessage.ResumeLayout(false);
             panelShowMessage.PerformLayout();
+            panelIssueTicket.ResumeLayout(false);
+            panelIssueTicket.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }

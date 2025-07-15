@@ -6,5 +6,17 @@
         public int BankId { get; set; }
         public string ScreenName { get; set; }
         public bool IsActive { get; set; }
+
+        public ScreenModel Clone()
+        {
+            return new ScreenModel
+            {
+                ScreenId = this.ScreenId,
+                BankId = this.BankId,
+                ScreenName = this.ScreenName,
+                IsActive = this.IsActive
+            };
+        }
+        
     }
 }

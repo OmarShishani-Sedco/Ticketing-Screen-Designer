@@ -16,6 +16,22 @@
         public string? MessageEn { get; set; } // Only if Type = Show Message
         public string? MessageAr { get; set; }
 
-        
+        public ButtonModel Clone()
+        {
+            return new ButtonModel
+            {
+                ButtonId = this.ButtonId,
+                ScreenId = this.ScreenId,
+                NameEn = this.NameEn,
+                NameAr = this.NameAr,
+                Type = this.Type,
+                MessageEn = this.MessageEn,
+                MessageAr = this.MessageAr,
+                ServiceId = this.ServiceId,
+                BankId = this.BankId
+            };
+        }
+
+
     }
 }
