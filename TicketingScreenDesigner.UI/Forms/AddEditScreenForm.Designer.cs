@@ -222,9 +222,6 @@
             listViewButtons.UseCompatibleStateImageBehavior = false;
             listViewButtons.View = View.Details;
             listViewButtons.SelectedIndexChanged += listViewButtons_SelectedIndexChanged;
-            listViewButtons.MouseDown += listViewButtons_MouseDown;
-            listViewButtons.MouseMove += listViewButtons_MouseMove;
-            listViewButtons.MouseUp += listViewButtons_MouseUp;
             // 
             // EnButtonName
             // 

@@ -35,6 +35,7 @@
             btnAddScreen = new Button();
             btnEditScreen = new Button();
             btnDeleteScreen = new Button();
+            btnRefreshScreens = new Button();
             lblBankName = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
             label1 = new Label();
@@ -74,6 +75,7 @@
             flowLayoutPanel1.Controls.Add(btnAddScreen);
             flowLayoutPanel1.Controls.Add(btnEditScreen);
             flowLayoutPanel1.Controls.Add(btnDeleteScreen);
+            flowLayoutPanel1.Controls.Add(btnRefreshScreens);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -112,6 +114,16 @@
             btnDeleteScreen.Text = "Delete Screen";
             btnDeleteScreen.UseVisualStyleBackColor = true;
             btnDeleteScreen.Click += btnDeleteScreen_Click;
+            // 
+            // btnRefreshScreens
+            // 
+            btnRefreshScreens.Image = Properties.Resources.refresh_15;
+            btnRefreshScreens.Location = new Point(404, 3);
+            btnRefreshScreens.Name = "btnRefreshScreens";
+            btnRefreshScreens.Size = new Size(30, 30);
+            btnRefreshScreens.TabIndex = 4;
+            btnRefreshScreens.UseVisualStyleBackColor = true;
+            btnRefreshScreens.Click += btnRefreshScreens_Click;
             // 
             // lblBankName
             // 
@@ -160,6 +172,7 @@
             // 
             // listViewScreens
             // 
+            listViewScreens.CheckBoxes = true;
             listViewScreens.Columns.AddRange(new ColumnHeader[] { ScreenName, ScreenStatus });
             listViewScreens.Dock = DockStyle.Fill;
             listViewScreens.Font = new Font("Segoe UI", 12F);
@@ -172,9 +185,6 @@
             listViewScreens.UseCompatibleStateImageBehavior = false;
             listViewScreens.View = View.Details;
             listViewScreens.SelectedIndexChanged += listViewScreens_SelectedIndexChanged;
-            listViewScreens.MouseDown += listViewButtons_MouseDown;
-            listViewScreens.MouseMove += listViewButtons_MouseMove;
-            listViewScreens.MouseUp += listViewButtons_MouseUp;
             // 
             // ScreenStatus
             // 
@@ -239,5 +249,6 @@
         private ToolStripStatusLabel StatusLabel;
         private ListView listViewScreens;
         private ColumnHeader ScreenStatus;
+        private Button btnRefreshScreens;
     }
 }

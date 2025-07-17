@@ -1,7 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
-using TicketingScreenDesigner.Common.Helpers;
+using System.Data;
 using System.IO;
 using System.Runtime.CompilerServices;
+using TicketingScreenDesigner.Common.Helpers;
 
 namespace Ticketing_Screen_Designer.UIHelpers
 {
@@ -13,6 +14,11 @@ namespace Ticketing_Screen_Designer.UIHelpers
 
             switch (ex)
             {
+                case DBConcurrencyException:
+                    MessageBox.Show($"The record you were trying to modify has been changed or deleted by another user. {message}",
+                                    "Concurrency Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    break;
+
                 case SqlException:
                     MessageBox.Show($"Failed to connect to the database. Please check your network or database server. {message}",
                                     "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

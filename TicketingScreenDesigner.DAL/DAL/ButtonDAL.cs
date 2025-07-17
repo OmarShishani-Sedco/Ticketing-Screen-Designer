@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using TicketingScreenDesigner.Common.Helpers;
-using TicketingScreenDesigner.DAL;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
@@ -14,7 +14,9 @@ public class ButtonDAL : IButtonDAL
         {
             using (var conn = DatabaseHelper.GetConnection())
             {
-                string query = "SELECT * FROM Button WHERE ScreenId = @ScreenId";
+                string query = @"SELECT ButtonId, ScreenId, NameEnglish, NameArabic, ButtonType, 
+                                        ServiceId, MessageEnglish, MessageArabic, BankId, RowVersion
+                                 FROM Button WHERE ScreenId = @ScreenId";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -35,6 +37,7 @@ public class ButtonDAL : IButtonDAL
                                 ServiceId = reader["ServiceId"] != DBNull.Value ? Convert.ToInt32(reader["ServiceId"]) : (int?)null,
                                 MessageEn = reader["MessageEnglish"] != DBNull.Value ? reader["MessageEnglish"].ToString() : null,
                                 MessageAr = reader["MessageArabic"] != DBNull.Value ? reader["MessageArabic"].ToString() : null,
+                                RowVersion = (byte[])reader["RowVersion"]
                             });
                         }
                     }
@@ -58,8 +61,8 @@ public class ButtonDAL : IButtonDAL
             {
                 string query = @"
                 INSERT INTO Button (ScreenId, NameEnglish, NameArabic, ButtonType, ServiceId, MessageEnglish, MessageArabic, BankId)
-                VALUES (@ScreenId, @NameEnglish, @NameArabic, @ButtonType, @ServiceId, @MessageEnglish, @MessageArabic, @BankId);
-                SELECT SCOPE_IDENTITY();";
+                OUTPUT INSERTED.ButtonId, INSERTED.RowVersion
+                VALUES (@ScreenId, @NameEnglish, @NameArabic, @ButtonType, @ServiceId, @MessageEnglish, @MessageArabic, @BankId);";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -73,7 +76,17 @@ public class ButtonDAL : IButtonDAL
                     cmd.Parameters.AddWithValue("@BankId", button.BankId);
 
                     conn.Open();
-                    return Convert.ToInt32(cmd.ExecuteScalar());
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            button.ButtonId = reader.GetInt32(0);
+                            button.RowVersion = (byte[])reader["RowVersion"];
+                        }
+                    }
+
+                    return button.ButtonId;
                 }
             }
         }
@@ -98,7 +111,9 @@ public class ButtonDAL : IButtonDAL
                     ServiceId = @ServiceId,
                     MessageEnglish = @MessageEnglish,
                     MessageArabic = @MessageArabic
-                WHERE ButtonId = @ButtonId";
+                WHERE ButtonId = @ButtonId AND RowVersion = @RowVersion;
+
+                SELECT RowVersion FROM Button WHERE ButtonId = @ButtonId;";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -109,9 +124,22 @@ public class ButtonDAL : IButtonDAL
                     cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@RowVersion", button.RowVersion);
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (!reader.HasRows)
+                        {
+                            throw new DBConcurrencyException("The button was modified by another user.");
+                        }
+
+                        if (reader.Read())
+                        {
+                            button.RowVersion = (byte[])reader["RowVersion"];
+                        }
+                    }
                 }
             }
         }
@@ -122,19 +150,26 @@ public class ButtonDAL : IButtonDAL
         }
     }
 
-    public void DeleteButton(int buttonId)
+    public void DeleteButton(int buttonId, byte[] rowVersion)
     {
         try
         {
             using (var conn = DatabaseHelper.GetConnection())
             {
-                string query = "DELETE FROM Button WHERE ButtonId = @ButtonId";
+                string query = "DELETE FROM Button WHERE ButtonId = @ButtonId AND RowVersion = @RowVersion";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@ButtonId", buttonId);
+                    cmd.Parameters.AddWithValue("@RowVersion", rowVersion);
+
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+                    int affectedRows = cmd.ExecuteNonQuery();
+
+                    if (affectedRows == 0)
+                    {
+                        throw new DBConcurrencyException("The button was modified or deleted by another user.");
+                    }
                 }
             }
         }

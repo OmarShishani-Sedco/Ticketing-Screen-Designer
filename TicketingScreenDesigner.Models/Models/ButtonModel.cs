@@ -15,6 +15,8 @@
 
         public string? MessageEn { get; set; } // Only if Type = Show Message
         public string? MessageAr { get; set; }
+        public byte[] RowVersion { get; set; } 
+
 
         public ButtonModel Clone()
         {

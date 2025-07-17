@@ -7,9 +7,10 @@ namespace TicketingScreenDesigner.DAL.DAL.Interfaces
     {
         List<ScreenModel> GetScreensByBankId(int bankId);
         ScreenModel InsertScreen(ScreenModel screen);
-        void DeleteScreen(int screenId);
+        void DeleteScreen(int screenId, byte[] rowVersion);
         void UpdateScreen(ScreenModel screen);
         void SetActiveScreen(int bankId, int screenId);
-        void DeactivateAllScreensForBank(int bankId);
+        ScreenModel GetScreenByScreenId(int screenId);
+        void DeactivateAllScreensForBankExcluding(int bankId, int screenIdToExclude);
     }
 }

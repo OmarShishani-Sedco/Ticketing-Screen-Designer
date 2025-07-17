@@ -8,7 +8,8 @@ namespace TicketingScreenDesigner.BLL.BLL.Interfaces
         List<ScreenModel> GetScreensForBank(int bankId);
         ScreenModel AddScreen(ScreenModel screen);
         void UpdateScreen(ScreenModel screen);
-        void DeleteScreen(int screenId);
+        void DeleteScreen(int screenId, byte[] rowVersion);
         void SetActiveScreen(int bankId, int screenId);
+        ScreenModel GetScreenById(int screenId);
     }
 }

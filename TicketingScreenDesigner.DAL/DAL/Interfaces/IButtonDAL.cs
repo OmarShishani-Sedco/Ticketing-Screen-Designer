@@ -8,7 +8,7 @@ namespace TicketingScreenDesigner.DAL.DAL.Interfaces
         List<ButtonModel> GetButtonsByScreenId(int screenId);
         int AddButton(ButtonModel button);
         void UpdateButton(ButtonModel button);
-        void DeleteButton(int buttonId);
+        void DeleteButton(int buttonId, byte[] rowVersion);
         void DeleteButtonsByScreenId(int screenId);
     }
 }

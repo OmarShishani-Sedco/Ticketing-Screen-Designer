@@ -8,7 +8,7 @@ namespace TicketingScreenDesigner.BLL.BLL.Interfaces
         List<ButtonModel> GetButtonsForScreen(int screenId);
         ButtonModel AddButton(ButtonModel button);
         void UpdateButton(ButtonModel button);
-        void DeleteButton(int buttonId);
+        void DeleteButton(int buttonId, byte[] rowVersion);
         void DeleteButtonsByScreenId(int screenId);
     }
 }

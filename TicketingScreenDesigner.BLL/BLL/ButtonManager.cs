@@ -55,11 +55,11 @@ namespace TicketingScreenDesigner.BLL.BLL
             }
         }
 
-        public void DeleteButton(int buttonId)
+        public void DeleteButton(int buttonId, byte[] rowVersion)
         {
             try
             {
-                _dal.DeleteButton(buttonId);
+                _dal.DeleteButton(buttonId, rowVersion);
             }
             catch (Exception ex)
             {

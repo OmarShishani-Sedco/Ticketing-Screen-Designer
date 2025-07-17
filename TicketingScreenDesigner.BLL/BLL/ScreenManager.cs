@@ -29,13 +29,26 @@ namespace TicketingScreenDesigner.BLL.BLL
             }
         }
 
+        public ScreenModel GetScreenById(int screenId)
+        {
+            try
+            {
+                return _screenDAL.GetScreenByScreenId(screenId);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenManager.GetScreenById");
+                throw;
+            }
+        }
+
         public ScreenModel AddScreen(ScreenModel screen)
         {
             try
             {
                 if (screen.IsActive)
                 {
-                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
+                    _screenDAL.DeactivateAllScreensForBankExcluding(screen.BankId, screen.ScreenId);
                 }
 
                 return _screenDAL.InsertScreen(screen);
@@ -53,7 +66,7 @@ namespace TicketingScreenDesigner.BLL.BLL
             {
                 if (screen.IsActive)
                 {
-                    _screenDAL.DeactivateAllScreensForBank(screen.BankId);
+                    _screenDAL.DeactivateAllScreensForBankExcluding(screen.BankId, screen.ScreenId);
                 }
 
                 _screenDAL.UpdateScreen(screen);
@@ -65,13 +78,13 @@ namespace TicketingScreenDesigner.BLL.BLL
             }
         }
 
-        public void DeleteScreen(int screenId)
+        public void DeleteScreen(int screenId, byte[] rowVersion)
         {
             try
             {
                 // First delete all buttons associated with the screen
                 _buttonDAL.DeleteButtonsByScreenId(screenId);
-                _screenDAL.DeleteScreen(screenId);
+                _screenDAL.DeleteScreen(screenId, rowVersion);
             }
             catch (Exception ex)
             {

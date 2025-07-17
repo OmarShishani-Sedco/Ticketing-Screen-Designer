@@ -6,6 +6,8 @@
         public int BankId { get; set; }
         public string ScreenName { get; set; }
         public bool IsActive { get; set; }
+        public byte[] RowVersion { get; set; }
+
 
         public ScreenModel Clone()
         {

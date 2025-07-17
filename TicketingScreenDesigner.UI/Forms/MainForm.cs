@@ -1,4 +1,5 @@
-﻿using Ticketing_Screen_Designer.UIHelpers;
+﻿using System.Data;
+using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
@@ -6,10 +7,6 @@ namespace Ticketing_Screen_Designer.Forms
 {
     public partial class MainForm : Form
     {
-        private Point _selectionStart;
-        private Rectangle _selectionRect;
-        private bool _isSelecting = false;
-
         private readonly BankModel _selectedBank;
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
@@ -89,6 +86,7 @@ namespace Ticketing_Screen_Designer.Forms
                     LoadScreens(); // Refresh the list
                     UpdateStatus("Screen added successfully.");
                 }
+                
             }
         }
         private ScreenModel GetSelectedScreen()
@@ -108,17 +106,46 @@ namespace Ticketing_Screen_Designer.Forms
                 return;
             }
 
-            using (var editForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager, selectedScreen))
+            try
             {
-                var result = editForm.ShowDialog();
-
-                if (result == DialogResult.OK)
+                // Re-fetch latest screen from DB
+                var freshScreen = _screenManager.GetScreenById(selectedScreen.ScreenId);
+                if (freshScreen == null)
                 {
+                    MessageBox.Show("This screen has been deleted by another user. (Refreshing Screens)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     LoadScreens();
-                    UpdateStatus("Screen edited successfully.");
+                    return;
+                }
+
+                if (!freshScreen.RowVersion.SequenceEqual(selectedScreen.RowVersion))
+                {
+                    MessageBox.Show("This screen has been modified by another user. (Refreshing Screens)", "Concurrency Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LoadScreens();
+                    return;
+                }
+
+                using (var editForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager, freshScreen))
+                {
+                    var result = editForm.ShowDialog();
+
+                    if (result == DialogResult.OK)
+                    {
+                        LoadScreens();
+                        UpdateStatus("Screen edited successfully.");
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        LoadScreens();
+                        UpdateStatus("Please try again!");
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "MainForm_EditScreen");
+            }
         }
+
 
         private void btnDeleteScreen_Click(object sender, EventArgs e)
         {
@@ -141,12 +168,17 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     if (item.Tag is ScreenModel screen)
                     {
-                        _screenManager.DeleteScreen(screen.ScreenId);
+                        _screenManager.DeleteScreen(screen.ScreenId, screen.RowVersion);
                     }
                 }
 
                 LoadScreens();
                 UpdateStatus("Screen(s) deleted successfully.");
+            }
+            catch (DBConcurrencyException ex)
+            {
+                UIExceptionHandler.Handle(ex, "MainForm_DeleteScreens", "(Refreshing screens)");
+                LoadScreens();
             }
             catch (Exception ex)
             {
@@ -185,61 +217,25 @@ namespace Ticketing_Screen_Designer.Forms
         {
             statusStrip.Visible = true;
             StatusLabel.Text = message;
-            statusClearTimer.Stop();   
-            statusClearTimer.Start();  
+            statusClearTimer.Stop();
+            statusClearTimer.Start();
         }
 
-
-
-        //Utility methods for custom design
-        private void listViewButtons_MouseDown(object sender, MouseEventArgs e)
+        private void btnRefreshScreens_Click(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            try
             {
-                _isSelecting = true;
-                _selectionStart = listViewScreens.PointToScreen(e.Location);
-                _selectionRect = new Rectangle(_selectionStart, new Size(0, 0));
+                LoadScreens();
+                UpdateStatus("Screens refreshed successfully.");
+            }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "MainForm_RefreshScreens");
             }
         }
 
-        private void listViewButtons_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isSelecting)
-            {
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
 
-                Point currentPoint = listViewScreens.PointToScreen(e.Location);
-                _selectionRect = GetNormalizedRectangle(_selectionStart, currentPoint);
 
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
-            }
-        }
-
-        private void listViewButtons_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (_isSelecting)
-            {
-                _isSelecting = false;
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
-
-                Rectangle selectionBox = listViewScreens.RectangleToClient(_selectionRect);
-                foreach (ListViewItem item in listViewScreens.Items)
-                {
-                    if (item.Bounds.IntersectsWith(selectionBox))
-                    {
-                        item.Selected = true;
-                    }
-                }
-            }
-        }
-
-        private Rectangle GetNormalizedRectangle(Point p1, Point p2)
-        {
-            return new Rectangle(
-                Math.Min(p1.X, p2.X),
-                Math.Min(p1.Y, p2.Y),
-                Math.Abs(p1.X - p2.X),
-                Math.Abs(p1.Y - p2.Y));
-        }
+       
     }
 }

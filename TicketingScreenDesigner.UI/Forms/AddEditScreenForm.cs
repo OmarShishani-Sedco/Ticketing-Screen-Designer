@@ -1,6 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using System.Data;
+using System.Windows.Forms;
 using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -8,11 +10,6 @@ namespace Ticketing_Screen_Designer.Forms
 
     public partial class AddEditScreenForm : Form
     {
-        private Point _selectionStart;
-        private Rectangle _selectionRect;
-        private bool _isSelecting = false;
-        private readonly ToolTip _tooltip = new ToolTip();
-
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
         private readonly IServiceManager _serviceManager;
@@ -24,6 +21,7 @@ namespace Ticketing_Screen_Designer.Forms
         private bool _isChanged;
         private ScreenModel _originalScreen;
         private List<ButtonModel> _originalButtons;
+        private readonly ToolTip _tooltip = new ToolTip();
 
         public AddEditScreenForm(
             BankModel bank,
@@ -176,14 +174,16 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     _screenManager.UpdateScreen(_screen);
 
+                    // existing buttons are the ones already in the database for this screen
                     var existingButtons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
                     var existingIds = existingButtons.Select(b => b.ButtonId).ToHashSet();
+                    // current buttons are the ones in the form (in-memory), which may include new or updated buttons
                     var currentIds = _buttons.Where(b => b.ButtonId != 0).Select(b => b.ButtonId).ToHashSet();
 
                     foreach (var btn in existingButtons)
                     {
                         if (!currentIds.Contains(btn.ButtonId))
-                            _buttonManager.DeleteButton(btn.ButtonId);
+                            _buttonManager.DeleteButton(btn.ButtonId, btn.RowVersion);
                     }
 
                     foreach (var btn in _buttons)
@@ -213,6 +213,12 @@ namespace Ticketing_Screen_Designer.Forms
                 _isSaved = true;
                 _isChanged = false;
                 DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (DBConcurrencyException ex)
+            {
+                UIExceptionHandler.Handle(ex, "AddEditScreenForm_Save", "Please try again!");
+                DialogResult = DialogResult.No;
                 this.Close();
             }
             catch (Exception ex)
@@ -302,57 +308,13 @@ namespace Ticketing_Screen_Designer.Forms
             statusClearTimer.Start();
         }
 
-
-        //Utility methods for custom design
-        private void listViewButtons_MouseDown(object sender, MouseEventArgs e)
+        private void chkIsActive_CheckedChanged(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                _isSelecting = true;
-                _selectionStart = listViewButtons.PointToScreen(e.Location);
-                _selectionRect = new Rectangle(_selectionStart, new Size(0, 0));
-            }
+            _isChanged = true;
         }
 
-        private void listViewButtons_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isSelecting)
-            {
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
 
-                Point currentPoint = listViewButtons.PointToScreen(e.Location);
-                _selectionRect = GetNormalizedRectangle(_selectionStart, currentPoint);
-
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
-            }
-        }
-
-        private void listViewButtons_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (_isSelecting)
-            {
-                _isSelecting = false;
-                ControlPaint.DrawReversibleFrame(_selectionRect, Color.Black, FrameStyle.Dashed);
-
-                Rectangle selectionBox = listViewButtons.RectangleToClient(_selectionRect);
-                foreach (ListViewItem item in listViewButtons.Items)
-                {
-                    if (item.Bounds.IntersectsWith(selectionBox))
-                    {
-                        item.Selected = true;
-                    }
-                }
-            }
-        }
-
-        private Rectangle GetNormalizedRectangle(Point p1, Point p2)
-        {
-            return new Rectangle(
-                Math.Min(p1.X, p2.X),
-                Math.Min(p1.Y, p2.Y),
-                Math.Abs(p1.X - p2.X),
-                Math.Abs(p1.Y - p2.Y));
-        }
+       
 
         private void txtScreenName_TextChanged(object sender, EventArgs e)
         {
@@ -371,14 +333,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
-        private void chkIsActive_TextChanged(object sender, EventArgs e)
-        {
-            _isChanged = true;
-        }
 
-        private void chkIsActive_CheckedChanged(object sender, EventArgs e)
-        {
-            _isChanged = true;
-        }
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.DAL.DAL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
@@ -16,7 +17,8 @@ namespace TicketingScreenDesigner.DAL.DAL
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
-                    string query = "SELECT ScreenId, BankId, ScreenName, IsActive FROM Screen WHERE BankId = @BankId";
+                    string query = @"SELECT ScreenId, BankId, ScreenName, IsActive, RowVersion 
+                                     FROM Screen WHERE BankId = @BankId";
                     using (var cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@BankId", bankId);
@@ -29,7 +31,8 @@ namespace TicketingScreenDesigner.DAL.DAL
                                     ScreenId = reader.GetInt32(0),
                                     BankId = reader.GetInt32(1),
                                     ScreenName = reader.GetString(2),
-                                    IsActive = reader.GetBoolean(3)
+                                    IsActive = reader.GetBoolean(3),
+                                    RowVersion = (byte[])reader["RowVersion"]
                                 });
                             }
                         }
@@ -45,6 +48,43 @@ namespace TicketingScreenDesigner.DAL.DAL
             }
         }
 
+        public ScreenModel GetScreenByScreenId(int screenId)
+        {
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    string query = @"SELECT ScreenId, BankId, ScreenName, IsActive, RowVersion 
+                                     FROM Screen WHERE ScreenId = @ScreenId";
+                    using (var cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ScreenId", screenId);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new ScreenModel
+                                {
+                                    ScreenId = reader.GetInt32(0),
+                                    BankId = reader.GetInt32(1),
+                                    ScreenName = reader.GetString(2),
+                                    IsActive = reader.GetBoolean(3),
+                                    RowVersion = (byte[])reader["RowVersion"]
+                                };
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenDAL.GetScreenByScreenId");
+                throw;
+            }
+        }
+
         public ScreenModel InsertScreen(ScreenModel screen)
         {
             try
@@ -52,9 +92,10 @@ namespace TicketingScreenDesigner.DAL.DAL
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
-                    string query = @"INSERT INTO Screen (BankId, ScreenName, IsActive) 
-                                     VALUES (@BankId, @ScreenName, @IsActive);
-                                     SELECT SCOPE_IDENTITY();";
+                    string query = @"
+                        INSERT INTO Screen (BankId, ScreenName, IsActive) 
+                        OUTPUT INSERTED.ScreenId, INSERTED.RowVersion
+                        VALUES (@BankId, @ScreenName, @IsActive);";
 
                     using (var cmd = new SqlCommand(query, conn))
                     {
@@ -62,7 +103,14 @@ namespace TicketingScreenDesigner.DAL.DAL
                         cmd.Parameters.AddWithValue("@ScreenName", screen.ScreenName);
                         cmd.Parameters.AddWithValue("@IsActive", screen.IsActive);
 
-                        screen.ScreenId = Convert.ToInt32(cmd.ExecuteScalar());
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                screen.ScreenId = reader.GetInt32(0);
+                                screen.RowVersion = (byte[])reader["RowVersion"];
+                            }
+                        }
                     }
                 }
 
@@ -75,28 +123,6 @@ namespace TicketingScreenDesigner.DAL.DAL
             }
         }
 
-        public void DeleteScreen(int screenId)
-        {
-            try
-            {
-                using (SqlConnection conn = DatabaseHelper.GetConnection())
-                {
-                    conn.Open();
-                    string query = "DELETE FROM Screen WHERE ScreenId = @ScreenId";
-                    using (var cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ScreenId", screenId);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "ScreenDAL.DeleteScreen");
-                throw;
-            }
-        }
-
         public void UpdateScreen(ScreenModel screen)
         {
             try
@@ -104,19 +130,90 @@ namespace TicketingScreenDesigner.DAL.DAL
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
-                    string query = "UPDATE Screen SET ScreenName = @ScreenName, IsActive = @IsActive WHERE ScreenId = @ScreenId";
+
+                    // First, execute the UPDATE statement
+                    string updateQuery = @"
+                UPDATE Screen
+                SET IsActive = @IsActive, ScreenName = @ScreenName
+                WHERE RowVersion = @RowVersion AND ScreenId = @ScreenId;";
+
+                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@ScreenName", screen.ScreenName);
+                        updateCmd.Parameters.AddWithValue("@IsActive", screen.IsActive);
+                        updateCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId); 
+                        updateCmd.Parameters.Add("@RowVersion", SqlDbType.Timestamp).Value = screen.RowVersion; // SqlDbType.Timestamp for rowversion
+
+                        int rowsAffected = updateCmd.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            // If no rows were affected, it means the RowVersion didn't match,
+                            // indicating a concurrency conflict or the record was deleted.
+                            throw new DBConcurrencyException("The screen was modified or deleted by another user.");
+                        }
+                    }
+
+                    // Second, select the new RowVersion
+                    string selectQuery = "SELECT RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
+
+                    using (SqlCommand selectCmd = new SqlCommand(selectQuery, conn))
+                    {
+                        selectCmd.Parameters.Add("@ScreenId", SqlDbType.Int).Value = screen.ScreenId;
+
+                        using (var reader = selectCmd.ExecuteReader())
+                        {
+                            if (!reader.HasRows)
+                            {
+                                throw new InvalidOperationException("Could not retrieve the updated RowVersion. The record might have been deleted.");
+                            }
+
+                            if (reader.Read())
+                            {
+                                screen.RowVersion = (byte[])reader["RowVersion"];
+                            }
+                        }
+                    }
+                }
+            }
+            catch (DBConcurrencyException ex)
+            {
+                Logger.LogError(ex, "ScreenDAL.UpdateScreen");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "ScreenDAL.UpdateScreen");
+                throw; 
+            }
+        }
+
+        public void DeleteScreen(int screenId, byte[] rowVersion)
+        {
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    string query = @"DELETE FROM Screen 
+                                     WHERE ScreenId = @ScreenId AND RowVersion = @RowVersion";
+
                     using (var cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@ScreenName", screen.ScreenName);
-                        cmd.Parameters.AddWithValue("@IsActive", screen.IsActive);
-                        cmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
-                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("@ScreenId", screenId);
+                        cmd.Parameters.AddWithValue("@RowVersion", rowVersion);
+
+                        int affectedRows = cmd.ExecuteNonQuery();
+                        if (affectedRows == 0)
+                        {
+                            throw new DBConcurrencyException("The screen was modified or deleted by another user.");
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "ScreenDAL.UpdateScreen");
+                Logger.LogError(ex, "ScreenDAL.DeleteScreen");
                 throw;
             }
         }
@@ -151,17 +248,18 @@ namespace TicketingScreenDesigner.DAL.DAL
             }
         }
 
-        public void DeactivateAllScreensForBank(int bankId)
+        public void DeactivateAllScreensForBankExcluding(int bankId, int screenIdToExclude)
         {
             try
             {
                 using (var conn = DatabaseHelper.GetConnection())
                 {
-                    string query = "UPDATE Screen SET IsActive = 0 WHERE BankId = @BankId";
+                    string query = "UPDATE Screen SET IsActive = 0 WHERE BankId = @BankId AND ScreenId != @ScreenIdToExclude";
 
                     using (var cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@BankId", bankId);
+                        cmd.Parameters.AddWithValue("@ScreenIdToExclude", screenIdToExclude); 
                         conn.Open();
                         cmd.ExecuteNonQuery();
                     }
@@ -169,7 +267,7 @@ namespace TicketingScreenDesigner.DAL.DAL
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "ScreenDAL.DeactivateAllScreensForBank");
+                Logger.LogError(ex, "ScreenDAL.DeactivateAllScreensForBankExcluding");
                 throw;
             }
         }
