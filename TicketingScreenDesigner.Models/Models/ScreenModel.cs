@@ -16,7 +16,8 @@
                 ScreenId = this.ScreenId,
                 BankId = this.BankId,
                 ScreenName = this.ScreenName,
-                IsActive = this.IsActive
+                IsActive = this.IsActive,
+                RowVersion = this.RowVersion
             };
         }
         

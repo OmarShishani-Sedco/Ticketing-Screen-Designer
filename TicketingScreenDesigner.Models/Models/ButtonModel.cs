@@ -30,7 +30,8 @@
                 MessageEn = this.MessageEn,
                 MessageAr = this.MessageAr,
                 ServiceId = this.ServiceId,
-                BankId = this.BankId
+                BankId = this.BankId,
+                RowVersion = this.RowVersion
             };
         }
 

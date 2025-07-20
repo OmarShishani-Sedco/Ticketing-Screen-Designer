@@ -131,7 +131,36 @@ namespace TicketingScreenDesigner.DAL.DAL
                 {
                     conn.Open();
 
-                    // First, execute the UPDATE statement
+                    string selectCurrentDataQuery = "SELECT ScreenName, IsActive, RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
+                    using (SqlCommand selectCurrentCmd = new SqlCommand(selectCurrentDataQuery, conn))
+                    {
+                        selectCurrentCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
+
+                        using (var reader = selectCurrentCmd.ExecuteReader())
+                        {
+                            if (!reader.HasRows)
+                            {
+                                throw new DBConcurrencyException("The screen record was not found (possibly deleted by another user).");
+                            }
+
+                            reader.Read();
+                            string currentScreenName = reader["ScreenName"].ToString();
+                            bool currentIsActive = (bool)reader["IsActive"];
+                            byte[] currentRowVersion = (byte[])reader["RowVersion"];
+
+                            if (currentScreenName == screen.ScreenName &&
+                                currentIsActive == screen.IsActive &&
+                                currentRowVersion.SequenceEqual(screen.RowVersion)) // Compare byte arrays for RowVersion
+                            {
+                                return; 
+                            }
+
+                            if (!currentRowVersion.SequenceEqual(screen.RowVersion))
+                            {
+                                throw new DBConcurrencyException("The screen was modified by another user before you could save your changes.");
+                            }
+                        }
+                    }
                     string updateQuery = @"
                 UPDATE Screen
                 SET IsActive = @IsActive, ScreenName = @ScreenName
@@ -141,36 +170,31 @@ namespace TicketingScreenDesigner.DAL.DAL
                     {
                         updateCmd.Parameters.AddWithValue("@ScreenName", screen.ScreenName);
                         updateCmd.Parameters.AddWithValue("@IsActive", screen.IsActive);
-                        updateCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId); 
+                        updateCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
                         updateCmd.Parameters.Add("@RowVersion", SqlDbType.Timestamp).Value = screen.RowVersion; // SqlDbType.Timestamp for rowversion
 
                         int rowsAffected = updateCmd.ExecuteNonQuery();
 
                         if (rowsAffected == 0)
                         {
-                            // If no rows were affected, it means the RowVersion didn't match,
-                            // indicating a concurrency conflict or the record was deleted.
-                            throw new DBConcurrencyException("The screen was modified or deleted by another user.");
+                            throw new DBConcurrencyException("The screen was modified or deleted by another user (race condition).");
                         }
                     }
 
-                    // Second, select the new RowVersion
-                    string selectQuery = "SELECT RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
-
-                    using (SqlCommand selectCmd = new SqlCommand(selectQuery, conn))
+                    string selectNewRowVersionQuery = "SELECT RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
+                    using (SqlCommand selectCmd = new SqlCommand(selectNewRowVersionQuery, conn))
                     {
                         selectCmd.Parameters.Add("@ScreenId", SqlDbType.Int).Value = screen.ScreenId;
 
                         using (var reader = selectCmd.ExecuteReader())
                         {
-                            if (!reader.HasRows)
-                            {
-                                throw new InvalidOperationException("Could not retrieve the updated RowVersion. The record might have been deleted.");
-                            }
-
                             if (reader.Read())
                             {
                                 screen.RowVersion = (byte[])reader["RowVersion"];
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException("Could not retrieve the updated RowVersion. The record might have been deleted immediately after update.");
                             }
                         }
                     }
@@ -184,7 +208,7 @@ namespace TicketingScreenDesigner.DAL.DAL
             catch (Exception ex)
             {
                 Logger.LogError(ex, "ScreenDAL.UpdateScreen");
-                throw; 
+                throw;
             }
         }
 

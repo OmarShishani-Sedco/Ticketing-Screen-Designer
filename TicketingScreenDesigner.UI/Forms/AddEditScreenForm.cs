@@ -186,7 +186,7 @@ namespace Ticketing_Screen_Designer.Forms
                     _screenManager.UpdateScreen(_screen);
 
                     // existing buttons are the ones already in the database for this screen
-                    var existingButtons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
+                    var existingButtons = _originalButtons;
                     var existingIds = existingButtons.Select(b => b.ButtonId).ToHashSet();
                     // current buttons are the ones in the form (in-memory), which may include new or updated buttons
                     var currentIds = _buttons.Where(b => b.ButtonId != 0).Select(b => b.ButtonId).ToHashSet();
