@@ -39,7 +39,10 @@
             lblBankName = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
             label1 = new Label();
+            panel1 = new Panel();
+            checkBoxSelectAll = new CheckBox();
             listViewScreens = new ListView();
+            CheckBoxColumn = new ColumnHeader();
             ScreenStatus = new ColumnHeader();
             statusStrip = new StatusStrip();
             StatusLabel = new ToolStripStatusLabel();
@@ -48,6 +51,7 @@
             tableLayoutPanel2.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -66,7 +70,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(977, 44);
+            tableLayoutPanel2.Size = new Size(1060, 44);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // flowLayoutPanel1
@@ -79,7 +83,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(971, 38);
+            flowLayoutPanel1.Size = new Size(1054, 38);
             flowLayoutPanel1.TabIndex = 3;
             // 
             // btnAddScreen
@@ -130,7 +134,7 @@
             lblBankName.Anchor = AnchorStyles.None;
             lblBankName.AutoSize = true;
             lblBankName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblBankName.Location = new Point(469, 17);
+            lblBankName.Location = new Point(510, 17);
             lblBankName.Name = "lblBankName";
             lblBankName.Size = new Size(65, 25);
             lblBankName.TabIndex = 5;
@@ -144,7 +148,7 @@
             tableLayoutPanel1.Controls.Add(label1, 0, 2);
             tableLayoutPanel1.Controls.Add(lblBankName, 0, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 1);
-            tableLayoutPanel1.Controls.Add(listViewScreens, 0, 3);
+            tableLayoutPanel1.Controls.Add(panel1, 0, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -155,7 +159,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(1003, 476);
+            tableLayoutPanel1.Size = new Size(1086, 489);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // label1
@@ -164,27 +168,56 @@
             label1.AutoSize = true;
             label1.BackColor = SystemColors.Control;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(461, 102);
+            label1.Location = new Point(503, 102);
             label1.Name = "label1";
             label1.Size = new Size(80, 25);
             label1.TabIndex = 8;
             label1.Text = "Screens";
             // 
+            // panel1
+            // 
+            panel1.AutoSize = true;
+            panel1.Controls.Add(checkBoxSelectAll);
+            panel1.Controls.Add(listViewScreens);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(13, 133);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1060, 343);
+            panel1.TabIndex = 5;
+            // 
+            // checkBoxSelectAll
+            // 
+            checkBoxSelectAll.AutoSize = true;
+            checkBoxSelectAll.Location = new Point(6, 10);
+            checkBoxSelectAll.Name = "checkBoxSelectAll";
+            checkBoxSelectAll.Size = new Size(15, 14);
+            checkBoxSelectAll.TabIndex = 10;
+            checkBoxSelectAll.UseVisualStyleBackColor = true;
+            checkBoxSelectAll.Visible = false;
+            checkBoxSelectAll.CheckedChanged += checkBoxSelectAll_CheckedChanged;
+            // 
             // listViewScreens
             // 
+            listViewScreens.Alignment = ListViewAlignment.SnapToGrid;
             listViewScreens.CheckBoxes = true;
-            listViewScreens.Columns.AddRange(new ColumnHeader[] { ScreenName, ScreenStatus });
+            listViewScreens.Columns.AddRange(new ColumnHeader[] { CheckBoxColumn, ScreenName, ScreenStatus });
             listViewScreens.Dock = DockStyle.Fill;
             listViewScreens.Font = new Font("Segoe UI", 12F);
-            listViewScreens.FullRowSelect = true;
             listViewScreens.GridLines = true;
-            listViewScreens.Location = new Point(13, 133);
+            listViewScreens.Location = new Point(0, 0);
+            listViewScreens.MultiSelect = false;
             listViewScreens.Name = "listViewScreens";
-            listViewScreens.Size = new Size(977, 330);
+            listViewScreens.Size = new Size(1060, 343);
             listViewScreens.TabIndex = 9;
             listViewScreens.UseCompatibleStateImageBehavior = false;
             listViewScreens.View = View.Details;
-            listViewScreens.SelectedIndexChanged += listViewScreens_SelectedIndexChanged;
+            listViewScreens.ItemCheck += listViewScreens_ItemCheck;
+            // 
+            // CheckBoxColumn
+            // 
+            CheckBoxColumn.Text = "";
+            CheckBoxColumn.TextAlign = HorizontalAlignment.Center;
+            CheckBoxColumn.Width = 20;
             // 
             // ScreenStatus
             // 
@@ -215,19 +248,23 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1003, 476);
+            ClientSize = new Size(1086, 489);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(statusStrip);
+            KeyPreview = true;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Main Form";
             Load += MainForm_Load;
+            KeyDown += MainForm_KeyDown;
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             ResumeLayout(false);
@@ -250,5 +287,8 @@
         private ListView listViewScreens;
         private ColumnHeader ScreenStatus;
         private Button btnRefreshScreens;
+        private ColumnHeader CheckBoxColumn;
+        private Panel panel1;
+        private CheckBox checkBoxSelectAll;
     }
 }

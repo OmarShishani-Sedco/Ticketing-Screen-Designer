@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Windows.Forms;
 using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
@@ -42,17 +43,29 @@ namespace Ticketing_Screen_Designer.Forms
 
                 foreach (var screen in screens)
                 {
-                    var item = new ListViewItem(screen.ScreenName);
+                    var item = new ListViewItem();
+                    item.SubItems.Add(screen.ScreenName);
                     item.SubItems.Add(screen.IsActive ? "Active" : "");
                     item.Tag = screen; // Store actual object
 
-                    listViewScreens.Items.Add(item);
+                    listViewScreens.Items.Add(item).Selected = false;
                 }
                 UpdateScreenButtonsEnabled();
-                if (listViewScreens.Items.Count > 0)
+                if (listViewScreens.Items.Count > 1)
                 {
+                    checkBoxSelectAll.Visible = true;
                     UpdateStatus("Screen(s) loaded successfully.");
                 }
+                else
+                {
+                    checkBoxSelectAll.Visible = false;
+                    UpdateStatus("No screens found for this bank.");
+                }
+
+                listViewScreens.SelectedItems.Clear();
+                listViewScreens.HideSelection = true;
+                this.ActiveControl = btnAddScreen;
+
             }
             catch (Exception ex)
             {
@@ -86,25 +99,29 @@ namespace Ticketing_Screen_Designer.Forms
                     LoadScreens(); // Refresh the list
                     UpdateStatus("Screen added successfully.");
                 }
-                
+
             }
         }
-        private ScreenModel GetSelectedScreen()
-        {
-            if (listViewScreens.SelectedItems.Count == 0)
-                return null;
 
-            return listViewScreens.SelectedItems[0].Tag as ScreenModel;
+        private List<ScreenModel?> GetCheckedScreens()
+        {
+            return listViewScreens.CheckedItems.Cast<ListViewItem>()
+                                   .Select(item => item.Tag as ScreenModel)
+                                   .Where(screen => screen != null)
+                                   .ToList();
         }
 
         private void btnEditScreen_Click(object sender, EventArgs e)
         {
-            var selectedScreen = GetSelectedScreen();
-            if (selectedScreen == null)
+            var checkedScreens = GetCheckedScreens();
+
+            if (checkedScreens.Count == 0)
             {
                 MessageBox.Show("Please select a screen to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            var selectedScreen = checkedScreens[0];
 
             try
             {
@@ -149,7 +166,8 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnDeleteScreen_Click(object sender, EventArgs e)
         {
-            if (listViewScreens.SelectedItems.Count == 0)
+            var screensToDelete = GetCheckedScreens();
+            if (screensToDelete.Count == 0)
             {
                 MessageBox.Show("Please select at least one screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -164,12 +182,9 @@ namespace Ticketing_Screen_Designer.Forms
 
             try
             {
-                foreach (ListViewItem item in listViewScreens.SelectedItems)
+                foreach (var screen in screensToDelete)
                 {
-                    if (item.Tag is ScreenModel screen)
-                    {
-                        _screenManager.DeleteScreen(screen.ScreenId, screen.RowVersion);
-                    }
+                    _screenManager.DeleteScreen(screen.ScreenId, screen.RowVersion);
                 }
 
                 LoadScreens();
@@ -187,20 +202,19 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-
         private void UpdateScreenButtonsEnabled()
         {
-            int selectedCount = listViewScreens.SelectedItems.Count;
+            int checkedCount = listViewScreens.CheckedItems.Count;
 
-            btnEditScreen.Enabled = selectedCount == 1;
-            btnDeleteScreen.Enabled = selectedCount > 0;
+            btnEditScreen.Enabled = checkedCount == 1;
+            btnDeleteScreen.Enabled = checkedCount > 0;
         }
 
 
-        private void listViewScreens_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateScreenButtonsEnabled();
-        }
+        //private void listViewScreens_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    UpdateScreenButtonsEnabled();
+        //}
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -234,8 +248,30 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                btnRefreshScreens.PerformClick();
+                e.Handled = true;
+            }
+        }
 
+        private void listViewScreens_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                UpdateScreenButtonsEnabled();
+            }));
+        }
 
-       
+        private void checkBoxSelectAll_CheckedChanged(object sender, EventArgs e)
+        {
+            bool isChecked = checkBoxSelectAll.Checked;
+            foreach (ListViewItem item in listViewScreens.Items)
+            {
+                item.Checked = isChecked;
+            }
+        }
     }
 }

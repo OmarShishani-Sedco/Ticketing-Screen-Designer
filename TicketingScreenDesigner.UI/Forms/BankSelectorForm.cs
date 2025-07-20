@@ -109,7 +109,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             if (txtBankName.Text.Length == txtBankName.MaxLength)
             {
-              
+
 
                 _tooltip.Show(
                     $"Maximum length of {txtBankName.MaxLength} characters reached.",
@@ -120,6 +120,15 @@ namespace Ticketing_Screen_Designer.Forms
             else
             {
                 _tooltip.Hide(txtBankName);
+            }
+        }
+
+        private void BankSelectorForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnContinue.PerformClick();
+                e.Handled = true;
             }
         }
     }

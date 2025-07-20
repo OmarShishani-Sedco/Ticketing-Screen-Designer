@@ -74,6 +74,11 @@ namespace Ticketing_Screen_Designer.Forms
             RefreshButtonList();
             UpdateButtonActionsEnabled();
             _isChanged = false;
+
+            listViewButtons.SelectedItems.Clear();
+            listViewButtons.HideSelection = true;
+            this.ActiveControl = txtScreenName; 
+
         }
 
         private void RefreshButtonList()
@@ -82,7 +87,8 @@ namespace Ticketing_Screen_Designer.Forms
 
             foreach (var button in _buttons)
             {
-                var item = new ListViewItem(button.NameEn);
+                var item = new ListViewItem();
+                item.SubItems.Add(button.NameEn);
                 item.SubItems.Add(button.NameAr);
                 item.SubItems.Add(button.Type.ToDisplayString());
                 item.Tag = button;
@@ -91,6 +97,14 @@ namespace Ticketing_Screen_Designer.Forms
             }
 
             UpdateButtonActionsEnabled();
+        }
+
+        private List<ButtonModel?> GetCheckedButtons()
+        {
+            return listViewButtons.CheckedItems.Cast<ListViewItem>()
+                                   .Select(item => item.Tag as ButtonModel)
+                                   .Where(button => button != null)
+                                   .ToList();
         }
 
         private void btnAddButton_Click(object sender, EventArgs e)
@@ -106,10 +120,15 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnEditButton_Click(object sender, EventArgs e)
         {
-            if (listViewButtons.SelectedItems.Count != 1) return;
+            var checkedButtons = GetCheckedButtons();
 
-            var selectedItem = listViewButtons.SelectedItems[0];
-            var selected = selectedItem.Tag as ButtonModel;
+            if (checkedButtons.Count == 0)
+            {
+                MessageBox.Show("Please select a button to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selected = checkedButtons[0];
 
             var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager, selected);
             if (form.ShowDialog() == DialogResult.OK)
@@ -125,7 +144,8 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnDeleteButton_Click(object sender, EventArgs e)
         {
-            if (listViewButtons.SelectedItems.Count == 0)
+            var buttonsToDelete = GetCheckedButtons(); // Use GetCheckedButtons()
+            if (buttonsToDelete.Count == 0)
             {
                 MessageBox.Show("Please select at least one button to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -134,15 +154,6 @@ namespace Ticketing_Screen_Designer.Forms
             var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes)
                 return;
-
-            var buttonsToDelete = new List<ButtonModel>();
-            foreach (ListViewItem item in listViewButtons.SelectedItems)
-            {
-                if (item.Tag is ButtonModel btn)
-                {
-                    buttonsToDelete.Add(btn);
-                }
-            }
 
             foreach (var btn in buttonsToDelete)
                 _buttons.Remove(btn);
@@ -281,17 +292,17 @@ namespace Ticketing_Screen_Designer.Forms
             this.Close();
         }
 
-        private void listViewButtons_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateButtonActionsEnabled();
-        }
+        //private void listViewButtons_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    UpdateButtonActionsEnabled();
+        //}
 
         private void UpdateButtonActionsEnabled()
         {
-            int selectedCount = listViewButtons.SelectedItems.Count;
+            int checkedCount = listViewButtons.CheckedItems.Count;
 
-            btnEditButton.Enabled = selectedCount == 1;
-            btnDeleteButton.Enabled = selectedCount > 0;
+            btnEditButton.Enabled = checkedCount == 1;
+            btnDeleteButton.Enabled = checkedCount > 0;
         }
 
         private void statusClearTimer_Tick(object sender, EventArgs e)
@@ -313,9 +324,6 @@ namespace Ticketing_Screen_Designer.Forms
             _isChanged = true;
         }
 
-
-       
-
         private void txtScreenName_TextChanged(object sender, EventArgs e)
         {
             _isChanged = true;
@@ -333,7 +341,21 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
+        private void listViewButtons_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                UpdateButtonActionsEnabled();
+            }));
+        }
 
-        
+        private void checkBoxSelectAll_CheckedChanged(object sender, EventArgs e)
+        {
+            bool isChecked = checkBoxSelectAll.Checked;
+            foreach (ListViewItem item in listViewButtons.Items)
+            {
+                item.Checked = isChecked;
+            }
+        }
     }
 }

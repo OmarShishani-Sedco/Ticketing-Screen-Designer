@@ -72,10 +72,12 @@
             Controls.Add(lblSelect);
             Controls.Add(btnContinue);
             Controls.Add(txtBankName);
+            KeyPreview = true;
             Name = "BankSelectorForm";
             Padding = new Padding(10);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Bank Form";
+            KeyDown += BankSelectorForm_KeyDown;
             ResumeLayout(false);
             PerformLayout();
         }

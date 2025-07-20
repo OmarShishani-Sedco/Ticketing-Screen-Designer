@@ -41,17 +41,21 @@
             btnCancel = new Button();
             btnSave = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
+            panel1 = new Panel();
+            checkBoxSelectAll = new CheckBox();
             listViewButtons = new ListView();
+            CheckBoxColumn = new ColumnHeader();
             EnButtonName = new ColumnHeader();
             ArButtonName = new ColumnHeader();
             btnType = new ColumnHeader();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             statusClearTimer = new System.Windows.Forms.Timer(components);
             statusStrip = new StatusStrip();
             StatusLabel = new ToolStripStatusLabel();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
+            panel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             statusStrip.SuspendLayout();
             SuspendLayout();
@@ -138,8 +142,8 @@
             tableLayoutPanel1.Controls.Add(flowLayoutPanel3, 0, 4);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
+            tableLayoutPanel1.Controls.Add(panel1, 0, 3);
             tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 0, 1);
-            tableLayoutPanel1.Controls.Add(listViewButtons, 0, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -150,6 +154,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.Size = new Size(830, 501);
             tableLayoutPanel1.TabIndex = 14;
             // 
@@ -197,31 +202,47 @@
             flowLayoutPanel1.Size = new Size(804, 44);
             flowLayoutPanel1.TabIndex = 17;
             // 
-            // flowLayoutPanel2
+            // panel1
             // 
-            flowLayoutPanel2.Controls.Add(btnAddButton);
-            flowLayoutPanel2.Controls.Add(btnEditButton);
-            flowLayoutPanel2.Controls.Add(btnDeleteButton);
-            flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(13, 63);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(804, 44);
-            flowLayoutPanel2.TabIndex = 18;
+            panel1.AutoSize = true;
+            panel1.Controls.Add(checkBoxSelectAll);
+            panel1.Controls.Add(listViewButtons);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(13, 160);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(804, 286);
+            panel1.TabIndex = 6;
+            // 
+            // checkBoxSelectAll
+            // 
+            checkBoxSelectAll.AutoSize = true;
+            checkBoxSelectAll.Location = new Point(6, 10);
+            checkBoxSelectAll.Name = "checkBoxSelectAll";
+            checkBoxSelectAll.Size = new Size(15, 14);
+            checkBoxSelectAll.TabIndex = 22;
+            checkBoxSelectAll.UseVisualStyleBackColor = true;
+            checkBoxSelectAll.CheckedChanged += checkBoxSelectAll_CheckedChanged;
             // 
             // listViewButtons
             // 
-            listViewButtons.Columns.AddRange(new ColumnHeader[] { EnButtonName, ArButtonName, btnType });
+            listViewButtons.CheckBoxes = true;
+            listViewButtons.Columns.AddRange(new ColumnHeader[] { CheckBoxColumn, EnButtonName, ArButtonName, btnType });
             listViewButtons.Dock = DockStyle.Fill;
             listViewButtons.Font = new Font("Segoe UI", 12F);
-            listViewButtons.FullRowSelect = true;
             listViewButtons.GridLines = true;
-            listViewButtons.Location = new Point(13, 160);
+            listViewButtons.Location = new Point(0, 0);
             listViewButtons.Name = "listViewButtons";
             listViewButtons.Size = new Size(804, 286);
             listViewButtons.TabIndex = 21;
             listViewButtons.UseCompatibleStateImageBehavior = false;
             listViewButtons.View = View.Details;
-            listViewButtons.SelectedIndexChanged += listViewButtons_SelectedIndexChanged;
+            listViewButtons.ItemCheck += listViewButtons_ItemCheck;
+            // 
+            // CheckBoxColumn
+            // 
+            CheckBoxColumn.Text = "";
+            CheckBoxColumn.TextAlign = HorizontalAlignment.Center;
+            CheckBoxColumn.Width = 20;
             // 
             // EnButtonName
             // 
@@ -237,6 +258,17 @@
             // 
             btnType.Text = "Type";
             btnType.Width = 120;
+            // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.Controls.Add(btnAddButton);
+            flowLayoutPanel2.Controls.Add(btnEditButton);
+            flowLayoutPanel2.Controls.Add(btnDeleteButton);
+            flowLayoutPanel2.Dock = DockStyle.Fill;
+            flowLayoutPanel2.Location = new Point(13, 63);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(804, 44);
+            flowLayoutPanel2.TabIndex = 18;
             // 
             // statusClearTimer
             // 
@@ -274,6 +306,8 @@
             flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             flowLayoutPanel2.ResumeLayout(false);
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
@@ -303,5 +337,8 @@
         private ColumnHeader EnButtonName;
         private ColumnHeader ArButtonName;
         private ColumnHeader btnType;
+        private ColumnHeader CheckBoxColumn;
+        private Panel panel1;
+        private CheckBox checkBoxSelectAll;
     }
 }
