@@ -103,7 +103,50 @@ public class ButtonDAL : IButtonDAL
         {
             using (var conn = DatabaseHelper.GetConnection())
             {
-                string query = @"
+                conn.Open();
+
+                string selectCurrentQuery = @"
+                SELECT NameEnglish, NameArabic, ButtonType, ServiceId, MessageEnglish, MessageArabic, RowVersion
+                FROM Button
+                WHERE ButtonId = @ButtonId;";
+
+                using (var selectCmd = new SqlCommand(selectCurrentQuery, conn))
+                {
+                    selectCmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
+
+                    using (var reader = selectCmd.ExecuteReader())
+                    {
+                        if (!reader.HasRows)
+                            throw new DBConcurrencyException("The button record was not found (possibly deleted by another user).");
+
+                        reader.Read();
+
+                        string currentNameEn = reader["NameEnglish"] as string;
+                        string currentNameAr = reader["NameArabic"] as string;
+                        int currentType = (int)reader["ButtonType"];
+                        int? currentServiceId = reader["ServiceId"] == DBNull.Value ? (int?)null : (int)reader["ServiceId"];
+                        string currentMsgEn = reader["MessageEnglish"] as string;
+                        string currentMsgAr = reader["MessageArabic"] as string;
+                        byte[] currentRowVersion = (byte[])reader["RowVersion"];
+
+                        bool unchanged =
+                            currentNameEn == button.NameEn &&
+                            currentNameAr == button.NameAr &&
+                            currentType == (int)button.Type &&
+                            currentServiceId == button.ServiceId &&
+                            currentMsgEn == button.MessageEn &&
+                            currentMsgAr == button.MessageAr &&
+                            currentRowVersion.SequenceEqual(button.RowVersion);
+
+                        if (unchanged)
+                            return;
+
+                        if (!currentRowVersion.SequenceEqual(button.RowVersion))
+                            throw new DBConcurrencyException("The button was modified by another user before you could save your changes.");
+                    }
+                }
+
+                string updateQuery = @"
                 UPDATE Button
                 SET NameEnglish = @NameEnglish,
                     NameArabic = @NameArabic,
@@ -111,37 +154,43 @@ public class ButtonDAL : IButtonDAL
                     ServiceId = @ServiceId,
                     MessageEnglish = @MessageEnglish,
                     MessageArabic = @MessageArabic
-                WHERE ButtonId = @ButtonId AND RowVersion = @RowVersion;
+                WHERE ButtonId = @ButtonId AND RowVersion = @RowVersion;";
 
-                SELECT RowVersion FROM Button WHERE ButtonId = @ButtonId;";
-
-                using (var cmd = new SqlCommand(query, conn))
+                using (var updateCmd = new SqlCommand(updateQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
-                    cmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
-                    cmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
-                    cmd.Parameters.AddWithValue("@ButtonType", (int)button.Type);
-                    cmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@RowVersion", button.RowVersion);
+                    updateCmd.Parameters.AddWithValue("@NameEnglish", button.NameEn);
+                    updateCmd.Parameters.AddWithValue("@NameArabic", button.NameAr);
+                    updateCmd.Parameters.AddWithValue("@ButtonType", (int)button.Type);
+                    updateCmd.Parameters.AddWithValue("@ServiceId", (object?)button.ServiceId ?? DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("@MessageEnglish", (object?)button.MessageEn ?? DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("@MessageArabic", (object?)button.MessageAr ?? DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
+                    updateCmd.Parameters.Add("@RowVersion", SqlDbType.Timestamp).Value = button.RowVersion;
 
-                    conn.Open();
+                    int rowsAffected = updateCmd.ExecuteNonQuery();
+                    if (rowsAffected == 0)
+                        throw new DBConcurrencyException("The button was modified or deleted by another user (race condition).");
+                }
 
-                    using (var reader = cmd.ExecuteReader())
+                string selectNewRowVersionQuery = "SELECT RowVersion FROM Button WHERE ButtonId = @ButtonId;";
+                using (var selectNewCmd = new SqlCommand(selectNewRowVersionQuery, conn))
+                {
+                    selectNewCmd.Parameters.AddWithValue("@ButtonId", button.ButtonId);
+
+                    using (var reader = selectNewCmd.ExecuteReader())
                     {
-                        if (!reader.HasRows)
-                        {
-                            throw new DBConcurrencyException("The button was modified by another user.");
-                        }
-
                         if (reader.Read())
-                        {
                             button.RowVersion = (byte[])reader["RowVersion"];
-                        }
+                        else
+                            throw new InvalidOperationException("Could not retrieve the updated RowVersion. The button may have been deleted.");
                     }
                 }
             }
+        }
+        catch (DBConcurrencyException ex)
+        {
+            Logger.LogError(ex, "ButtonDAL.UpdateButton (Concurrency)");
+            throw;
         }
         catch (Exception ex)
         {

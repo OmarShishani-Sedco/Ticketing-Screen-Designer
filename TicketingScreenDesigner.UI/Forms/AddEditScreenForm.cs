@@ -202,10 +202,21 @@ namespace Ticketing_Screen_Designer.Forms
                         btn.ScreenId = _screen.ScreenId;
 
                         if (btn.ButtonId == 0)
-                            _buttonManager.AddButton(btn);
+                        {
+                            _buttonManager.AddButton(btn); 
+                        }
                         else
-                            _buttonManager.UpdateButton(btn);
+                        {
+                            var original = _originalButtons.FirstOrDefault(b => b.ButtonId == btn.ButtonId);
+
+                            // Only update if something changed
+                            if (original != null && IsButtonModified(original, btn))
+                            {
+                                _buttonManager.UpdateButton(btn);
+                            }
+                        }
                     }
+
 
                     UpdateStatus("Screen and buttons updated successfully.");
                 }
@@ -237,6 +248,16 @@ namespace Ticketing_Screen_Designer.Forms
                 UIExceptionHandler.Handle(ex, "AddEditScreenForm_Save");
             }
         }
+        private bool IsButtonModified(ButtonModel original, ButtonModel current)
+        {
+            return original.NameEn != current.NameEn ||
+                   original.NameAr != current.NameAr ||
+                   original.Type != current.Type ||
+                   original.ServiceId != current.ServiceId ||
+                   original.MessageEn != current.MessageEn ||
+                   original.MessageAr != current.MessageAr;
+        }
+
 
         private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
         {
