@@ -51,7 +51,7 @@ namespace Ticketing_Screen_Designer.Forms
                     listViewScreens.Items.Add(item).Selected = false;
                 }
                 UpdateScreenButtonsEnabled();
-                if (listViewScreens.Items.Count > 1)
+                if (listViewScreens.Items.Count > 0)
                 {
                     checkBoxSelectAll.Visible = true;
                     UpdateStatus("Screen(s) loaded successfully.");

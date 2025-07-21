@@ -70,7 +70,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 this.Text = "Add Screen";
             }
-
+           
             RefreshButtonList();
             UpdateButtonActionsEnabled();
             _isChanged = false;
@@ -94,6 +94,14 @@ namespace Ticketing_Screen_Designer.Forms
                 item.Tag = button;
 
                 listViewButtons.Items.Add(item);
+            }
+            if (listViewButtons.Items.Count > 0)
+            {
+                checkBoxSelectAll.Visible = true;
+            }
+            else
+            {
+                checkBoxSelectAll.Visible = false;
             }
 
             UpdateButtonActionsEnabled();
@@ -280,19 +288,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (!_isSaved && !_isEditMode && _screen.ScreenId == -1 && _buttons.Count != 0)
-            {
-                var confirm = MessageBox.Show(
-                    "You haven't saved the screen yet. Are you sure you want to close? (warning: all buttons will be deleted)",
-                    "Unsaved Changes",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
-                if (confirm == DialogResult.No)
-                {
-                    return;
-                }
-            }
+            
             if (!_isSaved && _isEditMode && _isChanged)
             {
                 var confirm = MessageBox.Show(
