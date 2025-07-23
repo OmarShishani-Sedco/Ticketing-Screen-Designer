@@ -1,8 +1,6 @@
 ﻿using System.Data;
-using System.Windows.Forms;
 using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
-using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -141,6 +139,7 @@ namespace Ticketing_Screen_Designer.Forms
             var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager, selected);
             if (form.ShowDialog() == DialogResult.OK)
             {
+                //in-memory update
                 int index = _buttons.FindIndex(b => b.ButtonId == selected.ButtonId);
                 if (index >= 0)
                     _buttons[index] = form.ResultButton;
@@ -191,11 +190,31 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 if (_isEditMode)
                 {
-                    _screenManager.UpdateScreen(_screen);
+                    try
+                    {
+                        _screenManager.UpdateScreen(_screen); // initial attempt
+                    }
+                    catch (DBConcurrencyException ex) when (ex.Message.Contains("The screen was modified by another user."))
+                    {
+                        var result = MessageBox.Show(
+                            "This screen was modified by another user. Do you want to overwrite their changes?",
+                            "Concurrency Conflict",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning
+                        );
+
+                        if (result == DialogResult.Yes)
+                        {
+                                _screenManager.UpdateScreen(_screen, forceUpdate: true); // force overwrite
+                        }
+                        else
+                        {
+                           UpdateStatus("Update canceled. Please reload the screen to view latest changes.");
+                        }
+                    }
 
                     // existing buttons are the ones already in the database for this screen
                     var existingButtons = _originalButtons;
-                    var existingIds = existingButtons.Select(b => b.ButtonId).ToHashSet();
                     // current buttons are the ones in the form (in-memory), which may include new or updated buttons
                     var currentIds = _buttons.Where(b => b.ButtonId != 0).Select(b => b.ButtonId).ToHashSet();
 
@@ -220,7 +239,29 @@ namespace Ticketing_Screen_Designer.Forms
                             // Only update if something changed
                             if (original != null && IsButtonModified(original, btn))
                             {
-                                _buttonManager.UpdateButton(btn);
+                                try
+                                {
+                                    _buttonManager.UpdateButton(btn);
+                                }
+                                catch (DBConcurrencyException ex) when (ex.Message.Contains("The button was modified by another user."))
+                                {
+                                    var result = MessageBox.Show(
+                                        "This button was modified by another user. Do you want to overwrite their changes?",
+                                        "Concurrency Conflict",
+                                        MessageBoxButtons.YesNo,
+                                        MessageBoxIcon.Warning
+                                    );
+
+                                    if (result == DialogResult.Yes)
+                                    {
+                                        _buttonManager.UpdateButton(btn, forceUpdate: true);
+                                    }
+                                    else
+                                    {
+                                        UpdateStatus("Update canceled. Please reload the screen to view latest changes.");
+                                    }
+                                }
+                                
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Models.Models;
 
@@ -34,16 +35,16 @@ namespace Ticketing_Screen_Designer.Forms
             InitializeForm();
         }
 
-        private void InitializeForm()
+        private async void InitializeForm()
         {
             cmbButtonType.DataSource = Enum.GetValues(typeof(ButtonType));
             cmbButtonType.SelectedIndex = -1; // Forces no selection initially
-            cmbButtonType.SelectedIndexChanged += (s, e) =>
+            cmbButtonType.SelectedIndexChanged +=async (s, e) =>
             {
                 TogglePanels();
                 if ((ButtonType)cmbButtonType.SelectedItem == ButtonType.IssueTicket)
                 {
-                    LoadServices();
+                   await LoadServicesAsync();
                 }
             };
 
@@ -58,7 +59,7 @@ namespace Ticketing_Screen_Designer.Forms
                 {
                     panelIssueTicket.Visible = true;
                     panelShowMessage.Visible = false;
-                    LoadServices();
+                    await LoadServicesAsync();
                     cmbService.SelectedValue = _existingButton.ServiceId;
                 }
                 else
@@ -77,12 +78,33 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
-        private void LoadServices()
+        private async Task LoadServicesAsync()
         {
-            var services = _serviceManager.GetServicesForBank(_bankId);
-            cmbService.DataSource = services;
-            cmbService.DisplayMember = "Name"; // Shows service name in dropdown
-            cmbService.ValueMember = "ServiceId";     // SelectedValue returns ServiceId
+            try
+            {
+                lblLoadingServices.Visible = true;// Show loading indicator
+                cmbService.Enabled = false;// Disable dropdown during load
+
+                var services = await Task.Run(() =>
+                {
+                    return _serviceManager.GetServicesForBank(_bankId);
+                });
+
+                cmbService.DataSource = services;
+                cmbService.DisplayMember = "Name";          
+                cmbService.ValueMember = "ServiceId";
+                cmbService.SelectedIndex = -1; 
+            }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "LoadServicesAsync");
+                MessageBox.Show("Failed to load services.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                lblLoadingServices.Visible = false; // Hide loading indicator
+                cmbService.Enabled = true;
+            }
         }
 
         private void TogglePanels()

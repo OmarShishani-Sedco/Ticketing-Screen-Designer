@@ -42,11 +42,11 @@ namespace TicketingScreenDesigner.BLL.BLL
             }
         }
 
-        public void UpdateButton(ButtonModel button)
+        public void UpdateButton(ButtonModel button, bool forceUpdate = false)
         {
             try
             {
-                _dal.UpdateButton(button);
+                _dal.UpdateButton(button,forceUpdate);
             }
             catch (Exception ex)
             {

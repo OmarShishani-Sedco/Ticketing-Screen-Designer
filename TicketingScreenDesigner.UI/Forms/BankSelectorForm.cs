@@ -69,8 +69,6 @@ namespace Ticketing_Screen_Designer.Forms
                     }
                 }
 
-                this.Hide();
-
                 var mainForm = new MainForm(
                     selectedBank,
                     _screenManager,
@@ -78,13 +76,19 @@ namespace Ticketing_Screen_Designer.Forms
                     _serviceManager
                 );
 
-                mainForm.FormClosed += (s, args) =>
-                {
-                    CenterToParentOf(mainForm);
-                    this.Show();
-                };
+                // Set owner and centering behavior
+                mainForm.Owner = this;
+                mainForm.StartPosition = FormStartPosition.CenterParent;
 
-                mainForm.ShowDialog();
+                // Disable current form while MainForm is open
+                this.Enabled = false;
+
+                // Show main form modally
+                mainForm.ShowDialog(this);
+
+                // Re-enable current form after MainForm is closed
+                this.Enabled = true;
+
             }
             catch (Exception ex)
             {
@@ -93,17 +97,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
-        private void CenterToParentOf(Form parent)
-        {
-            if (parent == null)
-                return;
-
-            int x = parent.Location.X + (parent.Width - this.Width) / 2;
-            int y = parent.Location.Y + (parent.Height - this.Height) / 2;
-
-            this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(Math.Max(0, x), Math.Max(0, y));
-        }
+       
 
         private void txtBankName_TextChanged(object sender, EventArgs e)
         {

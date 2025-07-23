@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using System.Windows.Forms;
 using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Common.Helpers;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -12,6 +12,7 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
         private readonly IServiceManager _serviceManager;
+        private bool _isRefreshing = false;
 
         public MainForm(
             BankModel selectedBank,
@@ -28,67 +29,117 @@ namespace Ticketing_Screen_Designer.Forms
 
             this.Text = $"Main Form - {_selectedBank.BankName}";
             lblBankName.Text = $"Bank: {_selectedBank.BankName}";
-
+            refreshScreensTimer.Tick += async (s, e) => await LoadScreensAsync();
+            refreshScreensTimer.Start();
         }
 
-
-
-        private void LoadScreens()
+        public async Task LoadScreensAsync()
         {
-            try
+            var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
+
+            if (listViewScreens.InvokeRequired)
             {
-                var screens = _screenManager.GetScreensForBank(_selectedBank.BankId);
-
-                listViewScreens.Items.Clear();
-
-                foreach (var screen in screens)
-                {
-                    var item = new ListViewItem();
-                    item.SubItems.Add(screen.ScreenName);
-                    item.SubItems.Add(screen.IsActive ? "Active" : "");
-                    item.Tag = screen; // Store actual object
-
-                    listViewScreens.Items.Add(item).Selected = false;
-                }
-                UpdateScreenButtonsEnabled();
-                if (listViewScreens.Items.Count > 0)
-                {
-                    checkBoxSelectAll.Visible = true;
-                    UpdateStatus("Screen(s) loaded successfully.");
-                }
-                else
-                {
-                    checkBoxSelectAll.Visible = false;
-                    UpdateStatus("No screens found for this bank.");
-                }
-
-                listViewScreens.SelectedItems.Clear();
-                listViewScreens.HideSelection = true;
-                this.ActiveControl = btnAddScreen;
-
+                listViewScreens.Invoke(() => UpdateUI(screens));
             }
-            catch (Exception ex)
+            else
             {
-                UIExceptionHandler.Handle(ex, "MainForm_LoadScreens");
-                var result = MessageBox.Show(
-                       "An error occurred while loading screens.\nWould you like to try again?",
-                       "Load Failed",
-                       MessageBoxButtons.YesNo,
-                       MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                {
-                    LoadScreens();
-                }
-                else
-                {
-                    MessageBox.Show("Exiting application due to error. Please try again later.", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this.Close();
-                }
-
+                UpdateUI(screens);
             }
         }
-        private void btnAddScreen_Click(object sender, EventArgs e)
+
+        private void UpdateUI(List<ScreenModel> screens)
+        {
+            listViewScreens.Items.Clear();
+
+            foreach (var screen in screens)
+            {
+                var item = new ListViewItem();
+                item.SubItems.Add(screen.ScreenName);
+                item.SubItems.Add(screen.IsActive ? "Active" : "");
+                item.Tag = screen; // Store actual object
+
+                listViewScreens.Items.Add(item).Selected = false;
+            }
+            UpdateScreenButtonsEnabled();
+            if (listViewScreens.Items.Count > 0)
+            {
+                checkBoxSelectAll.Visible = true;
+                checkBoxSelectAll.Checked = false;
+                UpdateStatus("Screen(s) loaded successfully.");
+            }
+            else
+            {
+                checkBoxSelectAll.Visible = false;
+                UpdateStatus("No screens found for this bank.");
+            }
+
+            listViewScreens.SelectedItems.Clear();
+            listViewScreens.HideSelection = true;
+            this.ActiveControl = btnAddScreen;
+        }
+
+
+        //private async Task LoadScreensAsync()
+        //{
+        //    try
+        //    {
+        //        var screens = await Task.Run(() =>
+        //        {
+        //            return _screenManager.GetScreensForBank(_selectedBank.BankId);
+        //        });
+
+
+        //        listViewScreens.Items.Clear();
+
+        //        foreach (var screen in screens)
+        //        {
+        //            var item = new ListViewItem();
+        //            item.SubItems.Add(screen.ScreenName);
+        //            item.SubItems.Add(screen.IsActive ? "Active" : "");
+        //            item.Tag = screen; // Store actual object
+
+        //            listViewScreens.Items.Add(item).Selected = false;
+        //        }
+        //        UpdateScreenButtonsEnabled();
+        //        if (listViewScreens.Items.Count > 0)
+        //        {
+        //            checkBoxSelectAll.Visible = true;
+        //            checkBoxSelectAll.Checked = false;
+        //            UpdateStatus("Screen(s) loaded successfully.");
+        //        }
+        //        else
+        //        {
+        //            checkBoxSelectAll.Visible = false;
+        //            UpdateStatus("No screens found for this bank.");
+        //        }
+
+        //        listViewScreens.SelectedItems.Clear();
+        //        listViewScreens.HideSelection = true;
+        //        this.ActiveControl = btnAddScreen;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UIExceptionHandler.Handle(ex, "MainForm_LoadScreens");
+        //        var result = MessageBox.Show(
+        //               "An error occurred while loading screens.\nWould you like to try again?",
+        //               "Load Failed",
+        //               MessageBoxButtons.YesNo,
+        //               MessageBoxIcon.Question);
+
+        //        if (result == DialogResult.Yes)
+        //        {
+        //            LoadScreens();
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Exiting application due to error. Please try again later.", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            this.Close();
+        //        }
+
+        //    }
+        //}
+        private async void btnAddScreen_Click(object sender, EventArgs e)
         {
             using (var addScreenForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager))
             {
@@ -96,7 +147,7 @@ namespace Ticketing_Screen_Designer.Forms
 
                 if (result == DialogResult.OK)
                 {
-                    LoadScreens(); // Refresh the list
+                    await LoadScreensAsync(); // Refresh the list
                     UpdateStatus("Screen added successfully.");
                 }
 
@@ -111,7 +162,7 @@ namespace Ticketing_Screen_Designer.Forms
                                    .ToList();
         }
 
-        private void btnEditScreen_Click(object sender, EventArgs e)
+        private async void btnEditScreen_Click(object sender, EventArgs e)
         {
             var checkedScreens = GetCheckedScreens();
 
@@ -130,14 +181,14 @@ namespace Ticketing_Screen_Designer.Forms
                 if (freshScreen == null)
                 {
                     MessageBox.Show("This screen has been deleted by another user. (Refreshing Screens)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    LoadScreens();
+                   await LoadScreensAsync();
                     return;
                 }
 
                 if (!freshScreen.RowVersion.SequenceEqual(selectedScreen.RowVersion))
                 {
                     MessageBox.Show("This screen has been modified by another user. (Refreshing Screens)", "Concurrency Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    LoadScreens();
+                    await LoadScreensAsync();
                     return;
                 }
 
@@ -147,12 +198,12 @@ namespace Ticketing_Screen_Designer.Forms
 
                     if (result == DialogResult.OK)
                     {
-                        LoadScreens();
+                        await LoadScreensAsync();
                         UpdateStatus("Screen edited successfully.");
                     }
                     else if (result == DialogResult.No)
                     {
-                        LoadScreens();
+                        await LoadScreensAsync();
                         UpdateStatus("Please try again!");
                     }
                 }
@@ -164,7 +215,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-        private void btnDeleteScreen_Click(object sender, EventArgs e)
+        private async void btnDeleteScreen_Click(object sender, EventArgs e)
         {
             var screensToDelete = GetCheckedScreens();
             if (screensToDelete.Count == 0)
@@ -187,13 +238,13 @@ namespace Ticketing_Screen_Designer.Forms
                     _screenManager.DeleteScreen(screen.ScreenId, screen.RowVersion);
                 }
 
-                LoadScreens();
+                await LoadScreensAsync();
                 UpdateStatus("Screen(s) deleted successfully.");
             }
             catch (DBConcurrencyException ex)
             {
                 UIExceptionHandler.Handle(ex, "MainForm_DeleteScreens", "(Refreshing screens)");
-                LoadScreens();
+                await LoadScreensAsync();
             }
             catch (Exception ex)
             {
@@ -216,9 +267,9 @@ namespace Ticketing_Screen_Designer.Forms
         //    UpdateScreenButtonsEnabled();
         //}
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
-            LoadScreens();
+            await LoadScreensAsync();
         }
 
         private void statusClearTimer_Tick(object sender, EventArgs e)
@@ -235,11 +286,11 @@ namespace Ticketing_Screen_Designer.Forms
             statusClearTimer.Start();
         }
 
-        private void btnRefreshScreens_Click(object sender, EventArgs e)
+        private async void btnRefreshScreens_Click(object sender, EventArgs e)
         {
             try
             {
-                LoadScreens();
+                await LoadScreensAsync();
                 UpdateStatus("Screens refreshed successfully.");
             }
             catch (Exception ex)

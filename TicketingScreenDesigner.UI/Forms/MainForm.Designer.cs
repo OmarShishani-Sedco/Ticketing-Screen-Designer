@@ -47,6 +47,7 @@
             statusStrip = new StatusStrip();
             StatusLabel = new ToolStripStatusLabel();
             statusClearTimer = new System.Windows.Forms.Timer(components);
+            refreshScreensTimer = new System.Windows.Forms.Timer(components);
             ScreenName = new ColumnHeader();
             tableLayoutPanel2.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -243,6 +244,10 @@
             statusClearTimer.Interval = 3000;
             statusClearTimer.Tick += statusClearTimer_Tick;
             // 
+            // refreshScreensTimer
+            // 
+            refreshScreensTimer.Interval = 10000;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -290,5 +295,6 @@
         private ColumnHeader CheckBoxColumn;
         private Panel panel1;
         private CheckBox checkBoxSelectAll;
+        private System.Windows.Forms.Timer refreshScreensTimer;
     }
 }

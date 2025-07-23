@@ -22,7 +22,7 @@ public static class AppConfig
 
         _configuration = new ConfigurationBuilder()
             .SetBasePath(configDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
             .Build();
 
         _initialized = true;

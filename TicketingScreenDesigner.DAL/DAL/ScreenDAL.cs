@@ -123,7 +123,7 @@ namespace TicketingScreenDesigner.DAL.DAL
             }
         }
 
-        public void UpdateScreen(ScreenModel screen)
+        public void UpdateScreen(ScreenModel screen, bool forceUpdate = false)
         {
             try
             {
@@ -131,71 +131,55 @@ namespace TicketingScreenDesigner.DAL.DAL
                 {
                     conn.Open();
 
-                    string selectCurrentDataQuery = "SELECT ScreenName, IsActive, RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
-                    using (SqlCommand selectCurrentCmd = new SqlCommand(selectCurrentDataQuery, conn))
+                    // Optional RowVersion check unless forcing update
+                    if (!forceUpdate)
                     {
-                        selectCurrentCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
-
-                        using (var reader = selectCurrentCmd.ExecuteReader())
+                        string selectQuery = "SELECT ScreenName, IsActive, RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
+                        using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
                         {
-                            if (!reader.HasRows)
+                            cmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
+                            using (var reader = cmd.ExecuteReader())
                             {
-                                throw new DBConcurrencyException("The screen record was not found (possibly deleted by another user).");
-                            }
+                                if (!reader.Read())
+                                    throw new DBConcurrencyException("The screen was deleted.");
 
-                            reader.Read();
-                            string currentScreenName = reader["ScreenName"].ToString();
-                            bool currentIsActive = (bool)reader["IsActive"];
-                            byte[] currentRowVersion = (byte[])reader["RowVersion"];
-
-                            if (currentScreenName == screen.ScreenName &&
-                                currentIsActive == screen.IsActive &&
-                                currentRowVersion.SequenceEqual(screen.RowVersion)) // Compare byte arrays for RowVersion
-                            {
-                                return; 
-                            }
-
-                            if (!currentRowVersion.SequenceEqual(screen.RowVersion))
-                            {
-                                throw new DBConcurrencyException("The screen was modified by another user before you could save your changes.");
+                                byte[] currentRowVersion = (byte[])reader["RowVersion"];
+                                if (!currentRowVersion.SequenceEqual(screen.RowVersion))
+                                    throw new DBConcurrencyException("The screen was modified by another user.");
                             }
                         }
                     }
-                    string updateQuery = @"
-                UPDATE Screen
-                SET IsActive = @IsActive, ScreenName = @ScreenName
-                WHERE RowVersion = @RowVersion AND ScreenId = @ScreenId;";
+
+                    // Do the update
+                    string updateQuery = forceUpdate
+                        ? @"UPDATE Screen SET ScreenName = @ScreenName, IsActive = @IsActive WHERE ScreenId = @ScreenId"
+                        : @"UPDATE Screen SET ScreenName = @ScreenName, IsActive = @IsActive 
+                    WHERE ScreenId = @ScreenId AND RowVersion = @RowVersion";
 
                     using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
                     {
                         updateCmd.Parameters.AddWithValue("@ScreenName", screen.ScreenName);
                         updateCmd.Parameters.AddWithValue("@IsActive", screen.IsActive);
                         updateCmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
-                        updateCmd.Parameters.Add("@RowVersion", SqlDbType.Timestamp).Value = screen.RowVersion; // SqlDbType.Timestamp for rowversion
+
+                        if (!forceUpdate)
+                            updateCmd.Parameters.Add("@RowVersion", SqlDbType.Timestamp).Value = screen.RowVersion;
 
                         int rowsAffected = updateCmd.ExecuteNonQuery();
 
-                        if (rowsAffected == 0)
-                        {
-                            throw new DBConcurrencyException("The screen was modified or deleted by another user (race condition).");
-                        }
+                        if (rowsAffected == 0 && !forceUpdate)
+                            throw new DBConcurrencyException("The screen was modified by another user.");
                     }
 
-                    string selectNewRowVersionQuery = "SELECT RowVersion FROM Screen WHERE ScreenId = @ScreenId;";
-                    using (SqlCommand selectCmd = new SqlCommand(selectNewRowVersionQuery, conn))
+                    // Refresh RowVersion
+                    string getVersion = "SELECT RowVersion FROM Screen WHERE ScreenId = @ScreenId";
+                    using (SqlCommand cmd = new SqlCommand(getVersion, conn))
                     {
-                        selectCmd.Parameters.Add("@ScreenId", SqlDbType.Int).Value = screen.ScreenId;
-
-                        using (var reader = selectCmd.ExecuteReader())
+                        cmd.Parameters.AddWithValue("@ScreenId", screen.ScreenId);
+                        using (var reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
-                            {
                                 screen.RowVersion = (byte[])reader["RowVersion"];
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException("Could not retrieve the updated RowVersion. The record might have been deleted immediately after update.");
-                            }
                         }
                     }
                 }

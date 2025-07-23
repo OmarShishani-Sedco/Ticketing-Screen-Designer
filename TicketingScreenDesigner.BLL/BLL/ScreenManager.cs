@@ -60,7 +60,7 @@ namespace TicketingScreenDesigner.BLL.BLL
             }
         }
 
-        public void UpdateScreen(ScreenModel screen)
+        public void UpdateScreen(ScreenModel screen, bool forceUpdate = false)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace TicketingScreenDesigner.BLL.BLL
                     _screenDAL.DeactivateAllScreensForBankExcluding(screen.BankId, screen.ScreenId);
                 }
 
-                _screenDAL.UpdateScreen(screen);
+                _screenDAL.UpdateScreen(screen, forceUpdate);
             }
             catch (Exception ex)
             {
