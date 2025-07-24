@@ -56,7 +56,15 @@ namespace Ticketing_Screen_Designer.Forms
             if (_isEditMode)
             {
                 this.Text = "Edit Screen";
-                _buttons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
+               
+                try
+                {
+                    _buttons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
+                }
+                catch (Exception ex)
+                {
+                    UIExceptionHandler.Handle(ex, "AddEditScreenForm_InitializeForm");
+                }
                 _originalScreen = _screen.Clone();
                 _originalButtons = _buttons.Select(b => b.Clone()).ToList();
                 if (_buttons.Count > 0)
@@ -70,7 +78,6 @@ namespace Ticketing_Screen_Designer.Forms
             }
            
             RefreshButtonList();
-            UpdateButtonActionsEnabled();
             _isChanged = false;
 
             listViewButtons.SelectedItems.Clear();
@@ -190,9 +197,19 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 if (_isEditMode)
                 {
+                    //Re-fetch Screen and buttons at save time to ensure we have the latest data
+                    var freshScreen = _screenManager.GetScreenById(_screen.ScreenId);
+                    var freshButtons = _buttonManager.GetButtonsForScreen(_screen.ScreenId);
+                    bool buttonConflictsDetected = false;
+                    // List to store buttons that had a concurrency conflict
+                    List<ButtonModel> conflictedButtons = new List<ButtonModel>();
                     try
                     {
-                        _screenManager.UpdateScreen(_screen); // initial attempt
+                       
+                        if (!_screen.Equals(freshScreen))
+                        {
+                            _screenManager.UpdateScreen(_screen); // initial attempt
+                        }
                     }
                     catch (DBConcurrencyException ex) when (ex.Message.Contains("The screen was modified by another user."))
                     {
@@ -209,7 +226,10 @@ namespace Ticketing_Screen_Designer.Forms
                         }
                         else
                         {
-                           UpdateStatus("Update canceled. Please reload the screen to view latest changes.");
+                            UpdateStatus("Screen update canceled due to conflict. Please reload the screen to view latest changes.");
+                            DialogResult = DialogResult.Abort;
+                            this.Close();
+                            return; 
                         }
                     }
 
@@ -234,10 +254,9 @@ namespace Ticketing_Screen_Designer.Forms
                         }
                         else
                         {
-                            var original = _originalButtons.FirstOrDefault(b => b.ButtonId == btn.ButtonId);
-
+                            var freshButton = freshButtons.FirstOrDefault(b => b.ButtonId == btn.ButtonId);
                             // Only update if something changed
-                            if (original != null && IsButtonModified(original, btn))
+                            if (freshButton != null && !freshButton.Equals(btn))
                             {
                                 try
                                 {
@@ -245,29 +264,41 @@ namespace Ticketing_Screen_Designer.Forms
                                 }
                                 catch (DBConcurrencyException ex) when (ex.Message.Contains("The button was modified by another user."))
                                 {
-                                    var result = MessageBox.Show(
-                                        "This button was modified by another user. Do you want to overwrite their changes?",
-                                        "Concurrency Conflict",
-                                        MessageBoxButtons.YesNo,
-                                        MessageBoxIcon.Warning
-                                    );
-
-                                    if (result == DialogResult.Yes)
-                                    {
-                                        _buttonManager.UpdateButton(btn, forceUpdate: true);
-                                    }
-                                    else
-                                    {
-                                        UpdateStatus("Update canceled. Please reload the screen to view latest changes.");
-                                    }
+                                    buttonConflictsDetected = true;
+                                    conflictedButtons.Add(btn);
                                 }
                                 
                             }
                         }
                     }
+                    if (buttonConflictsDetected)
+                    {
+                        var conflictResult = MessageBox.Show(
+                            "One or more buttons were modified by another user. Do you want to overwrite ALL their changes for these conflicted buttons?",
+                            "Multiple Button Concurrency Conflict",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning
+                        );
 
-
-                    UpdateStatus("Screen and buttons updated successfully.");
+                        if (conflictResult == DialogResult.Yes)
+                        {
+                            foreach (var conflictedBtn in conflictedButtons)
+                            {
+                                // Force update each button that had a conflict
+                                _buttonManager.UpdateButton(conflictedBtn, forceUpdate: true);
+                            }
+                            UpdateStatus("Screen and buttons updated successfully, overwriting some button conflicts.");
+                        }
+                        else
+                        {
+                            UpdateStatus("Screen updated. Some button changes were not applied due to conflicts. Please reload to see latest button data.");
+                        }
+                    }
+                    else
+                    {
+                        // No button conflicts, or only screen conflict was handled
+                        UpdateStatus("Screen and buttons updated successfully.");
+                    }
                 }
                 else
                 {
@@ -297,15 +328,7 @@ namespace Ticketing_Screen_Designer.Forms
                 UIExceptionHandler.Handle(ex, "AddEditScreenForm_Save");
             }
         }
-        private bool IsButtonModified(ButtonModel original, ButtonModel current)
-        {
-            return original.NameEn != current.NameEn ||
-                   original.NameAr != current.NameAr ||
-                   original.Type != current.Type ||
-                   original.ServiceId != current.ServiceId ||
-                   original.MessageEn != current.MessageEn ||
-                   original.MessageAr != current.MessageAr;
-        }
+        
 
 
         private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -350,10 +373,7 @@ namespace Ticketing_Screen_Designer.Forms
             this.Close();
         }
 
-        //private void listViewButtons_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    UpdateButtonActionsEnabled();
-        //}
+        
 
         private void UpdateButtonActionsEnabled()
         {

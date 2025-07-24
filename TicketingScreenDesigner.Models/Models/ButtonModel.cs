@@ -35,6 +35,21 @@
             };
         }
 
+        public bool Equals(ButtonModel other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return NameEn == other.NameEn &&
+                   NameAr == other.NameAr &&
+                   Type == other.Type &&
+                   ServiceId == other.ServiceId &&
+                   MessageEn == other.MessageEn &&
+                   MessageAr == other.MessageAr;
+        }
+
 
     }
 }

@@ -12,7 +12,7 @@ namespace Ticketing_Screen_Designer.Forms
         private readonly IScreenManager _screenManager;
         private readonly IButtonManager _buttonManager;
         private readonly IServiceManager _serviceManager;
-        private bool _isRefreshing = false;
+        private bool _suppressItemCheck = false;
 
         public MainForm(
             BankModel selectedBank,
@@ -35,19 +35,25 @@ namespace Ticketing_Screen_Designer.Forms
 
         public async Task LoadScreensAsync()
         {
-            var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
+            HashSet<int> checkedScreenIds = new(
+               listViewScreens.CheckedItems
+                   .Cast<ListViewItem>()
+                   .Select(item => (item.Tag as ScreenModel)?.ScreenId ?? 0)
+                   .Where(id => id != 0));
+
+           var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
 
             if (listViewScreens.InvokeRequired)
             {
-                listViewScreens.Invoke(() => UpdateUI(screens));
+                listViewScreens.Invoke(() => UpdateUI(screens, checkedScreenIds));
             }
             else
             {
-                UpdateUI(screens);
+                UpdateUI(screens, checkedScreenIds);
             }
         }
 
-        private void UpdateUI(List<ScreenModel> screens)
+        private void UpdateUI(List<ScreenModel> screens, HashSet<int> previouslyCheckedScreenIds)
         {
             listViewScreens.Items.Clear();
 
@@ -57,20 +63,21 @@ namespace Ticketing_Screen_Designer.Forms
                 item.SubItems.Add(screen.ScreenName);
                 item.SubItems.Add(screen.IsActive ? "Active" : "");
                 item.Tag = screen; // Store actual object
+                if (previouslyCheckedScreenIds.Contains(screen.ScreenId))
+                {
+                    item.Checked = true;
+                }
 
                 listViewScreens.Items.Add(item).Selected = false;
             }
-            UpdateScreenButtonsEnabled();
             if (listViewScreens.Items.Count > 0)
             {
                 checkBoxSelectAll.Visible = true;
-                checkBoxSelectAll.Checked = false;
-                UpdateStatus("Screen(s) loaded successfully.");
+                checkBoxSelectAll.Checked = listViewScreens.CheckedItems.Count == listViewScreens.Items.Count;
             }
             else
             {
                 checkBoxSelectAll.Visible = false;
-                UpdateStatus("No screens found for this bank.");
             }
 
             listViewScreens.SelectedItems.Clear();
@@ -79,66 +86,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-        //private async Task LoadScreensAsync()
-        //{
-        //    try
-        //    {
-        //        var screens = await Task.Run(() =>
-        //        {
-        //            return _screenManager.GetScreensForBank(_selectedBank.BankId);
-        //        });
-
-
-        //        listViewScreens.Items.Clear();
-
-        //        foreach (var screen in screens)
-        //        {
-        //            var item = new ListViewItem();
-        //            item.SubItems.Add(screen.ScreenName);
-        //            item.SubItems.Add(screen.IsActive ? "Active" : "");
-        //            item.Tag = screen; // Store actual object
-
-        //            listViewScreens.Items.Add(item).Selected = false;
-        //        }
-        //        UpdateScreenButtonsEnabled();
-        //        if (listViewScreens.Items.Count > 0)
-        //        {
-        //            checkBoxSelectAll.Visible = true;
-        //            checkBoxSelectAll.Checked = false;
-        //            UpdateStatus("Screen(s) loaded successfully.");
-        //        }
-        //        else
-        //        {
-        //            checkBoxSelectAll.Visible = false;
-        //            UpdateStatus("No screens found for this bank.");
-        //        }
-
-        //        listViewScreens.SelectedItems.Clear();
-        //        listViewScreens.HideSelection = true;
-        //        this.ActiveControl = btnAddScreen;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        UIExceptionHandler.Handle(ex, "MainForm_LoadScreens");
-        //        var result = MessageBox.Show(
-        //               "An error occurred while loading screens.\nWould you like to try again?",
-        //               "Load Failed",
-        //               MessageBoxButtons.YesNo,
-        //               MessageBoxIcon.Question);
-
-        //        if (result == DialogResult.Yes)
-        //        {
-        //            LoadScreens();
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Exiting application due to error. Please try again later.", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            this.Close();
-        //        }
-
-        //    }
-        //}
+       
         private async void btnAddScreen_Click(object sender, EventArgs e)
         {
             using (var addScreenForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager))
@@ -166,11 +114,6 @@ namespace Ticketing_Screen_Designer.Forms
         {
             var checkedScreens = GetCheckedScreens();
 
-            if (checkedScreens.Count == 0)
-            {
-                MessageBox.Show("Please select a screen to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
 
             var selectedScreen = checkedScreens[0];
 
@@ -206,6 +149,11 @@ namespace Ticketing_Screen_Designer.Forms
                         await LoadScreensAsync();
                         UpdateStatus("Please try again!");
                     }
+                    else if (result == DialogResult.Abort)
+                    {
+                        await LoadScreensAsync();
+                        UpdateStatus("Screen update canceled due to conflict. Please reload the screen to view latest changes.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -218,11 +166,6 @@ namespace Ticketing_Screen_Designer.Forms
         private async void btnDeleteScreen_Click(object sender, EventArgs e)
         {
             var screensToDelete = GetCheckedScreens();
-            if (screensToDelete.Count == 0)
-            {
-                MessageBox.Show("Please select at least one screen to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
 
             var confirm = MessageBox.Show(
                 "Are you sure you want to delete the selected screen(s)?",
@@ -262,10 +205,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-        //private void listViewScreens_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    UpdateScreenButtonsEnabled();
-        //}
+       
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
@@ -310,19 +250,29 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void listViewScreens_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            BeginInvoke(new Action(() =>
-            {
-                UpdateScreenButtonsEnabled();
-            }));
+            if (_suppressItemCheck) return;
+
+            BeginInvoke(new Action(UpdateScreenButtonsEnabled));
         }
 
         private void checkBoxSelectAll_CheckedChanged(object sender, EventArgs e)
         {
             bool isChecked = checkBoxSelectAll.Checked;
+
+            _suppressItemCheck = true; // Suppress item check logic
+
+            listViewScreens.BeginUpdate();
             foreach (ListViewItem item in listViewScreens.Items)
             {
                 item.Checked = isChecked;
             }
+            listViewScreens.EndUpdate();
+
+            _suppressItemCheck = false; 
+
+            // Update button state once after all checkboxes are updated
+            UpdateScreenButtonsEnabled();
         }
+
     }
 }

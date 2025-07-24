@@ -60,7 +60,6 @@ namespace Ticketing_Screen_Designer.Forms
                     panelIssueTicket.Visible = true;
                     panelShowMessage.Visible = false;
                     await LoadServicesAsync();
-                    cmbService.SelectedValue = _existingButton.ServiceId;
                 }
                 else
                 {
@@ -93,7 +92,12 @@ namespace Ticketing_Screen_Designer.Forms
                 cmbService.DataSource = services;
                 cmbService.DisplayMember = "Name";          
                 cmbService.ValueMember = "ServiceId";
-                cmbService.SelectedIndex = -1; 
+                cmbService.SelectedIndex = -1;
+                if (_existingButton != null && _existingButton.Type == ButtonType.IssueTicket && _existingButton.ServiceId.HasValue)
+                {
+                    cmbService.SelectedValue = _existingButton.ServiceId.Value;
+                }
+
             }
             catch (Exception ex)
             {

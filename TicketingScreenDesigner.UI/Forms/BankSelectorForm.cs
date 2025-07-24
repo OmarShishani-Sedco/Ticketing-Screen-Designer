@@ -97,7 +97,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
         }
 
-       
+
 
         private void txtBankName_TextChanged(object sender, EventArgs e)
         {

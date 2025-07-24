@@ -35,18 +35,19 @@
             // 
             // txtBankName
             // 
-            txtBankName.Location = new Point(22, 79);
+            txtBankName.Location = new Point(25, 105);
+            txtBankName.Margin = new Padding(3, 4, 3, 4);
             txtBankName.MaxLength = 80;
             txtBankName.Name = "txtBankName";
-            txtBankName.Size = new Size(141, 23);
+            txtBankName.Size = new Size(161, 27);
             txtBankName.TabIndex = 1;
-            txtBankName.TextChanged += txtBankName_TextChanged;
             // 
             // btnContinue
             // 
-            btnContinue.Location = new Point(22, 132);
+            btnContinue.Location = new Point(25, 176);
+            btnContinue.Margin = new Padding(3, 4, 3, 4);
             btnContinue.Name = "btnContinue";
-            btnContinue.Size = new Size(130, 30);
+            btnContinue.Size = new Size(149, 40);
             btnContinue.TabIndex = 2;
             btnContinue.Text = "Continue";
             btnContinue.UseVisualStyleBackColor = true;
@@ -57,26 +58,28 @@
             lblSelect.AutoSize = true;
             lblSelect.BackColor = SystemColors.ButtonFace;
             lblSelect.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSelect.Location = new Point(22, 36);
+            lblSelect.Location = new Point(25, 48);
             lblSelect.Name = "lblSelect";
-            lblSelect.Size = new Size(747, 20);
+            lblSelect.Size = new Size(949, 25);
             lblSelect.TabIndex = 3;
             lblSelect.Text = "Please enter your bank name to continue to main form (if the bank doesn't exist it will create a new bank)";
             // 
             // BankSelectorForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(834, 461);
+            ClientSize = new Size(982, 553);
             Controls.Add(lblSelect);
             Controls.Add(btnContinue);
             Controls.Add(txtBankName);
             KeyPreview = true;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "BankSelectorForm";
-            Padding = new Padding(10);
+            Padding = new Padding(11, 13, 11, 13);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Bank Form";
+            TextChanged += txtBankName_TextChanged;
             KeyDown += BankSelectorForm_KeyDown;
             ResumeLayout(false);
             PerformLayout();

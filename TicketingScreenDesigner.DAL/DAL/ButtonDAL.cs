@@ -31,8 +31,8 @@ public class ButtonDAL : IButtonDAL
                             {
                                 ButtonId = Convert.ToInt32(reader["ButtonId"]),
                                 ScreenId = Convert.ToInt32(reader["ScreenId"]),
-                                NameEn = reader["NameEnglish"]?.ToString(),
-                                NameAr = reader["NameArabic"]?.ToString(),
+                                NameEn = Convert.ToString(reader["NameEnglish"]),
+                                NameAr = Convert.ToString(reader["NameArabic"]),
                                 Type = (ButtonType)Convert.ToInt32(reader["ButtonType"]),
                                 ServiceId = reader["ServiceId"] != DBNull.Value ? Convert.ToInt32(reader["ServiceId"]) : (int?)null,
                                 MessageEn = reader["MessageEnglish"] != DBNull.Value ? reader["MessageEnglish"].ToString() : null,

@@ -25,7 +25,7 @@ namespace TicketingScreenDesigner.DAL.DAL
                             return new BankModel
                             {
                                 BankId = (int)reader["BankId"],
-                                BankName = reader["BankName"].ToString()
+                                BankName = Convert.ToString(reader["BankName"])
                             };
                         }
                     }

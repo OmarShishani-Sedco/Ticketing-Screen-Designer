@@ -20,6 +20,16 @@
                 RowVersion = this.RowVersion
             };
         }
-        
+        public bool Equals(ScreenModel other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            return ScreenName == other.ScreenName &&
+                   IsActive == other.IsActive &&
+                   BankId == other.BankId;
+
+        }
     }
 }
