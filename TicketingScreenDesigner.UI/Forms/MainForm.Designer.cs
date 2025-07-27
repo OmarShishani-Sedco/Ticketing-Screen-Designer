@@ -67,12 +67,11 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.5537186F));
             tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(14, 70);
-            tableLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
+            tableLayoutPanel2.Location = new Point(13, 53);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(954, 59);
+            tableLayoutPanel2.Size = new Size(833, 44);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // flowLayoutPanel1
@@ -83,19 +82,17 @@
             flowLayoutPanel1.Controls.Add(btnDeleteScreen);
             flowLayoutPanel1.Controls.Add(btnRefreshScreens);
             flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(3, 4);
-            flowLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(948, 51);
+            flowLayoutPanel1.Size = new Size(827, 38);
             flowLayoutPanel1.TabIndex = 3;
             // 
             // btnAddScreen
             // 
             btnAddScreen.AutoSize = true;
-            btnAddScreen.Location = new Point(3, 4);
-            btnAddScreen.Margin = new Padding(3, 4, 3, 4);
+            btnAddScreen.Location = new Point(3, 3);
             btnAddScreen.Name = "btnAddScreen";
-            btnAddScreen.Size = new Size(149, 40);
+            btnAddScreen.Size = new Size(130, 30);
             btnAddScreen.TabIndex = 1;
             btnAddScreen.Text = "Add Screen";
             btnAddScreen.UseVisualStyleBackColor = true;
@@ -104,10 +101,9 @@
             // btnEditScreen
             // 
             btnEditScreen.AutoSize = true;
-            btnEditScreen.Location = new Point(158, 4);
-            btnEditScreen.Margin = new Padding(3, 4, 3, 4);
+            btnEditScreen.Location = new Point(139, 3);
             btnEditScreen.Name = "btnEditScreen";
-            btnEditScreen.Size = new Size(138, 40);
+            btnEditScreen.Size = new Size(121, 30);
             btnEditScreen.TabIndex = 2;
             btnEditScreen.Text = "Edit Screen";
             btnEditScreen.UseVisualStyleBackColor = true;
@@ -116,10 +112,9 @@
             // btnDeleteScreen
             // 
             btnDeleteScreen.AutoSize = true;
-            btnDeleteScreen.Location = new Point(302, 4);
-            btnDeleteScreen.Margin = new Padding(3, 4, 3, 4);
+            btnDeleteScreen.Location = new Point(266, 3);
             btnDeleteScreen.Name = "btnDeleteScreen";
-            btnDeleteScreen.Size = new Size(151, 40);
+            btnDeleteScreen.Size = new Size(132, 30);
             btnDeleteScreen.TabIndex = 3;
             btnDeleteScreen.Text = "Delete Screen";
             btnDeleteScreen.UseVisualStyleBackColor = true;
@@ -128,10 +123,9 @@
             // btnRefreshScreens
             // 
             btnRefreshScreens.Image = Properties.Resources.refresh_15;
-            btnRefreshScreens.Location = new Point(459, 4);
-            btnRefreshScreens.Margin = new Padding(3, 4, 3, 4);
+            btnRefreshScreens.Location = new Point(404, 3);
             btnRefreshScreens.Name = "btnRefreshScreens";
-            btnRefreshScreens.Size = new Size(34, 40);
+            btnRefreshScreens.Size = new Size(30, 30);
             btnRefreshScreens.TabIndex = 4;
             btnRefreshScreens.UseVisualStyleBackColor = true;
             btnRefreshScreens.Click += btnRefreshScreens_Click;
@@ -141,9 +135,9 @@
             lblBankName.Anchor = AnchorStyles.None;
             lblBankName.AutoSize = true;
             lblBankName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblBankName.Location = new Point(449, 23);
+            lblBankName.Location = new Point(397, 17);
             lblBankName.Name = "lblBankName";
-            lblBankName.Size = new Size(83, 32);
+            lblBankName.Size = new Size(65, 25);
             lblBankName.TabIndex = 5;
             lblBankName.Text = "label2";
             // 
@@ -158,16 +152,15 @@
             tableLayoutPanel1.Controls.Add(panel1, 0, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.Padding = new Padding(11, 13, 11, 13);
+            tableLayoutPanel1.Padding = new Padding(10);
             tableLayoutPanel1.RowCount = 4;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 53F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 67F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
-            tableLayoutPanel1.Size = new Size(982, 553);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(859, 415);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // label1
@@ -176,9 +169,9 @@
             label1.AutoSize = true;
             label1.BackColor = SystemColors.Control;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(440, 137);
+            label1.Location = new Point(389, 102);
             label1.Name = "label1";
-            label1.Size = new Size(101, 32);
+            label1.Size = new Size(80, 25);
             label1.TabIndex = 8;
             label1.Text = "Screens";
             // 
@@ -188,19 +181,17 @@
             panel1.Controls.Add(checkBoxSelectAll);
             panel1.Controls.Add(listViewScreens);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(14, 177);
-            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Location = new Point(13, 133);
             panel1.Name = "panel1";
-            panel1.Size = new Size(954, 359);
+            panel1.Size = new Size(833, 269);
             panel1.TabIndex = 5;
             // 
             // checkBoxSelectAll
             // 
             checkBoxSelectAll.AutoSize = true;
-            checkBoxSelectAll.Location = new Point(7, 13);
-            checkBoxSelectAll.Margin = new Padding(3, 4, 3, 4);
+            checkBoxSelectAll.Location = new Point(6, 10);
             checkBoxSelectAll.Name = "checkBoxSelectAll";
-            checkBoxSelectAll.Size = new Size(18, 17);
+            checkBoxSelectAll.Size = new Size(15, 14);
             checkBoxSelectAll.TabIndex = 10;
             checkBoxSelectAll.UseVisualStyleBackColor = true;
             checkBoxSelectAll.Visible = false;
@@ -215,10 +206,9 @@
             listViewScreens.Font = new Font("Segoe UI", 12F);
             listViewScreens.GridLines = true;
             listViewScreens.Location = new Point(0, 0);
-            listViewScreens.Margin = new Padding(3, 4, 3, 4);
             listViewScreens.MultiSelect = false;
             listViewScreens.Name = "listViewScreens";
-            listViewScreens.Size = new Size(954, 359);
+            listViewScreens.Size = new Size(833, 269);
             listViewScreens.TabIndex = 9;
             listViewScreens.UseCompatibleStateImageBehavior = false;
             listViewScreens.View = View.Details;
@@ -238,10 +228,9 @@
             // 
             statusStrip.ImageScalingSize = new Size(20, 20);
             statusStrip.Items.AddRange(new ToolStripItem[] { StatusLabel });
-            statusStrip.Location = new Point(0, 543);
+            statusStrip.Location = new Point(0, 407);
             statusStrip.Name = "statusStrip";
-            statusStrip.Padding = new Padding(1, 0, 16, 0);
-            statusStrip.Size = new Size(1090, 29);
+            statusStrip.Size = new Size(954, 22);
             statusStrip.TabIndex = 8;
             statusStrip.Text = "statusStrip1";
             statusStrip.Visible = false;
@@ -249,7 +238,7 @@
             // StatusLabel
             // 
             StatusLabel.Name = "StatusLabel";
-            StatusLabel.Size = new Size(0, 23);
+            StatusLabel.Size = new Size(0, 17);
             // 
             // statusClearTimer
             // 
@@ -262,14 +251,13 @@
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(982, 553);
+            ClientSize = new Size(859, 415);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(statusStrip);
             KeyPreview = true;
-            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Main Form";

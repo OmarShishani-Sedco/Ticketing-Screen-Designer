@@ -41,7 +41,7 @@ namespace Ticketing_Screen_Designer.Forms
                    .Select(item => (item.Tag as ScreenModel)?.ScreenId ?? 0)
                    .Where(id => id != 0));
 
-           var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
+            var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
 
             if (listViewScreens.InvokeRequired)
             {
@@ -55,6 +55,9 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void UpdateUI(List<ScreenModel> screens, HashSet<int> previouslyCheckedScreenIds)
         {
+            listViewScreens.BeginUpdate();
+            _suppressItemCheck = true; // Also suppress item check events during this bulk update
+
             listViewScreens.Items.Clear();
 
             foreach (var screen in screens)
@@ -70,15 +73,20 @@ namespace Ticketing_Screen_Designer.Forms
 
                 listViewScreens.Items.Add(item).Selected = false;
             }
+            UpdateScreenButtonsEnabled();
+
             if (listViewScreens.Items.Count > 0)
             {
                 checkBoxSelectAll.Visible = true;
                 checkBoxSelectAll.Checked = listViewScreens.CheckedItems.Count == listViewScreens.Items.Count;
+                UpdateStatus("Screens loaded successfully.");
             }
             else
             {
                 checkBoxSelectAll.Visible = false;
             }
+            _suppressItemCheck = false;
+            listViewScreens.EndUpdate();
 
             listViewScreens.SelectedItems.Clear();
             listViewScreens.HideSelection = true;
@@ -86,7 +94,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-       
+
         private async void btnAddScreen_Click(object sender, EventArgs e)
         {
             using (var addScreenForm = new AddEditScreenForm(_selectedBank, _screenManager, _buttonManager, _serviceManager))
@@ -124,7 +132,7 @@ namespace Ticketing_Screen_Designer.Forms
                 if (freshScreen == null)
                 {
                     MessageBox.Show("This screen has been deleted by another user. (Refreshing Screens)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                   await LoadScreensAsync();
+                    await LoadScreensAsync();
                     return;
                 }
 
@@ -205,7 +213,7 @@ namespace Ticketing_Screen_Designer.Forms
         }
 
 
-       
+
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
@@ -268,7 +276,7 @@ namespace Ticketing_Screen_Designer.Forms
             }
             listViewScreens.EndUpdate();
 
-            _suppressItemCheck = false; 
+            _suppressItemCheck = false;
 
             // Update button state once after all checkboxes are updated
             UpdateScreenButtonsEnabled();
