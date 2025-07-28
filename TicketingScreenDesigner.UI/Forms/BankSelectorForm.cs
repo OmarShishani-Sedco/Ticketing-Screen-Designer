@@ -1,5 +1,7 @@
 ﻿using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
+using TicketingScreenDesigner.Common.Helpers;
+using TicketingScreenDesigner.DAL.DAL;
 using TicketingScreenDesigner.Models.Models;
 
 namespace Ticketing_Screen_Designer.Forms
@@ -42,25 +44,31 @@ namespace Ticketing_Screen_Designer.Forms
                     return;
                 }
 
-                var selectedBank = _bankManager.GetBankByName(bankName);
+                var existingBank = _bankManager.GetBankByName(bankName);
 
-                if (selectedBank == null)
+                if (existingBank == null)
                 {
                     var confirm = MessageBox.Show(
-                        "Entered bank name doesn't exist. Are you sure you want to create a new bank?",
-                        "Creating New Bank",
+                        $"Bank '{bankName}' does not exist. Do you want to create it?",
+                        "Create New Bank",
                         MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning);
+                        MessageBoxIcon.Question);
 
                     if (confirm == DialogResult.Yes)
                     {
-                        _bankManager.AddBank(bankName);
-                        selectedBank = _bankManager.GetBankByName(bankName);
+                        int newBankId = _bankManager.AddBank(bankName);
+                        existingBank = _bankManager.GetBankByName(bankName);
 
-                        if (selectedBank == null)
+                        if (existingBank == null)
                         {
-                            MessageBox.Show("Failed to create new bank. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Failed to create bank. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
+                        }
+
+                        // Automatically map new bank to user if user is not super admin
+                        if (!SessionContext.IsSuperAdmin)
+                        {
+                            _bankManager.MapUserToBank(SessionContext.CurrentUserName, newBankId);
                         }
                     }
                     else
@@ -68,27 +76,33 @@ namespace Ticketing_Screen_Designer.Forms
                         return;
                     }
                 }
+                else
+                {
+                    // if Bank exists  check access
+                    bool hasAccess = _bankManager.UserHasAccessToBank(existingBank.BankId);
+                    if (!hasAccess)
+                    {
+                        MessageBox.Show("You do not have access to this bank.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
 
-                var mainForm = new MainForm(
-                    selectedBank,
-                    _screenManager,
-                    _buttonManager,
-                    _serviceManager
-                );
+                //At this point: bank exists AND user has access
+                SessionContext.CurrentBankId = existingBank.BankId;
 
-                // Set owner and centering behavior
-                mainForm.Owner = this;
-                mainForm.StartPosition = FormStartPosition.CenterParent;
+                var mainForm = new MainForm(existingBank, _screenManager, _buttonManager, _serviceManager)
+                {
+                    Owner = this,
+                    StartPosition = FormStartPosition.CenterParent
+                };
 
                 // Disable current form while MainForm is open
                 this.Enabled = false;
 
-                // Show main form modally
                 mainForm.ShowDialog(this);
 
                 // Re-enable current form after MainForm is closed
                 this.Enabled = true;
-
             }
             catch (Exception ex)
             {

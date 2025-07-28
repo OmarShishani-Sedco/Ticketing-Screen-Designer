@@ -7,39 +7,99 @@ namespace TicketingScreenDesigner.DAL.DAL
 {
     public class BankDAL : IBankDAL
     {
-        public BankModel GetBankByName(string name)
+        public BankModel? GetBankByName(string name)
         {
             try
             {
                 using (SqlConnection conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
-                    string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@name", name);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    string query = "SELECT BankId, BankName FROM Bank WHERE BankName = @name;";
+                    using (var cmd = new SqlCommand(query, conn))
                     {
-                        if (reader.Read())
+                        cmd.Parameters.AddWithValue("@name", name);
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            return new BankModel
+                            if (reader.Read())
                             {
-                                BankId = (int)reader["BankId"],
-                                BankName = Convert.ToString(reader["BankName"])
-                            };
+                                return new BankModel
+                                {
+                                    BankId = (int)reader["BankId"],
+                                    BankName = Convert.ToString(reader["BankName"])
+                                };
+                            }
                         }
                     }
                 }
-
-                return null;
+                return null; // Bank not found
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "BankDAL.GetBankByName");
                 throw;
             }
-           
         }
+
+        public bool UserHasAccessToBank(int bankId)
+        {
+            if (SessionContext.IsSuperAdmin)
+            {
+                return true;
+            }
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+                    string query = "SELECT 1 FROM BankUserMapping WHERE UserName = @userName AND BankId = @bankId;";
+                    using (var cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@userName", SessionContext.CurrentUserName);
+                        cmd.Parameters.AddWithValue("@bankId", bankId);
+
+                        return cmd.ExecuteScalar() != null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankDAL.UserHasAccessToBank");
+                throw;
+            }
+        }
+
+        public void MapUserToBank(string userName, int bankId)
+        {
+            try
+            {
+                using (SqlConnection conn = DatabaseHelper.GetConnection())
+                {
+                    conn.Open();
+
+                    string query = @"
+                IF NOT EXISTS (SELECT 1 FROM BankUserMapping WHERE UserName = @UserName AND BankId = @BankId)
+                BEGIN
+                    INSERT INTO BankUserMapping (UserName, BankId)
+                    VALUES (@UserName, @BankId);
+                END";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserName", userName);
+                        cmd.Parameters.AddWithValue("@BankId", bankId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "BankDAL.MapUserToBank");
+                throw;
+            }
+        }
+
+
         public int AddBank(string name)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using Ticketing_Screen_Designer.Forms;
+using Ticketing_Screen_Designer.UIHelpers;
 using TicketingScreenDesigner.BLL.BLL;
 using TicketingScreenDesigner.BLL.BLL.Interfaces;
 using TicketingScreenDesigner.Common.Helpers; // Needed for Logger
@@ -45,7 +46,14 @@ namespace Ticketing_Screen_Designer
                 Application.Exit();
                 return;
             }
-
+            try
+            {
+                DatabaseUtility.InitializeSessionContext();
+            }
+            catch (Exception ex)
+            {
+                UIExceptionHandler.Handle(ex, "Program_InitializeSessionContext");
+            }
 
             // --- Manual Dependency Injection ---
 

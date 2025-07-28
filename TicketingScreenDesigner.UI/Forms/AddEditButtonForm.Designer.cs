@@ -61,10 +61,10 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 11.25F);
-            label1.Location = new Point(9, 7);
+            label1.Location = new Point(8, 5);
             label1.Name = "label1";
-            label1.Padding = new Padding(0, 7, 0, 0);
-            label1.Size = new Size(164, 32);
+            label1.Padding = new Padding(0, 5, 0, 0);
+            label1.Size = new Size(130, 25);
             label1.TabIndex = 0;
             label1.Text = "Button Name (EN)";
             // 
@@ -72,30 +72,28 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 11.25F);
-            label2.Location = new Point(299, 7);
+            label2.Location = new Point(250, 5);
             label2.Name = "label2";
-            label2.Padding = new Padding(0, 7, 0, 0);
-            label2.Size = new Size(163, 32);
+            label2.Padding = new Padding(0, 5, 0, 0);
+            label2.Size = new Size(130, 25);
             label2.TabIndex = 1;
             label2.Text = "Button Name (AR)\n";
             // 
             // txtNameEn
             // 
-            txtNameEn.Location = new Point(179, 11);
-            txtNameEn.Margin = new Padding(3, 4, 3, 4);
+            txtNameEn.Location = new Point(144, 8);
             txtNameEn.MaxLength = 80;
             txtNameEn.Name = "txtNameEn";
-            txtNameEn.Size = new Size(114, 27);
+            txtNameEn.Size = new Size(100, 23);
             txtNameEn.TabIndex = 1;
             txtNameEn.TextChanged += txtNameEn_TextChanged;
             // 
             // txtNameAr
             // 
-            txtNameAr.Location = new Point(468, 11);
-            txtNameAr.Margin = new Padding(3, 4, 3, 4);
+            txtNameAr.Location = new Point(386, 8);
             txtNameAr.MaxLength = 80;
             txtNameAr.Name = "txtNameAr";
-            txtNameAr.Size = new Size(114, 27);
+            txtNameAr.Size = new Size(100, 23);
             txtNameAr.TabIndex = 2;
             txtNameAr.TextChanged += txtNameAr_TextChanged;
             // 
@@ -103,10 +101,10 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(588, 7);
+            label3.Location = new Point(492, 5);
             label3.Name = "label3";
-            label3.Padding = new Padding(0, 7, 0, 0);
-            label3.Size = new Size(112, 32);
+            label3.Padding = new Padding(0, 5, 0, 0);
+            label3.Size = new Size(88, 25);
             label3.TabIndex = 4;
             label3.Text = "Button Type";
             // 
@@ -114,19 +112,18 @@
             // 
             cmbButtonType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbButtonType.FormattingEnabled = true;
-            cmbButtonType.Location = new Point(706, 12);
-            cmbButtonType.Margin = new Padding(3, 5, 3, 4);
+            cmbButtonType.Location = new Point(586, 9);
+            cmbButtonType.Margin = new Padding(3, 4, 3, 3);
             cmbButtonType.Name = "cmbButtonType";
-            cmbButtonType.Size = new Size(138, 28);
+            cmbButtonType.Size = new Size(121, 23);
             cmbButtonType.TabIndex = 3;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = AnchorStyles.Bottom;
-            btnCancel.Location = new Point(158, 4);
-            btnCancel.Margin = new Padding(3, 4, 3, 4);
+            btnCancel.Location = new Point(139, 3);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(149, 40);
+            btnCancel.Size = new Size(130, 30);
             btnCancel.TabIndex = 8;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -134,10 +131,9 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(3, 4);
-            btnSave.Margin = new Padding(3, 4, 3, 4);
+            btnSave.Location = new Point(3, 3);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(149, 40);
+            btnSave.Size = new Size(130, 30);
             btnSave.TabIndex = 7;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
@@ -153,14 +149,13 @@
             tableLayoutPanel1.Controls.Add(panel1, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.Padding = new Padding(11, 13, 11, 13);
+            tableLayoutPanel1.Padding = new Padding(10);
             tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 267F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 67F));
-            tableLayoutPanel1.Size = new Size(982, 478);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 200F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutPanel1.Size = new Size(859, 358);
             tableLayoutPanel1.TabIndex = 10;
             // 
             // flowLayoutPanel1
@@ -172,11 +167,11 @@
             flowLayoutPanel1.Controls.Add(label3);
             flowLayoutPanel1.Controls.Add(cmbButtonType);
             flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(14, 26);
-            flowLayoutPanel1.Margin = new Padding(3, 13, 3, 4);
+            flowLayoutPanel1.Location = new Point(13, 20);
+            flowLayoutPanel1.Margin = new Padding(3, 10, 3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Padding = new Padding(6, 7, 6, 7);
-            flowLayoutPanel1.Size = new Size(954, 90);
+            flowLayoutPanel1.Padding = new Padding(5);
+            flowLayoutPanel1.Size = new Size(833, 67);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel2
@@ -184,10 +179,9 @@
             flowLayoutPanel2.Controls.Add(btnSave);
             flowLayoutPanel2.Controls.Add(btnCancel);
             flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(14, 391);
-            flowLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel2.Location = new Point(13, 293);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(954, 70);
+            flowLayoutPanel2.Size = new Size(833, 52);
             flowLayoutPanel2.TabIndex = 8;
             // 
             // panel1
@@ -195,10 +189,9 @@
             panel1.Controls.Add(panelShowMessage);
             panel1.Controls.Add(panelIssueTicket);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(14, 124);
-            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Location = new Point(13, 93);
             panel1.Name = "panel1";
-            panel1.Size = new Size(954, 259);
+            panel1.Size = new Size(833, 194);
             panel1.TabIndex = 10;
             // 
             // panelShowMessage
@@ -211,9 +204,8 @@
             panelShowMessage.Controls.Add(label4);
             panelShowMessage.Dock = DockStyle.Fill;
             panelShowMessage.Location = new Point(0, 0);
-            panelShowMessage.Margin = new Padding(3, 4, 3, 4);
             panelShowMessage.Name = "panelShowMessage";
-            panelShowMessage.Size = new Size(954, 259);
+            panelShowMessage.Size = new Size(833, 194);
             panelShowMessage.TabIndex = 0;
             panelShowMessage.Visible = false;
             // 
@@ -221,31 +213,29 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 11.25F);
-            label6.Location = new Point(9, 92);
+            label6.Location = new Point(8, 69);
             label6.Name = "label6";
-            label6.Size = new Size(126, 25);
+            label6.Size = new Size(100, 20);
             label6.TabIndex = 12;
             label6.Text = "Message (AR)\n";
             // 
             // txtMsgAr
             // 
-            txtMsgAr.Location = new Point(165, 93);
-            txtMsgAr.Margin = new Padding(3, 4, 3, 4);
+            txtMsgAr.Location = new Point(144, 70);
             txtMsgAr.MaxLength = 200;
             txtMsgAr.Multiline = true;
             txtMsgAr.Name = "txtMsgAr";
-            txtMsgAr.Size = new Size(114, 29);
+            txtMsgAr.Size = new Size(100, 23);
             txtMsgAr.TabIndex = 5;
             txtMsgAr.TextChanged += txtMsgAr_TextChanged;
             // 
             // txtMsgEn
             // 
-            txtMsgEn.Location = new Point(165, 32);
-            txtMsgEn.Margin = new Padding(3, 4, 3, 4);
+            txtMsgEn.Location = new Point(144, 24);
             txtMsgEn.MaxLength = 200;
             txtMsgEn.Multiline = true;
             txtMsgEn.Name = "txtMsgEn";
-            txtMsgEn.Size = new Size(114, 29);
+            txtMsgEn.Size = new Size(100, 23);
             txtMsgEn.TabIndex = 4;
             txtMsgEn.TextChanged += txtMsgEn_TextChanged;
             // 
@@ -253,9 +243,9 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 11.25F);
-            label4.Location = new Point(9, 31);
+            label4.Location = new Point(8, 23);
             label4.Name = "label4";
-            label4.Size = new Size(127, 25);
+            label4.Size = new Size(100, 20);
             label4.TabIndex = 8;
             label4.Text = "Message (EN)\n";
             // 
@@ -266,18 +256,17 @@
             panelIssueTicket.Controls.Add(cmbService);
             panelIssueTicket.Dock = DockStyle.Fill;
             panelIssueTicket.Location = new Point(0, 0);
-            panelIssueTicket.Margin = new Padding(3, 4, 3, 4);
             panelIssueTicket.Name = "panelIssueTicket";
-            panelIssueTicket.Size = new Size(954, 259);
+            panelIssueTicket.Size = new Size(833, 194);
             panelIssueTicket.TabIndex = 7;
             // 
             // lblLoadingServices
             // 
             lblLoadingServices.AutoSize = true;
             lblLoadingServices.Font = new Font("Segoe UI", 11.25F);
-            lblLoadingServices.Location = new Point(13, 32);
+            lblLoadingServices.Location = new Point(11, 24);
             lblLoadingServices.Name = "lblLoadingServices";
-            lblLoadingServices.Size = new Size(163, 25);
+            lblLoadingServices.Size = new Size(127, 20);
             lblLoadingServices.TabIndex = 11;
             lblLoadingServices.Text = "Loading services...";
             lblLoadingServices.Visible = false;
@@ -286,9 +275,9 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 11.25F);
-            label5.Location = new Point(9, 31);
+            label5.Location = new Point(8, 23);
             label5.Name = "label5";
-            label5.Size = new Size(127, 25);
+            label5.Size = new Size(100, 20);
             label5.TabIndex = 9;
             label5.Text = "Select Service\n";
             // 
@@ -296,20 +285,18 @@
             // 
             cmbService.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbService.FormattingEnabled = true;
-            cmbService.Location = new Point(9, 61);
-            cmbService.Margin = new Padding(3, 4, 3, 4);
+            cmbService.Location = new Point(8, 46);
             cmbService.Name = "cmbService";
-            cmbService.Size = new Size(138, 28);
+            cmbService.Size = new Size(121, 23);
             cmbService.TabIndex = 6;
             // 
             // AddEditButtonForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(982, 478);
+            ClientSize = new Size(859, 358);
             Controls.Add(tableLayoutPanel1);
-            Margin = new Padding(3, 4, 3, 4);
             Name = "AddEditButtonForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Add/Edit Button Form";

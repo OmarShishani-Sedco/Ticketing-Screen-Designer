@@ -20,6 +20,7 @@ namespace Ticketing_Screen_Designer.Forms
         private ScreenModel _originalScreen;
         private List<ButtonModel> _originalButtons;
         private readonly ToolTip _tooltip = new ToolTip();
+        private bool _suppressItemCheck = false;
 
         public AddEditScreenForm(
             BankModel bank,
@@ -45,7 +46,6 @@ namespace Ticketing_Screen_Designer.Forms
             };
 
             InitializeForm();
-            this.FormClosing += AddEditScreenForm_FormClosing;
         }
 
         private void InitializeForm()
@@ -135,12 +135,7 @@ namespace Ticketing_Screen_Designer.Forms
         {
             var checkedButtons = GetCheckedButtons();
 
-            if (checkedButtons.Count == 0)
-            {
-                MessageBox.Show("Please select a button to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
+           
             var selected = checkedButtons[0];
 
             var form = new AddEditButtonForm(_screen.ScreenId, _bank.BankId, _buttonManager, _serviceManager, selected);
@@ -159,12 +154,7 @@ namespace Ticketing_Screen_Designer.Forms
         private void btnDeleteButton_Click(object sender, EventArgs e)
         {
             var buttonsToDelete = GetCheckedButtons(); // Use GetCheckedButtons()
-            if (buttonsToDelete.Count == 0)
-            {
-                MessageBox.Show("Please select at least one button to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
+            
             var confirm = MessageBox.Show("Are you sure you want to delete the selected button(s)?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes)
                 return;
@@ -215,7 +205,7 @@ namespace Ticketing_Screen_Designer.Forms
                     {
                         var result = MessageBox.Show(
                             "This screen was modified by another user. Do you want to overwrite their changes?",
-                            "Concurrency Conflict",
+                            "Screen Concurrency Conflict",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Warning
                         );
@@ -275,7 +265,7 @@ namespace Ticketing_Screen_Designer.Forms
                     {
                         var conflictResult = MessageBox.Show(
                             "One or more buttons were modified by another user. Do you want to overwrite ALL their changes for these conflicted buttons?",
-                            "Multiple Button Concurrency Conflict",
+                            "Button Concurrency Conflict",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Warning
                         );
@@ -328,7 +318,7 @@ namespace Ticketing_Screen_Designer.Forms
                 UIExceptionHandler.Handle(ex, "AddEditScreenForm_Save");
             }
         }
-        
+
 
 
         private void AddEditScreenForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -421,19 +411,28 @@ namespace Ticketing_Screen_Designer.Forms
 
         private void listViewButtons_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            BeginInvoke(new Action(() =>
-            {
-                UpdateButtonActionsEnabled();
-            }));
+            if (_suppressItemCheck) return;
+
+            BeginInvoke(new Action(UpdateButtonActionsEnabled));
         }
 
         private void checkBoxSelectAll_CheckedChanged(object sender, EventArgs e)
         {
             bool isChecked = checkBoxSelectAll.Checked;
+
+            _suppressItemCheck = true; // Suppress item check logic
+
+            listViewButtons.BeginUpdate();
             foreach (ListViewItem item in listViewButtons.Items)
             {
                 item.Checked = isChecked;
             }
+            listViewButtons.EndUpdate();
+
+            _suppressItemCheck = false;
+
+            // Update button state once after all checkboxes are updated
+            UpdateButtonActionsEnabled();
         }
     }
 }

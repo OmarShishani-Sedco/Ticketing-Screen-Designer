@@ -4,8 +4,10 @@ namespace TicketingScreenDesigner.DAL.DAL.Interfaces
 {
     public interface IBankDAL
     {
-        BankModel GetBankByName(string name);
+        BankModel? GetBankByName(string name);
         int AddBank(string name);
         List<BankModel> GetAllBanks();
+        bool UserHasAccessToBank(int bankId);
+        void MapUserToBank(string userName, int bankId);
     }
 }

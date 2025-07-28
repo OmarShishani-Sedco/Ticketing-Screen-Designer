@@ -44,7 +44,7 @@ namespace Ticketing_Screen_Designer.Forms
                 TogglePanels();
                 if ((ButtonType)cmbButtonType.SelectedItem == ButtonType.IssueTicket)
                 {
-                   await LoadServicesAsync();
+                    await LoadServicesAsync();
                 }
             };
 
@@ -90,7 +90,7 @@ namespace Ticketing_Screen_Designer.Forms
                 });
 
                 cmbService.DataSource = services;
-                cmbService.DisplayMember = "Name";          
+                cmbService.DisplayMember = "Name";
                 cmbService.ValueMember = "ServiceId";
                 cmbService.SelectedIndex = -1;
                 if (_existingButton != null && _existingButton.Type == ButtonType.IssueTicket && _existingButton.ServiceId.HasValue)

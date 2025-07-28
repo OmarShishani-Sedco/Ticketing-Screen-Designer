@@ -66,29 +66,27 @@
             label1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Padding = new Padding(0, 7, 0, 0);
-            label1.Size = new Size(116, 30);
+            label1.Padding = new Padding(0, 5, 0, 0);
+            label1.Size = new Size(91, 22);
             label1.TabIndex = 0;
             label1.Text = "Screen Name:";
             // 
             // txtScreenName
             // 
-            txtScreenName.Location = new Point(125, 4);
-            txtScreenName.Margin = new Padding(3, 4, 3, 4);
+            txtScreenName.Location = new Point(100, 3);
             txtScreenName.MaxLength = 80;
             txtScreenName.Name = "txtScreenName";
-            txtScreenName.Size = new Size(114, 27);
+            txtScreenName.Size = new Size(100, 23);
             txtScreenName.TabIndex = 1;
             txtScreenName.TextChanged += txtScreenName_TextChanged;
             // 
             // chkIsActive
             // 
             chkIsActive.AutoSize = true;
-            chkIsActive.Location = new Point(245, 4);
-            chkIsActive.Margin = new Padding(3, 4, 3, 4);
+            chkIsActive.Location = new Point(206, 3);
             chkIsActive.Name = "chkIsActive";
-            chkIsActive.Padding = new Padding(0, 3, 0, 0);
-            chkIsActive.Size = new Size(163, 27);
+            chkIsActive.Padding = new Padding(0, 2, 0, 0);
+            chkIsActive.Size = new Size(130, 21);
             chkIsActive.TabIndex = 2;
             chkIsActive.Text = "Set as Active Screen";
             chkIsActive.UseVisualStyleBackColor = true;
@@ -96,10 +94,9 @@
             // 
             // btnDeleteButton
             // 
-            btnDeleteButton.Location = new Point(313, 4);
-            btnDeleteButton.Margin = new Padding(3, 4, 3, 4);
+            btnDeleteButton.Location = new Point(275, 3);
             btnDeleteButton.Name = "btnDeleteButton";
-            btnDeleteButton.Size = new Size(149, 40);
+            btnDeleteButton.Size = new Size(130, 30);
             btnDeleteButton.TabIndex = 5;
             btnDeleteButton.Text = "\tDelete Button";
             btnDeleteButton.UseVisualStyleBackColor = true;
@@ -107,10 +104,9 @@
             // 
             // btnEditButton
             // 
-            btnEditButton.Location = new Point(158, 4);
-            btnEditButton.Margin = new Padding(3, 4, 3, 4);
+            btnEditButton.Location = new Point(139, 3);
             btnEditButton.Name = "btnEditButton";
-            btnEditButton.Size = new Size(149, 40);
+            btnEditButton.Size = new Size(130, 30);
             btnEditButton.TabIndex = 4;
             btnEditButton.Text = "Edit Button";
             btnEditButton.UseVisualStyleBackColor = true;
@@ -118,10 +114,9 @@
             // 
             // btnAddButton
             // 
-            btnAddButton.Location = new Point(3, 4);
-            btnAddButton.Margin = new Padding(3, 4, 3, 4);
+            btnAddButton.Location = new Point(3, 3);
             btnAddButton.Name = "btnAddButton";
-            btnAddButton.Size = new Size(149, 40);
+            btnAddButton.Size = new Size(130, 30);
             btnAddButton.TabIndex = 3;
             btnAddButton.Text = "\tAdd Button";
             btnAddButton.UseVisualStyleBackColor = true;
@@ -133,9 +128,9 @@
             label2.AutoSize = true;
             label2.BackColor = SystemColors.ButtonFace;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(449, 164);
+            label2.Location = new Point(396, 123);
             label2.Name = "label2";
-            label2.Size = new Size(83, 28);
+            label2.Size = new Size(67, 21);
             label2.TabIndex = 12;
             label2.Text = "Buttons";
             // 
@@ -151,17 +146,16 @@
             tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.Padding = new Padding(11, 13, 11, 13);
+            tableLayoutPanel1.Padding = new Padding(10);
             tableLayoutPanel1.RowCount = 5;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 67F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 67F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 63F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
-            tableLayoutPanel1.Size = new Size(982, 553);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(859, 415);
             tableLayoutPanel1.TabIndex = 14;
             // 
             // flowLayoutPanel3
@@ -170,19 +164,17 @@
             flowLayoutPanel3.Controls.Add(btnSave);
             flowLayoutPanel3.Dock = DockStyle.Fill;
             flowLayoutPanel3.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel3.Location = new Point(14, 488);
-            flowLayoutPanel3.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel3.Location = new Point(13, 366);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(954, 48);
+            flowLayoutPanel3.Size = new Size(833, 36);
             flowLayoutPanel3.TabIndex = 20;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnCancel.Location = new Point(804, 4);
-            btnCancel.Margin = new Padding(3, 4, 3, 4);
+            btnCancel.Location = new Point(701, 3);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(147, 40);
+            btnCancel.Size = new Size(129, 30);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -191,10 +183,9 @@
             // btnSave
             // 
             btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnSave.Location = new Point(649, 4);
-            btnSave.Margin = new Padding(3, 4, 3, 4);
+            btnSave.Location = new Point(565, 3);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(149, 40);
+            btnSave.Size = new Size(130, 30);
             btnSave.TabIndex = 6;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
@@ -206,10 +197,9 @@
             flowLayoutPanel1.Controls.Add(txtScreenName);
             flowLayoutPanel1.Controls.Add(chkIsActive);
             flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(14, 17);
-            flowLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel1.Location = new Point(13, 13);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(954, 59);
+            flowLayoutPanel1.Size = new Size(833, 44);
             flowLayoutPanel1.TabIndex = 17;
             // 
             // panel1
@@ -218,19 +208,17 @@
             panel1.Controls.Add(checkBoxSelectAll);
             panel1.Controls.Add(listViewButtons);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(14, 214);
-            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Location = new Point(13, 160);
             panel1.Name = "panel1";
-            panel1.Size = new Size(954, 266);
+            panel1.Size = new Size(833, 200);
             panel1.TabIndex = 6;
             // 
             // checkBoxSelectAll
             // 
             checkBoxSelectAll.AutoSize = true;
-            checkBoxSelectAll.Location = new Point(7, 13);
-            checkBoxSelectAll.Margin = new Padding(3, 4, 3, 4);
+            checkBoxSelectAll.Location = new Point(6, 10);
             checkBoxSelectAll.Name = "checkBoxSelectAll";
-            checkBoxSelectAll.Size = new Size(18, 17);
+            checkBoxSelectAll.Size = new Size(15, 14);
             checkBoxSelectAll.TabIndex = 22;
             checkBoxSelectAll.UseVisualStyleBackColor = true;
             checkBoxSelectAll.CheckedChanged += checkBoxSelectAll_CheckedChanged;
@@ -243,9 +231,8 @@
             listViewButtons.Font = new Font("Segoe UI", 12F);
             listViewButtons.GridLines = true;
             listViewButtons.Location = new Point(0, 0);
-            listViewButtons.Margin = new Padding(3, 4, 3, 4);
             listViewButtons.Name = "listViewButtons";
-            listViewButtons.Size = new Size(954, 266);
+            listViewButtons.Size = new Size(833, 200);
             listViewButtons.TabIndex = 21;
             listViewButtons.UseCompatibleStateImageBehavior = false;
             listViewButtons.View = View.Details;
@@ -278,10 +265,9 @@
             flowLayoutPanel2.Controls.Add(btnEditButton);
             flowLayoutPanel2.Controls.Add(btnDeleteButton);
             flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(14, 84);
-            flowLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel2.Location = new Point(13, 63);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(954, 59);
+            flowLayoutPanel2.Size = new Size(833, 44);
             flowLayoutPanel2.TabIndex = 18;
             // 
             // statusClearTimer
@@ -293,10 +279,9 @@
             // 
             statusStrip.ImageScalingSize = new Size(20, 20);
             statusStrip.Items.AddRange(new ToolStripItem[] { StatusLabel });
-            statusStrip.Location = new Point(0, 639);
+            statusStrip.Location = new Point(0, 479);
             statusStrip.Name = "statusStrip";
-            statusStrip.Padding = new Padding(1, 0, 16, 0);
-            statusStrip.Size = new Size(949, 29);
+            statusStrip.Size = new Size(830, 22);
             statusStrip.TabIndex = 15;
             statusStrip.Text = "statusStrip1";
             statusStrip.Visible = false;
@@ -304,20 +289,20 @@
             // StatusLabel
             // 
             StatusLabel.Name = "StatusLabel";
-            StatusLabel.Size = new Size(0, 23);
+            StatusLabel.Size = new Size(0, 17);
             // 
             // AddEditScreenForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(982, 553);
+            ClientSize = new Size(859, 415);
             Controls.Add(statusStrip);
             Controls.Add(tableLayoutPanel1);
-            Margin = new Padding(3, 4, 3, 4);
             Name = "AddEditScreenForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Add/Edit Screen Form";
+            FormClosing += AddEditScreenForm_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             flowLayoutPanel3.ResumeLayout(false);

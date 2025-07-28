@@ -45,4 +45,36 @@ public static class DatabaseUtility
 
         return false;
     }
+
+    public static void InitializeSessionContext()
+    {
+        SessionContext.Initialize(GetCurrentDbUser());
+    }
+
+    public static string GetCurrentDbUser()
+    {
+        try
+        {
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                using (var cmd = new SqlCommand("SELECT USER_NAME()", conn))
+                {
+                    return Convert.ToString(cmd.ExecuteScalar());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "DatabaseUtility.GetCurrentDbUser");
+            throw;
+        }
+       
+    }
+
+
+
 }
+
+   
+

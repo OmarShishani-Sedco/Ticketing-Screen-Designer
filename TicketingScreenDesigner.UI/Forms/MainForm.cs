@@ -56,7 +56,7 @@ namespace Ticketing_Screen_Designer.Forms
         private void UpdateUI(List<ScreenModel> screens, HashSet<int> previouslyCheckedScreenIds)
         {
             listViewScreens.BeginUpdate();
-            _suppressItemCheck = true; // Also suppress item check events during this bulk update
+            _suppressItemCheck = true;
 
             listViewScreens.Items.Clear();
 
