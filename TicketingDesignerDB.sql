@@ -287,61 +287,49 @@ GO
 
 
 ---------------------------------------------------------
--- Security Function and Policies
+-- Drop Security Policies
 ---------------------------------------------------------
 
--- Security Predicate Function
-IF OBJECT_ID('dbo.fn_securitypredicate_userBased', 'IF') IS NULL
+-- Drop Security Policy: Bank
+IF EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Bank')
 BEGIN
-    EXEC('
-    CREATE FUNCTION dbo.fn_securitypredicate_userBased(@BankId INT)
-    RETURNS TABLE
-    WITH SCHEMABINDING
-    AS
-    RETURN SELECT 1 AS fn_result
-    WHERE IS_MEMBER(''db_owner'') = 1
-        OR SYSTEM_USER = ''sa''
-        OR EXISTS (
-            SELECT 1 FROM dbo.BankUserMapping
-            WHERE UserName = USER_NAME()
-              AND BankId = @BankId
-        );
-    ');
+    DROP SECURITY POLICY [dbo].[SecurityPolicy_Bank];
+    PRINT 'Security Policy [dbo].[SecurityPolicy_Bank] dropped successfully.';
 END
 GO
 
--- Security Policy: Bank
-IF NOT EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Bank')
+-- Drop Security Policy: Button
+IF EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Button')
 BEGIN
-    CREATE SECURITY POLICY [dbo].[SecurityPolicy_Bank] 
-    ADD FILTER PREDICATE [dbo].[fn_securitypredicate_userBased]([BankId]) ON [dbo].[Bank]
-    WITH (STATE = ON, SCHEMABINDING = ON);
+    DROP SECURITY POLICY [dbo].[SecurityPolicy_Button];
+    PRINT 'Security Policy [dbo].[SecurityPolicy_Button] dropped successfully.';
 END
 GO
 
--- Security Policy: Button
-IF NOT EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Button')
+-- Drop Security Policy: Screen
+IF EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Screen')
 BEGIN
-    CREATE SECURITY POLICY [dbo].[SecurityPolicy_Button] 
-    ADD FILTER PREDICATE [dbo].[fn_securitypredicate_userBased]([BankId]) ON [dbo].[Button]
-    WITH (STATE = ON, SCHEMABINDING = ON);
+    DROP SECURITY POLICY [dbo].[SecurityPolicy_Screen];
+    PRINT 'Security Policy [dbo].[SecurityPolicy_Screen] dropped successfully.';
 END
 GO
 
--- Security Policy: Screen
-IF NOT EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Screen')
+-- Drop Security Policy: Service
+IF EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Service')
 BEGIN
-    CREATE SECURITY POLICY [dbo].[SecurityPolicy_Screen] 
-    ADD FILTER PREDICATE [dbo].[fn_securitypredicate_userBased]([BankId]) ON [dbo].[Screen]
-    WITH (STATE = ON, SCHEMABINDING = ON);
+    DROP SECURITY POLICY [dbo].[SecurityPolicy_Service];
+    PRINT 'Security Policy [dbo].[SecurityPolicy_Service] dropped successfully.';
 END
 GO
 
--- Security Policy: Service
-IF NOT EXISTS (SELECT * FROM sys.security_policies WHERE name = 'SecurityPolicy_Service')
+---------------------------------------------------------
+-- Drop Security Predicate Function
+---------------------------------------------------------
+
+-- Drop Security Predicate Function
+IF OBJECT_ID('dbo.fn_securitypredicate_userBased', 'IF') IS NOT NULL
 BEGIN
-    CREATE SECURITY POLICY [dbo].[SecurityPolicy_Service] 
-    ADD FILTER PREDICATE [dbo].[fn_securitypredicate_userBased]([BankId]) ON [dbo].[Service]
-    WITH (STATE = ON, SCHEMABINDING = ON);
+    DROP FUNCTION dbo.fn_securitypredicate_userBased;
+    PRINT 'Function dbo.fn_securitypredicate_userBased dropped successfully.';
 END
 GO
