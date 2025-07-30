@@ -82,7 +82,7 @@ namespace Ticketing_Screen_Designer.Forms
             {
                 checkBoxSelectAll.Visible = true;
                 checkBoxSelectAll.Checked = listViewScreens.CheckedItems.Count == listViewScreens.Items.Count;
-                UpdateStatus("Screens loaded successfully.");
+                UpdateStatus("Screens re-loaded successfully.");
             }
             else
             {
@@ -221,6 +221,7 @@ namespace Ticketing_Screen_Designer.Forms
         private async void MainForm_Load(object sender, EventArgs e)
         {
             await HandleUserScreenLoadAsync();
+            UpdateStatus("Screens loaded successfully.");
         }
 
         private void statusClearTimer_Tick(object sender, EventArgs e)
