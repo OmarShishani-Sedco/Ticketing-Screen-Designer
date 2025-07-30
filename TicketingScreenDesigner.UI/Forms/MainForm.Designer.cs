@@ -248,6 +248,7 @@
             // refreshScreensTimer
             // 
             refreshScreensTimer.Interval = 10000;
+            refreshScreensTimer.Tick += refreshScreensTimer_Tick;
             // 
             // MainForm
             // 

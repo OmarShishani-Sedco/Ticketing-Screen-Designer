@@ -29,7 +29,6 @@ namespace Ticketing_Screen_Designer.Forms
 
             this.Text = $"Main Form - {_selectedBank.BankName}";
             lblBankName.Text = $"Bank: {_selectedBank.BankName}";
-            refreshScreensTimer.Tick += async (s, e) => await LoadScreensAsync();
             refreshScreensTimer.Start();
         }
 
@@ -43,13 +42,17 @@ namespace Ticketing_Screen_Designer.Forms
 
             var screens = await Task.Run(() => _screenManager.GetScreensForBank(_selectedBank.BankId));
 
-            if (listViewScreens.InvokeRequired)
+            UpdateUI(screens, checkedScreenIds);
+        }
+        private async Task HandleUserScreenLoadAsync()
+        {
+            try
             {
-                listViewScreens.Invoke(() => UpdateUI(screens, checkedScreenIds));
+                await LoadScreensAsync();
             }
-            else
+            catch (Exception ex)
             {
-                UpdateUI(screens, checkedScreenIds);
+                UIExceptionHandler.Handle(ex, "MainForm_LoadScreensAsync");
             }
         }
 
@@ -103,7 +106,7 @@ namespace Ticketing_Screen_Designer.Forms
 
                 if (result == DialogResult.OK)
                 {
-                    await LoadScreensAsync(); // Refresh the list
+                    await HandleUserScreenLoadAsync(); // Refresh the list
                     UpdateStatus("Screen added successfully.");
                 }
 
@@ -132,14 +135,14 @@ namespace Ticketing_Screen_Designer.Forms
                 if (freshScreen == null)
                 {
                     MessageBox.Show("This screen has been deleted by another user. (Refreshing Screens)", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    await LoadScreensAsync();
+                    await HandleUserScreenLoadAsync();
                     return;
                 }
 
                 if (!freshScreen.RowVersion.SequenceEqual(selectedScreen.RowVersion))
                 {
                     MessageBox.Show("This screen has been modified by another user. (Refreshing Screens)", "Concurrency Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    await LoadScreensAsync();
+                    await HandleUserScreenLoadAsync();
                     return;
                 }
 
@@ -149,17 +152,17 @@ namespace Ticketing_Screen_Designer.Forms
 
                     if (result == DialogResult.OK)
                     {
-                        await LoadScreensAsync();
+                        await HandleUserScreenLoadAsync();
                         UpdateStatus("Screen edited successfully.");
                     }
                     else if (result == DialogResult.No)
                     {
-                        await LoadScreensAsync();
+                        await HandleUserScreenLoadAsync();
                         UpdateStatus("Please try again!");
                     }
                     else if (result == DialogResult.Abort)
                     {
-                        await LoadScreensAsync();
+                        await HandleUserScreenLoadAsync();
                         UpdateStatus("Screen update canceled due to conflict. Please reload the screen to view latest changes.");
                     }
                 }
@@ -189,13 +192,13 @@ namespace Ticketing_Screen_Designer.Forms
                     _screenManager.DeleteScreen(screen.ScreenId, screen.RowVersion);
                 }
 
-                await LoadScreensAsync();
+                await HandleUserScreenLoadAsync();
                 UpdateStatus("Screen(s) deleted successfully.");
             }
             catch (DBConcurrencyException ex)
             {
                 UIExceptionHandler.Handle(ex, "MainForm_DeleteScreens", "(Refreshing screens)");
-                await LoadScreensAsync();
+                await HandleUserScreenLoadAsync();
             }
             catch (Exception ex)
             {
@@ -217,7 +220,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
-            await LoadScreensAsync();
+            await HandleUserScreenLoadAsync();
         }
 
         private void statusClearTimer_Tick(object sender, EventArgs e)
@@ -236,15 +239,7 @@ namespace Ticketing_Screen_Designer.Forms
 
         private async void btnRefreshScreens_Click(object sender, EventArgs e)
         {
-            try
-            {
-                await LoadScreensAsync();
-                UpdateStatus("Screens refreshed successfully.");
-            }
-            catch (Exception ex)
-            {
-                UIExceptionHandler.Handle(ex, "MainForm_RefreshScreens");
-            }
+            await HandleUserScreenLoadAsync();
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -282,5 +277,18 @@ namespace Ticketing_Screen_Designer.Forms
             UpdateScreenButtonsEnabled();
         }
 
+        private async void refreshScreensTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                await LoadScreensAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "MainForm_refreshScreensTimer"); 
+                UpdateStatus("Automatic screen refresh failed.");
+                refreshScreensTimer.Stop(); // Stop the timer to prevent further attempts
+            }
+        }
     }
 }
