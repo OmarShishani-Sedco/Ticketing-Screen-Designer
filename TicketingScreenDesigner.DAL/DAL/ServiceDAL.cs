@@ -15,7 +15,7 @@ namespace TicketingScreenDesigner.DAL.DAL
                 using (var connection = DatabaseHelper.GetConnection())
                 {
                     connection.Open();
-                    var command = new SqlCommand("SELECT ServiceId, BankId, Name FROM Service WHERE BankId = @BankId", connection);
+                    var command = new SqlCommand("SELECT ServiceId, BankId, NameEnglish FROM Service WHERE BankId = @BankId", connection);
                     command.Parameters.AddWithValue("@BankId", bankId);
 
                     using (var reader = command.ExecuteReader())
